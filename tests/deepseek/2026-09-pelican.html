@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Пеликан на велосипеде — SVG + CSS Keyframes</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(145deg, #a3d0ff 0%, #c8e6ff 100%);
+      font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .scene {
+      background: #f0f9ff;
+      border-radius: 2rem;
+      box-shadow: 0 20px 40px rgba(0, 20, 30, 0.2);
+      padding: 1rem 2rem 2rem 2rem;
+    }
+
+    svg {
+      display: block;
+      width: min(900px, 95vw);
+      height: auto;
+      background: #d9f0ff;
+      border-radius: 1.5rem;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+    }
+
+    /* ========== ФОН: движется назад ========== */
+    .background-group {
+      animation: bgMove 3s linear infinite;
+    }
+
+    @keyframes bgMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-80px); }
+    }
+
+    /* ========== КОЛЁСА: вращение ========== */
+    .wheel-spokes {
+      transform-origin: center;
+      transform-box: fill-box;
+      animation: spin 1.2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* ========== ПЕДАЛИ: вращение ========== */
+    .pedal-crank {
+      transform-origin: center;
+      transform-box: fill-box;
+      animation: pedalSpin 1.2s linear infinite;
+    }
+
+    @keyframes pedalSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* ========== НОГИ: движение вверх-вниз (имитация педалирования) ========== */
+    .leg-left {
+      animation: legLeftMove 1.2s ease-in-out infinite;
+    }
+
+    .leg-right {
+      animation: legRightMove 1.2s ease-in-out infinite;
+    }
+
+    @keyframes legLeftMove {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      25% { transform: translateY(-4px) rotate(-3deg); }
+      50% { transform: translateY(0px) rotate(0deg); }
+      75% { transform: translateY(4px) rotate(3deg); }
+    }
+
+    @keyframes legRightMove {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      25% { transform: translateY(4px) rotate(3deg); }
+      50% { transform: translateY(0px) rotate(0deg); }
+      75% { transform: translateY(-4px) rotate(-3deg); }
+    }
+
+    /* ========== ЛЁГКОЕ ПОКАЧИВАНИЕ ПЕЛИКАНА (весёлый эффект) ========== */
+    .pelican-body {
+      animation: bob 0.6s ease-in-out infinite alternate;
+    }
+
+    @keyframes bob {
+      from { transform: translateY(0px); }
+      to { transform: translateY(-2px); }
+    }
+
+    /* ========== ЗОБ (большой мешок) — лёгкая пульсация ========== */
+    .pouch {
+      animation: pouchPulse 1.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes pouchPulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.02); }
+    }
+
+    /* ========== ОБЛАКА: плывут быстрее ========== */
+    .clouds {
+      animation: cloudMove 6s linear infinite;
+    }
+
+    @keyframes cloudMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-160px); }
+    }
+
+    /* ========== СОЛНЦЕ / ЛУЧИ (медленное вращение) ========== */
+    .sun-rays {
+      transform-origin: 80px 70px;
+      animation: sunSpin 20s linear infinite;
+    }
+
+    @keyframes sunSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* ========== КУСТИКИ / ТРАВА — бегут назад ========== */
+    .ground-strip {
+      animation: groundMove 3s linear infinite;
+    }
+
+    @keyframes groundMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-60px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
+      <!-- ================= ФОН ================= -->
+      <!-- Небо (статичное) -->
+      <rect width="700" height="400" fill="#b3e0ff" rx="20" />
+
+      <!-- Солнце с лучами -->
+      <g>
+        <circle cx="80" cy="70" r="28" fill="#FFF9B0" stroke="#FFD966" stroke-width="2" />
+        <g class="sun-rays">
+          <line x1="80" y1="25" x2="80" y2="10" stroke="#FFD966" stroke-width="4" stroke-linecap="round" />
+          <line x1="80" y1="115" x2="80" y2="130" stroke="#FFD966" stroke-width="4" stroke-linecap="round" />
+          <line x1="35" y1="70" x2="20" y2="70" stroke="#FFD966" stroke-width="4" stroke-linecap="round" />
+          <line x1="125" y1="70" x2="140" y2="70" stroke="#FFD966" stroke-width="4" stroke-linecap="round" />
+          <line x1="48" y1="38" x2="38" y2="28" stroke="#FFD966" stroke-width="4" stroke-linecap="round" />
+          <line x1="112" y1="102" x2="122" y2="112" stroke="#FFD966" stroke-width="4" stroke-linecap="round" />
+          <line x1="112" y1="38" x2="122" y2="28" stroke="#FFD966" stroke-width="4" stroke-linecap="round" />
+          <line x1="48" y1="102" x2="38" y2="112" stroke="#FFD966" stroke-width="4" stroke-linecap="round" />
+        </g>
+      </g>
+
+      <!-- Облака (движутся) -->
+      <g class="clouds">
+        <g fill="#ffffff" opacity="0.9">
+          <ellipse cx="220" cy="60" rx="35" ry="18" />
+          <ellipse cx="260" cy="45" rx="30" ry="22" />
+          <ellipse cx="300" cy="60" rx="40" ry="18" />
+          <ellipse cx="580" cy="100" rx="45" ry="20" />
+          <ellipse cx="630" cy="85" rx="30" ry="18" />
+          <ellipse cx="670" cy="105" rx="35" ry="16" />
+        </g>
+      </g>
+
+      <!-- Движущийся фон: кустики и трава (смещаются назад) -->
+      <g class="background-group">
+        <!-- Дальние кустики -->
+        <g fill="#7ec850" opacity="0.6">
+          <circle cx="50" cy="340" r="18" />
+          <circle cx="90" cy="330" r="22" />
+          <circle cx="140" cy="345" r="16" />
+          <circle cx="200" cy="335" r="20" />
+          <circle cx="270" cy="342" r="18" />
+          <circle cx="340" cy="332" r="24" />
+          <circle cx="420" cy="344" r="17" />
+          <circle cx="500" cy="338" r="21" />
+          <circle cx="580" cy="346" r="19" />
+          <circle cx="660" cy="334" r="23" />
+          <circle cx="720" cy="340" r="18" />
+        </g>
+      </g>
+
+      <!-- Земля (статичная полоса, но с движущимися элементами) -->
+      <rect x="0" y="355" width="700" height="45" fill="#8bc34a" rx="8" />
+      
+      <!-- Движущаяся трава / линии на земле -->
+      <g class="ground-strip">
+        <g stroke="#6a9e3a" stroke-width="2" opacity="0.7">
+          <line x1="20" y1="365" x2="20" y2="390" />
+          <line x1="50" y1="368" x2="50" y2="392" />
+          <line x1="90" y1="362" x2="90" y2="388" />
+          <line x1="130" y1="370" x2="130" y2="394" />
+          <line x1="170" y1="365" x2="170" y2="390" />
+          <line x1="210" y1="367" x2="210" y2="392" />
+          <line x1="250" y1="363" x2="250" y2="388" />
+          <line x1="290" y1="369" x2="290" y2="393" />
+          <line x1="330" y1="365" x2="330" y2="390" />
+          <line x1="370" y1="370" x2="370" y2="394" />
+          <line x1="410" y1="364" x2="410" y2="389" />
+          <line x1="450" y1="368" x2="450" y2="392" />
+          <line x1="490" y1="365" x2="490" y2="390" />
+          <line x1="530" y1="370" x2="530" y2="394" />
+          <line x1="570" y1="366" x2="570" y2="391" />
+          <line x1="610" y1="362" x2="610" y2="388" />
+          <line x1="650" y1="369" x2="650" y2="393" />
+          <line x1="690" y1="365" x2="690" y2="390" />
+        </g>
+      </g>
+
+      <!-- ================= ВЕЛОСИПЕД ================= -->
+      <!-- Рама (статичная часть) -->
+      <g stroke="#3a3a3a" stroke-width="5" stroke-linecap="round" fill="none">
+        <!-- Основной треугольник -->
+        <line x1="280" y1="270" x2="380" y2="270" />   <!-- верхняя труба -->
+        <line x1="380" y1="270" x2="430" y2="315" />   <!-- подседельная труба -->
+        <line x1="280" y1="270" x2="230" y2="315" />   <!-- передняя вилка верх -->
+        <line x1="230" y1="315" x2="280" y2="270" />   <!-- нижняя труба (дублируем для толщины) -->
+        <!-- Задние перья -->
+        <line x1="380" y1="270" x2="430" y2="315" />
+        <line x1="380" y1="270" x2="330" y2="315" />
+        <!-- Передняя вилка -->
+        <line x1="230" y1="315" x2="230" y2="330" stroke="#3a3a3a" stroke-width="6" />
+        <!-- Руль -->
+        <line x1="210" y1="255" x2="250" y2="255" stroke="#2c2c2c" stroke-width="6" />
+        <line x1="230" y1="255" x2="230" y2="270" stroke="#2c2c2c" stroke-width="5" />
+      </g>
+
+      <!-- Седло -->
+      <ellipse cx="390" cy="260" rx="22" ry="8" fill="#2c2c2c" />
+
+      <!-- ===== ЗАДНЕЕ КОЛЕСО (левое на картинке) ===== -->
+      <g>
+        <!-- Обод -->
+        <circle cx="330" cy="315" r="45" fill="none" stroke="#1e1e1e" stroke-width="7" />
+        <!-- Спицы (вращаются) -->
+        <g class="wheel-spokes">
+          <line x1="330" y1="270" x2="330" y2="360" stroke="#5a5a5a" stroke-width="2.5" />
+          <line x1="285" y1="315" x2="375" y2="315" stroke="#5a5a5a" stroke-width="2.5" />
+          <line x1="298" y1="283" x2="362" y2="347" stroke="#5a5a5a" stroke-width="2.5" />
+          <line x1="362" y1="283" x2="298" y2="347" stroke="#5a5a5a" stroke-width="2.5" />
+          <line x1="330" y1="278" x2="330" y2="352" stroke="#5a5a5a" stroke-width="1.8" />
+          <line x1="293" y1="315" x2="367" y2="315" stroke="#5a5a5a" stroke-width="1.8" />
+          <line x1="306" y1="291" x2="354" y2="339" stroke="#5a5a5a" stroke-width="1.8" />
+          <line x1="354" y1="291" x2="306" y2="339" stroke="#5a5a5a" stroke-width="1.8" />
+        </g>
+        <!-- Втулка -->
+        <circle cx="330" cy="315" r="8" fill="#3a3a3a" />
+      </g>
+
+      <!-- ===== ПЕРЕДНЕЕ КОЛЕСО (правое) ===== -->
+      <g>
+        <circle cx="230" cy="330" r="45" fill="none" stroke="#1e1e1e" stroke-width="7" />
+        <!-- Спицы (вращаются) -->
+        <g class="wheel-spokes">
+          <line x1="230" y1="285" x2="230" y2="375" stroke="#5a5a5a" stroke-width="2.5" />
+          <line x1="185" y1="330" x2="275" y2="330" stroke="#5a5a5a" stroke-width="2.5" />
+          <line x1="198" y1="298" x2="262" y2="362" stroke="#5a5a5a" stroke-width="2.5" />
+          <line x1="262" y1="298" x2="198" y2="362" stroke="#5a5a5a" stroke-width="2.5" />
+          <line x1="230" y1="293" x2="230" y2="367" stroke="#5a5a5a" stroke-width="1.8" />
+          <line x1="193" y1="330" x2="267" y2="330" stroke="#5a5a5a" stroke-width="1.8" />
+          <line x1="206" y1="306" x2="254" y2="354" stroke="#5a5a5a" stroke-width="1.8" />
+          <line x1="254" y1="306" x2="206" y2="354" stroke="#5a5a5a" stroke-width="1.8" />
+        </g>
+        <circle cx="230" cy="330" r="8" fill="#3a3a3a" />
+      </g>
+
+      <!-- ===== ПЕДАЛИ И КРИВОШИП ===== -->
+      <g>
+        <!-- Центр каретки (звёздочка) -->
+        <circle cx="355" cy="315" r="12" fill="#2c2c2c" />
+        <!-- Вращающийся кривошип с педалями -->
+        <g class="pedal-crank">
+          <!-- Левая педаль (условно) -->
+          <rect x="332" y="303" width="10" height="24" rx="3" fill="#4a4a4a" transform="rotate(30, 355, 315)" />
+          <rect x="338" y="288" width="18" height="8" rx="4" fill="#1e1e1e" transform="rotate(30, 355, 315)" />
+          <!-- Правая педаль (условно) -->
+          <rect x="368" y="303" width="10" height="24" rx="3" fill="#4a4a4a" transform="rotate(-150, 355, 315)" />
+          <rect x="356" y="334" width="18" height="8" rx="4" fill="#1e1e1e" transform="rotate(-150, 355, 315)" />
+        </g>
+      </g>
+
+      <!-- ================= ПЕЛИКАН ================= -->
+      <g class="pelican-body">
+        <!-- ТУЛОВИЩЕ (белое с лёгким жёлтым оттенком) -->
+        <ellipse cx="370" cy="235" rx="55" ry="38" fill="#fffef0" stroke="#d4c9a8" stroke-width="2.5" />
+
+        <!-- КРЫЛО (сложенное, с лёгким контуром) -->
+        <ellipse cx="380" cy="230" rx="35" ry="22" fill="#f5f0d0" stroke="#c9bb8a" stroke-width="2" />
+
+        <!-- ШЕЯ (изогнутая) -->
+        <path d="M 320 220 Q 300 180 310 150 Q 315 135 330 130" 
+              fill="none" stroke="#fffef0" stroke-width="22" stroke-linecap="round" />
+        <path d="M 320 220 Q 300 180 310 150 Q 315 135 330 130" 
+              fill="none" stroke="#d4c9a8" stroke-width="2" stroke-linecap="round" />
+
+        <!-- ГОЛОВА -->
+        <circle cx="340" cy="120" r="24" fill="#fffef0" stroke="#d4c9a8" stroke-width="2.5" />
+
+        <!-- ГЛАЗ -->
+        <circle cx="348" cy="114" r="6" fill="#1e1e1e" />
+        <circle cx="350" cy="112" r="2" fill="white" />
+
+        <!-- КЛЮВ (длинный, с большим зобом) -->
+        <!-- Верхняя часть клюва -->
+        <path d="M 360 112 L 420 108 L 425 118 L 362 122 Z" 
+              fill="#f5a623" stroke="#cc8b1a" stroke-width="2" stroke-linejoin="round" />
+        <!-- Зоб (большой мешок) -->
+        <path class="pouch" d="M 362 120 Q 380 140 410 130 Q 430 122 425 118 L 362 122 Z" 
+              fill="#f7c56e" stroke="#d49b34" stroke-width="2.5" stroke-linejoin="round" />
+        
+        <!-- Хохолок (перья на голове) -->
+        <path d="M 328 100 Q 320 85 330 78 Q 335 88 338 98" fill="#f5f0d0" stroke="#c9bb8a" stroke-width="1.5" />
+        <path d="M 338 98 Q 332 82 342 76 Q 345 88 346 98" fill="#f5f0d0" stroke="#c9bb8a" stroke-width="1.5" />
+
+        <!-- НОГИ (анимированные) -->
+        <!-- Левая нога (задняя, визуально левая) -->
+        <g class="leg-left">
+          <path d="M 360 260 L 340 290 L 335 310" 
+                fill="none" stroke="#f5a623" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+          <!-- Лапа -->
+          <path d="M 328 308 L 335 310 L 342 308" fill="none" stroke="#d48b1a" stroke-width="4" stroke-linecap="round" />
+        </g>
+        <!-- Правая нога (передняя, визуально правая) -->
+        <g class="leg-right">
+          <path d="M 380 255 L 365 285 L 360 305" 
+                fill="none" stroke="#f5a623" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" />
+          <!-- Лапа -->
+          <path d="M 353 303 L 360 305 L 367 303" fill="none" stroke="#d48b1a" stroke-width="4" stroke-linecap="round" />
+        </g>
+      </g>
+
+      <!-- Дополнительные детали: руль (поверх пеликана, чтобы крыло не перекрывало) -->
+      <line x1="210" y1="255" x2="250" y2="255" stroke="#2c2c2c" stroke-width="6" stroke-linecap="round" />
+      <line x1="230" y1="255" x2="230" y2="270" stroke="#2c2c2c" stroke-width="5" stroke-linecap="round" />
+      
+      <!-- Небольшой блик на колесах для красоты (статичный) -->
+      <circle cx="315" cy="300" r="4" fill="white" opacity="0.5" />
+      <circle cx="215" cy="315" r="4" fill="white" opacity="0.5" />
+    </svg>
+  </div>
+</body>
+</html>

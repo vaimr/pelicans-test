@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Лягушка на пенни-фартинге — чисто на CSS keyframes</title>
+<style>
+  *{margin:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;min-height:100vh;
+    display:flex;align-items:center;justify-content:center;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:linear-gradient(180deg,#9ed9f5 0%,#e4f8ff 90%);
+    padding:16px;
+  }
+  main{width:min(1120px,96vw)}
+  svg{display:block;width:100%;height:auto}
+  .hint{text-align:center;margin-top:10px;color:#2f6e28;font-size:13px;letter-spacing:.5px}
+
+  /* ---------- анимация: всё на CSS keyframes ---------- */
+  .spokesF,.spokesR,.crankNear,.crankFar,.footKeepNear,.footKeepFar,
+  .legFront,.legBack,.dashes,.near,.mid,.clouds{
+    transform-box:view-box;will-change:transform;
+  }
+  .spokesF      { transform-origin:360px 380px; animation:spin 2s linear infinite }
+  .spokesR      { transform-origin:985px 560px; animation:spin 2s linear infinite }
+  .crankNear    { transform-origin:360px 380px; animation:spin 2s linear infinite }
+  .crankFar     { transform-origin:360px 380px; animation:crankFar 2s linear infinite }
+  .footKeepNear { transform-origin:360px 380px; animation:spinRev 2s linear infinite }
+  .footKeepFar  { transform-origin:360px 380px; animation:footKeepFar 2s linear infinite }
+  .legFront     { transform-origin:298px 112px; animation:legF 2s linear infinite }
+  .legBack      { transform-origin:286px 114px; animation:legB 2s linear infinite }
+  .dashes       { animation:dashes 0.25s linear infinite }
+  .near         { animation:near 1.6s linear infinite }
+  .mid          { animation:mid 3.2s linear infinite }
+  .clouds       { animation:cl 9s linear infinite }
+
+  .eye   { transform-box:fill-box; transform-origin:50% 50%; animation:blink 4.6s ease-in-out infinite }
+  .eye2  { animation-delay:.35s }
+
+  @keyframes spin       { to { transform:rotate(360deg) } }
+  @keyframes spinRev    { to { transform:rotate(-360deg) } }
+  @keyframes crankFar   { from { transform:rotate(180deg) } to { transform:rotate(540deg) } }
+  @keyframes footKeepFar{ from { transform:rotate(-180deg) } to { transform:rotate(-540deg) } }
+  @keyframes legF {
+    0%,100% { transform:rotate(-11deg) }
+    25%     { transform:rotate(-21deg) }
+    50%     { transform:rotate(-15deg) }
+    75%     { transform:rotate(-5deg) }
+  }
+  @keyframes legB {
+    0%,100% { transform:rotate(-18deg) }
+    25%     { transform:rotate(-8deg) }
+    50%     { transform:rotate(-14deg) }
+    75%     { transform:rotate(-23deg) }
+  }
+  @keyframes dashes { to { transform:translateX(-187px) } }
+  @keyframes near   { to { transform:translateX(-1200px) } }
+  @keyframes mid    { to { transform:translateX(-1200px) } }
+  @keyframes cl     { to { transform:translateX(-1200px) } }
+  @keyframes blink  { 0%,90%,100% { transform:scaleY(1) } 94%,96% { transform:scaleY(.08) } }
+
+  @media (prefers-reduced-motion: reduce){
+    svg g{animation-play-state:paused!important}
+  }
+</style>
+</head>
+<body>
+<main>
+<svg viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg" role="img"
+     aria-label="Мультяшная лягушка едет на велосипеде пенни-фартинг">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9ed9f5"/>
+      <stop offset=".7" stop-color="#cbecfa"/>
+      <stop offset="1" stop-color="#eefaff"/>
+    </linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c9a878"/>
+      <stop offset="1" stop-color="#a8834f"/>
+    </linearGradient>
+    <g id="tree">
+      <rect x="-7" y="-64" width="14" height="64" rx="4" fill="#7a5230"/>
+      <polygon points="0,-150 44,-22 -44,-22" fill="#3a7448"/>
+      <polygon points="0,-108 35,-4 -35,-4" fill="#4b9059"/>
+      <polygon points="0,-64 26,-2 -26,-2" fill="#5da26a"/>
+    </g>
+    <g id="bush">
+      <circle cx="0" cy="4" r="30" fill="#4c9c3d"/>
+      <circle cx="27" cy="8" r="23" fill="#59a948"/>
+      <circle cx="14" cy="-16" r="21" fill="#438f36"/>
+      <circle cx="8" cy="12" r="6" fill="#e4573d"/>
+      <circle cx="28" cy="-2" r="5" fill="#e4573d"/>
+    </g>
+    <g id="cloud">
+      <ellipse cx="0" cy="0" rx="60" ry="24" fill="#fff" opacity=".85"/>
+      <ellipse cx="42" cy="-10" rx="42" ry="20" fill="#fff" opacity=".85"/>
+      <ellipse cx="-42" cy="-8" rx="40" ry="18" fill="#fff" opacity=".85"/>
+    </g>
+  </defs>
+
+  <!-- =============== НЕБО / СОЛНЦЕ / ОБЛАКА =============== -->
+  <rect x="0" y="0" width="1200" height="700" fill="url(#sky)"/>
+  <circle cx="1080" cy="85" r="70" fill="#ffdf6b" opacity=".35"/>
+  <circle cx="1080" cy="85" r="44" fill="#ffd34d"/>
+  <g class="clouds">
+    <use href="#cloud" transform="translate(150 95)"/>
+    <use href="#cloud" transform="translate(520 62)"/>
+    <use href="#cloud" transform="translate(880 120) scale(1.15)"/>
+    <use href="#cloud" transform="translate(1350 90)"/>
+    <use href="#cloud" transform="translate(1720 68)"/>
+    <use href="#cloud" transform="translate(2080 125) scale(1.15)"/>
+  </g>
+
+  <!-- =============== ХОЛМЫ =============== -->
+  <g>
+    <ellipse cx="260" cy="640" rx="420" ry="150" fill="#aadd85"/>
+    <ellipse cx="760" cy="660" rx="520" ry="180" fill="#96d172"/>
+    <ellipse cx="1180" cy="650" rx="420" ry="155" fill="#a5da80"/>
+  </g>
+
+  <!-- =============== ДЕРЕВЬЯ (средний план) =============== -->
+  <g class="mid">
+    <use href="#tree" transform="translate(140 588)"/>
+    <use href="#tree" transform="translate(470 592) scale(0.85 0.85)"/>
+    <use href="#tree" transform="translate(820 586) scale(1.1 1.1)"/>
+    <use href="#tree" transform="translate(1140 590) scale(0.9 0.9)"/>
+    <use href="#tree" transform="translate(1400 590)"/>
+    <use href="#tree" transform="translate(1840 592) scale(0.85 0.85)"/>
+    <use href="#tree" transform="translate(2180 586) scale(1.1 1.1)"/>
+  </g>
+
+  <!-- =============== ЗЕМЛЯ / ДОРОГА / ШТРИХИ =============== -->
+  <rect x="0" y="580" width="1200" height="40" fill="#8ccb6d"/>
+  <rect x="0" y="585" width="1200" height="35" fill="#9bd57d"/>
+  <rect x="0" y="620" width="1200" height="80" fill="url(#road)"/>
+  <line x1="0" y1="620" x2="1200" y2="620" stroke="#6d8f3f" stroke-width="3"/>
+  <line x1="0" y1="628" x2="1200" y2="628" stroke="#7a5a2f" stroke-width="4" opacity=".5"/>
+  <ellipse cx="620" cy="622" rx="270" ry="10" fill="rgba(40,60,25,.14)"/>
+
+  <g class="dashes">
+    <rect x="0" y="656" width="90" height="14" rx="7" fill="#ffe89a"/>
+    <rect x="187" y="656" width="90" height="14" rx="7" fill="#ffe89a"/>
+    <rect x="374" y="656" width="90" height="14" rx="7" fill="#ffe89a"/>
+    <rect x="561" y="656" width="90" height="14" rx="7" fill="#ffe89a"/>
+    <rect x="748" y="656" width="90" height="14" rx="7" fill="#ffe89a"/>
+    <rect x="935" y="656" width="90" height="14" rx="7" fill="#ffe89a"/>
+    <rect x="1122" y="656" width="90" height="14" rx="7" fill="#ffe89a"/>
+    <rect x="1309" y="656" width="90" height="14" rx="7" fill="#ffe89a"/>
+  </g>
+
+  <!-- =============== КУСТЫ (ближний план) =============== -->
+  <g class="near">
+    <use href="#bush" transform="translate(200 592)"/>
+    <use href="#bush" transform="translate(720 590)"/>
+    <use href="#bush" transform="translate(1100 594)"/>
+    <use href="#bush" transform="translate(1400 592)"/>
+    <use href="#bush" transform="translate(1920 590)"/>
+    <use href="#bush" transform="translate(2300 594)"/>
+  </g>
+
+  <!-- =============== ЗАДНЕЕ КОЛЕСО =============== -->
+  <g>
+    <circle cx="985" cy="560" r="54" fill="none" stroke="#30343c" stroke-width="9"/>
+    <g class="spokesR">
+      <path d="M985 560 L1037 560 M985 560 L1030 586 M985 560 L1011 605 M985 560 L985 612 M985 560 L959 605 M985 560 L940 586 M985 560 L933 560 M985 560 L940 534 M985 560 L959 515 M985 560 L985 508 M985 560 L1011 515 M985 560 L1030 534"
+            fill="none" stroke="#a7b6ca" stroke-width="2.5"/>
+      <circle cx="1037" cy="562" r="5" fill="#e4573d"/>
+    </g>
+    <circle cx="985" cy="560" r="50" fill="none" stroke="#7f8b9d" stroke-width="3"/>
+    <circle cx="985" cy="560" r="8" fill="#30343c"/>
+    <circle cx="985" cy="560" r="3.5" fill="#9fb0c4"/>
+  </g>
+
+  <!-- =============== РАМА ПЕННИ-ФАРТИНГА =============== -->
+  <path d="M360 380 C 300 255 245 205 305 150" fill="none" stroke="#33415e" stroke-width="8" stroke-linecap="round"/>
+  <path d="M985 560 C 880 470 720 300 302 152" fill="none" stroke="#33415e" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- =============== ДАЛЬНЯЯ НОГА (за передним колесом) =============== -->
+  <g class="legBack">
+    <path d="M286 114 L304 182" stroke="#458b3a" stroke-width="24" stroke-linecap="round"/>
+    <path d="M304 182 L352 342" stroke="#458b3a" stroke-width="19" stroke-linecap="round"/>
+  </g>
+
+  <!-- =============== ДАЛЬНЯЯ ПЕДАЛЬ (за колесом) =============== -->
+  <g class="crankFar">
+    <path d="M360 380 L360 416" stroke="#33415e" stroke-width="7" stroke-linecap="round"/>
+    <g class="footKeepFar">
+      <rect x="334" y="416" width="52" height="13" rx="6.5" fill="#8c9bb0"/>
+      <ellipse cx="358" cy="412" rx="18" ry="9" fill="#5cae42" stroke="#2f6e28" stroke-width="2"/>
+      <g stroke="#3f8d2f" stroke-width="2.8" stroke-linecap="round">
+        <line x1="374" y1="406" x2="383" y2="404"/>
+        <line x1="374" y1="411" x2="384" y2="410"/>
+        <line x1="373" y1="417" x2="382" y2="418"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- =============== ПЕРЕДНЕЕ БОЛЬШОЕ КОЛЕСО =============== -->
+  <g>
+    <circle cx="360" cy="380" r="238" fill="none" stroke="#30343c" stroke-width="10"/>
+    <g class="spokesF">
+      <path d="M360 380 L592 380 M360 380 L584 440 M360 380 L561 496 M360 380 L524 544 M360 380 L476 581 M360 380 L420 604 M360 380 L360 612 M360 380 L300 604 M360 380 L244 581 M360 380 L196 544 M360 380 L159 496 M360 380 L136 440 M360 380 L128 380 M360 380 L136 320 M360 380 L159 264 M360 380 L196 216 M360 380 L244 179 M360 380 L300 156 M360 380 L360 148 M360 380 L420 156 M360 380 L476 179 M360 380 L524 216 M360 380 L561 264 M360 380 L584 320"
+            fill="none" stroke="#a7b6ca" stroke-width="2"/>
+      <path d="M360 380 L592 380 M360 380 L584 440 M360 380 L561 496 M360 380 L524 544 M360 380 L476 581 M360 380 L420 604 M360 380 L360 612 M360 380 L300 604 M360 380 L244 581 M360 380 L196 544 M360 380 L159 496 M360 380 L136 440 M360 380 L128 380 M360 380 L136 320 M360 380 L159 264 M360 380 L196 216 M360 380 L244 179 M360 380 L300 156 M360 380 L360 148 M360 380 L420 156 M360 380 L476 179 M360 380 L524 216 M360 380 L561 264 M360 380 L584 320"
+            transform="rotate(7.5 360 380)" fill="none" stroke="#a7b6ca" stroke-width="2"/>
+      <circle cx="592" cy="380" r="6" fill="#e4573d"/>
+    </g>
+    <circle cx="360" cy="380" r="234" fill="none" stroke="#7f8b9d" stroke-width="3"/>
+    <circle cx="360" cy="380" r="15" fill="#30343c"/>
+    <circle cx="360" cy="380" r="6" fill="#9fb0c4"/>
+  </g>
+
+  <!-- =============== РУЛЬ / ВИЛКА =============== -->
+  <path d="M360 380 C 325 250 345 205 404 153" fill="none" stroke="#33415e" stroke-width="8" stroke-linecap="round"/>
+  <path d="M404 154 Q 428 138 454 156" fill="none" stroke="#33415e" stroke-width="9" stroke-linecap="round"/>
+
+  <!-- =============== БЛИЖНЯЯ ПЕДАЛЬ (перед колесом) =============== -->
+  <g class="crankNear">
+    <path d="M360 380 L360 416" stroke="#33415e" stroke-width="8" stroke-linecap="round"/>
+    <g class="footKeepNear">
+      <rect x="334" y="416" width="52" height="13" rx="6.5" fill="#8c9bb0"/>
+      <ellipse cx="358" cy="412" rx="18" ry="9" fill="#6fc84f" stroke="#2f6e28" stroke-width="2"/>
+      <g stroke="#4fa03a" stroke-width="2.8" stroke-linecap="round">
+        <line x1="374" y1="406" x2="383" y2="404"/>
+        <line x1="374" y1="411" x2="384" y2="410"/>
+        <line x1="373" y1="417" x2="382" y2="418"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- =============== БЛИЖНЯЯ НОГА =============== -->
+  <g class="legFront">
+    <path d="M298 112 L324 210" stroke="#69c653" stroke-width="26" stroke-linecap="round"/>
+    <circle cx="324" cy="208" r="13" fill="#69c653"/>
+    <path d="M324 210 L356 398" stroke="#69c653" stroke-width="21" stroke-linecap="round"/>
+    <path d="M298 112 L324 210" stroke="#8fd96c" stroke-width="9" stroke-linecap="round" opacity=".55"/>
+  </g>
+
+  <!-- =============== СЕДЛО =============== -->
+  <path d="M288 134 Q 286 152 300 156" fill="none" stroke="#7a4a29" stroke-width="6" stroke-linecap="round"/>
+  <path d="M290 132 Q 302 118 322 130" fill="none" stroke="#7a4a29" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- =============== ЛЯГУШКА: ТУЛОВИЩЕ =============== -->
+  <ellipse cx="288" cy="86" rx="32" ry="25" fill="#69c653" stroke="#2f6e28" stroke-width="3"/>
+  <ellipse cx="294" cy="99" rx="20" ry="16" fill="#f8eab4"/>
+  <ellipse cx="276" cy="78" rx="9" ry="13" fill="#8fd96c" opacity=".6" transform="rotate(-20 276 78)"/>
+  <circle cx="262" cy="76" r="3" fill="#4f9f3d"/>
+  <circle cx="268" cy="98" r="3" fill="#4f9f3d"/>
+  <circle cx="322" cy="50" r="2.4" fill="#2f6e28"/>
+  <circle cx="333" cy="52" r="2.4" fill="#2f6e28"/>
+  <path d="M300 62 Q 320 55 334 62" fill="none" stroke="#2f6e28" stroke-width="2.6" stroke-linecap="round"/>
+
+  <!-- =============== ГОЛОВА И БОЛЬШИЕ ГЛАЗА =============== -->
+  <ellipse cx="312" cy="54" rx="31" ry="28" fill="#69c653" stroke="#2f6e28" stroke-width="3"/>
+  <g class="eye">
+    <circle cx="297" cy="27" r="13" fill="#69c653" stroke="#2f6e28" stroke-width="3"/>
+    <circle cx="298" cy="25" r="8.5" fill="#fffbe6" stroke="#2f6e28" stroke-width="2"/>
+    <circle cx="300" cy="25" r="4.2" fill="#27323b"/>
+    <circle cx="301.4" cy="23.6" r="1.5" fill="#fff"/>
+  </g>
+  <g class="eye eye2">
+    <circle cx="331" cy="25" r="13" fill="#69c653" stroke="#2f6e28" stroke-width="3"/>
+    <circle cx="332" cy="23" r="8.5" fill="#fffbe6" stroke="#2f6e28" stroke-width="2"/>
+    <circle cx="334" cy="23" r="4.2" fill="#27323b"/>
+    <circle cx="335.4" cy="21.6" r="1.5" fill="#fff"/>
+  </g>
+
+  <!-- =============== ЛАПКИ НА РУЛЕ =============== -->
+  <path d="M306 84 Q 330 160 424 151" fill="none" stroke="#69c653" stroke-width="15" stroke-linecap="round"/>
+  <path d="M296 88 Q 322 166 448 153" fill="none" stroke="#58a83f" stroke-width="13" stroke-linecap="round"/>
+  <circle cx="424" cy="151" r="7.5" fill="#6fc84f" stroke="#2f6e28" stroke-width="2"/>
+  <circle cx="448" cy="153" r="7" fill="#58a83f" stroke="#2f6e28" stroke-width="2"/>
+</svg>
+<p class="hint">Лягушка-велосипедист &middot; пенни-фартинг &middot; только CSS keyframes, без библиотек</p>
+</main>
+</body>
+</html>

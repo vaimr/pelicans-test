@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Пеликан-гонщик · SVG + CSS keyframes</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;overflow:hidden;background:#cfeeff}
+
+  /* ============ ПАЛИТРА (день / ночь) ============ */
+  .stage{
+    position:fixed;inset:0;overflow:hidden;
+    --font: ui-rounded,"Comic Sans MS","Chalkboard SE","Trebuchet MS","Segoe UI",sans-serif;
+    --ink:#33291f;
+    --sky-top:#3fb0e8; --sky-bot:#e2f5ff;
+    --hills-far:#cde7ae; --hills-near:#a4d389;
+    --grass:#82c94c; --grass-dark:#68b13c;
+    --tree:#4fa257; --trunk:#8a5a3b;
+    --road-hi:#5d6779; --road-lo:#454e5f; --dash:#f1f5fa;
+    --cloud:#ffffff; --flower:#ff8fa3;
+    --dust:#d3c8b2; --shadowO:.13;
+    --body:#fff7e0; --wing:#f6e5ba; --beak:#f7a23b;
+    --leg:#f5a03a; --leg-far:#c97b26;
+    --tire:#2c2f38; --rim:#c9cfd9; --spoke:#a9b1c0;
+    --frame:#e8503a;
+    --lamp:#ff5f52; --lamp-glow:0;
+    --sunO:1; --moonO:0; --starsO:0; --birdO:.6;
+    background:linear-gradient(var(--sky-top),var(--sky-bot));
+  }
+  #night:checked ~ .stage{
+    --sky-top:#0e1b38; --sky-bot:#3a5280;
+    --hills-far:#2c3c5e; --hills-near:#243350;
+    --grass:#26374f; --grass-dark:#1f2d44;
+    --tree:#1d2d48; --trunk:#414a63;
+    --road-hi:#272f42; --road-lo:#1b2233; --dash:#8d97b1;
+    --cloud:#93a7cc; --flower:#7a6aa8;
+    --dust:#7b85a0; --shadowO:.3;
+    --body:#e7ecf8; --wing:#ccd6ec; --beak:#f09a33;
+    --leg:#e28d2f; --leg-far:#a8641f;
+    --tire:#20242e; --rim:#8b94a8; --spoke:#78829a;
+    --frame:#d6432f;
+    --lamp:#ffd977; --lamp-glow:1;
+    --sunO:0; --moonO:1; --starsO:1; --birdO:.18;
+  }
+
+  .scene{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .scene *{transition:fill .9s linear,stroke .9s linear}
+  .scene stop{transition:stop-color .9s linear}
+  .scene .sun,.scene .moon,.scene .stars,.scene .lampWrap,.scene .bird{transition:opacity .9s linear}
+
+  /* ============ КЛЮЧЕВЫЕ КАДРЫ ============ */
+  /* вращение вокруг точки через translate-rotate-translate — без transform-origin */
+  @keyframes rotW1{from{transform:translate(470px,560px) rotate(0turn) translate(-470px,-560px)}to{transform:translate(470px,560px) rotate(1turn) translate(-470px,-560px)}}
+  @keyframes rotW2{from{transform:translate(710px,560px) rotate(0turn) translate(-710px,-560px)}to{transform:translate(710px,560px) rotate(1turn) translate(-710px,-560px)}}
+  @keyframes rotCrank{from{transform:translate(555px,560px) rotate(0turn) translate(-555px,-560px)}to{transform:translate(555px,560px) rotate(1turn) translate(-555px,-560px)}}
+  @keyframes rotPedal1{from{transform:translate(593px,560px) rotate(0turn) translate(-593px,-560px)}to{transform:translate(593px,560px) rotate(-1turn) translate(-593px,-560px)}}
+  @keyframes rotPedal2{from{transform:translate(517px,560px) rotate(0turn) translate(-517px,-560px)}to{transform:translate(517px,560px) rotate(-1turn) translate(-517px,-560px)}}
+  @keyframes rotRays{from{transform:translate(1040px,120px) rotate(0turn) translate(-1040px,-120px)}to{transform:translate(1040px,120px) rotate(1turn) translate(-1040px,-120px)}}
+
+  /* бесшовный сдвиг фона: слой 2400px (2 копии по 1200px) */
+  @keyframes slide{to{transform:translateX(-1200px)}}
+  @keyframes chainKF{to{stroke-dashoffset:-12}}
+  @keyframes bobKF{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
+
+  /* ноги: двухкостная IK, 8 поз по 45° за оборот кривошипа (линейно) */
+  @keyframes thighKF{
+    0%,100%{transform:translate(525px,432px) rotate(0deg) translate(-525px,-432px)}
+    12.5%{transform:translate(525px,432px) rotate(23.9deg) translate(-525px,-432px)}
+    25%{transform:translate(525px,432px) rotate(39.7deg) translate(-525px,-432px)}
+    37.5%{transform:translate(525px,432px) rotate(33.7deg) translate(-525px,-432px)}
+    50%{transform:translate(525px,432px) rotate(22.3deg) translate(-525px,-432px)}
+    62.5%{transform:translate(525px,432px) rotate(4.7deg) translate(-525px,-432px)}
+    75%{transform:translate(525px,432px) rotate(-14.4deg) translate(-525px,-432px)}
+    87.5%{transform:translate(525px,432px) rotate(-16.4deg) translate(-525px,-432px)}
+  }
+  @keyframes shinKF{
+    0%,100%{transform:translate(599.9px,474.3px) rotate(0deg) translate(-599.9px,-474.3px)}
+    12.5%{transform:translate(599.9px,474.3px) rotate(-32.3deg) translate(-599.9px,-474.3px)}
+    25%{transform:translate(599.9px,474.3px) rotate(-44deg) translate(-599.9px,-474.3px)}
+    37.5%{transform:translate(599.9px,474.3px) rotate(-13.9deg) translate(-599.9px,-474.3px)}
+    50%{transform:translate(599.9px,474.3px) rotate(18.5deg) translate(-599.9px,-474.3px)}
+    62.5%{transform:translate(599.9px,474.3px) rotate(42.8deg) translate(-599.9px,-474.3px)}
+    75%{transform:translate(599.9px,474.3px) rotate(48deg) translate(-599.9px,-474.3px)}
+    87.5%{transform:translate(599.9px,474.3px) rotate(30.2deg) translate(-599.9px,-474.3px)}
+  }
+
+  @keyframes pouchKF{0%,100%{transform:translate(620px,332px) rotate(2deg) translate(-620px,-332px)}50%{transform:translate(620px,332px) rotate(-2.5deg) translate(-620px,-332px)}}
+  @keyframes wingKF{0%,100%{transform:translate(518px,424px) rotate(0deg) translate(-518px,-424px)}50%{transform:translate(518px,424px) rotate(-3.5deg) translate(-518px,-424px)}}
+  @keyframes headKF{0%,100%{transform:translate(552px,378px) rotate(0deg) translate(-552px,-378px)}50%{transform:translate(552px,378px) rotate(2.2deg) translate(-552px,-378px)}}
+  @keyframes blinkKF{
+    0%,91%{transform:translate(612px,320px) scaleY(1) translate(-612px,-320px)}
+    94%{transform:translate(612px,320px) scaleY(.06) translate(-612px,-320px)}
+    97%,100%{transform:translate(612px,320px) scaleY(1) translate(-612px,-320px)}
+  }
+  @keyframes dustKF{0%{opacity:0;transform:translate(0,0) scale(.4)}30%{opacity:.8}100%{opacity:0;transform:translate(-54px,-14px) scale(1.5)}}
+  @keyframes speedKF{0%{opacity:0;transform:translateX(26px)}35%{opacity:.85}100%{opacity:0;transform:translateX(-44px)}}
+  @keyframes twinkleKF{0%,100%{opacity:.25}50%{opacity:1}}
+  @keyframes glowKF{0%,100%{opacity:.5;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
+
+  /* ============ НАЗНАЧЕНИЕ АНИМАЦИЙ ============ */
+  .w1{animation:rotW1 .6s linear infinite}
+  .w2{animation:rotW2 .6s linear infinite}
+  .crank{animation:rotCrank 1.05s linear infinite}
+  .pedal1{animation:rotPedal1 1.05s linear infinite}
+  .pedal2{animation:rotPedal2 1.05s linear infinite}
+  .rays{animation:rotRays 80s linear infinite}
+  .cloudsA{animation:slide 70s linear infinite}
+  .cloudsB{animation:slide 45s linear infinite}
+  .hillsFar{animation:slide 30s linear infinite}
+  .hillsNear{animation:slide 18s linear infinite}
+  .scenery{animation:slide 2.1s linear infinite}
+  .roadDash{animation:slide 1.846s linear infinite}
+  .chain{animation:chainKF .0526s linear infinite}
+  .pelican,.leg{animation:bobKF 1.05s ease-in-out infinite}
+  .thigh{animation:thighKF 1.05s linear infinite}
+  .shin{animation:shinKF 1.05s linear infinite}
+  .legFar .thigh,.legFar .shin{animation-delay:-.525s}   /* дальняя нога — фазовый сдвиг 180° */
+  .pouch{animation:pouchKF 2.2s ease-in-out infinite}
+  .wing{animation:wingKF 1.05s ease-in-out infinite}
+  .head{animation:headKF 1.05s ease-in-out infinite}
+  .eye{animation:blinkKF 4.6s linear infinite}
+  .dust{opacity:0;transform-box:fill-box;transform-origin:50% 50%;animation:dustKF 1.3s ease-out infinite}
+  .d2{animation-delay:.43s}.d3{animation-delay:.86s}
+  .speedline{opacity:0;animation:speedKF .9s ease-out infinite}
+  .s2{animation-delay:.3s}.s3{animation-delay:.6s}
+  .star{animation:twinkleKF 2.8s ease-in-out infinite}
+  .glow{transform-box:fill-box;transform-origin:50% 50%;animation:glowKF 2.4s ease-in-out infinite}
+
+  /* ============ HUD (чистый CSS, без JS) ============ */
+  .stage::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(120% 90% at 50% 40%,transparent 62%,rgba(15,25,45,.10))}
+  .hud{position:absolute;inset:0;z-index:3;pointer-events:none}
+  .title{position:absolute;top:16px;left:16px;pointer-events:auto;background:#fffdf7;
+    border:3px solid var(--ink);border-radius:14px;padding:9px 14px 10px;
+    transform:rotate(-2deg);box-shadow:0 5px 0 rgba(35,30,25,.18);
+    font-family:var(--font);transition:transform .2s ease}
+  .title:hover{transform:rotate(.5deg) scale(1.03)}
+  .title h1{margin:0;font-size:19px;font-weight:800;color:#33291f;letter-spacing:.3px}
+  .title p{margin:3px 0 0;font-size:11px;font-weight:700;color:#8a7a66}
+  .btn{pointer-events:auto;position:absolute;top:16px;right:16px;width:46px;height:46px;
+    border-radius:50%;background:#fffdf7;border:3px solid var(--ink);
+    box-shadow:0 5px 0 rgba(35,30,25,.18);display:grid;place-items:center;cursor:pointer;
+    font-family:var(--font);transition:transform .18s ease,box-shadow .18s ease}
+  .btn-pause{top:72px}
+  .btn:hover{transform:translateY(-3px) rotate(-5deg);box-shadow:0 8px 0 rgba(35,30,25,.22)}
+  .btn:active{transform:translateY(1px) scale(.97);box-shadow:0 2px 0 rgba(35,30,25,.2)}
+  .btn svg{display:block}
+  .ic-sun,.ic-play{display:none}
+  #night:checked ~ .stage .ic-moon{display:none}
+  #night:checked ~ .stage .ic-sun{display:block}
+  #pause:checked ~ .stage .ic-pause{display:none}
+  #pause:checked ~ .stage .ic-play{display:block}
+  #night:focus-visible ~ .stage .btn-night,
+  #pause:focus-visible ~ .stage .btn-pause{outline:3px solid #3d8bfd;outline-offset:3px}
+
+  .tgl{position:absolute;opacity:0;width:1px;height:1px;margin:-1px;pointer-events:none}
+
+  /* пауза и уважение к prefers-reduced-motion */
+  #pause:checked ~ .stage *{animation-play-state:paused !important}
+  @media (prefers-reduced-motion:reduce){.stage *{animation:none !important}}
+  @media (max-width:560px){
+    .title{padding:8px 11px}.title h1{font-size:16px}.title p{font-size:10px}
+  }
+</style>
+</head>
+<body>
+
+<input type="checkbox" id="night" class="tgl" aria-label="День / ночь">
+<input type="checkbox" id="pause" class="tgl" aria-label="Пауза / продолжить">
+
+<div class="stage">
+  <svg class="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice" role="img" aria-labelledby="sceneTitle">
+    <title id="sceneTitle">Пеликан на велосипеде: колёса крутятся, лапы вращают педали, фон прокручивается назад</title>
+
+    <defs>
+      <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" style="stop-color:var(--sky-top)"/>
+        <stop offset="1" style="stop-color:var(--sky-bot)"/>
+      </linearGradient>
+      <linearGradient id="roadGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" style="stop-color:var(--road-hi)"/>
+        <stop offset="1" style="stop-color:var(--road-lo)"/>
+      </linearGradient>
+      <linearGradient id="pouchGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ffe2ae"/><stop offset="1" stop-color="#f0a558"/>
+      </linearGradient>
+      <g id="cloud">
+        <circle cx="-46" cy="6" r="24"/><circle cx="-12" cy="-12" r="30"/>
+        <circle cx="24" cy="-4" r="26"/><circle cx="54" cy="8" r="18"/>
+        <rect x="-66" y="2" width="138" height="26" rx="13"/>
+      </g>
+    </defs>
+
+    <!-- НЕБО -->
+    <rect x="0" y="0" width="1200" height="700" fill="url(#skyGrad)"/>
+
+    <!-- ЗВЁЗДЫ (ночь) -->
+    <g class="stars" style="opacity:var(--starsO)" fill="#fff">
+      <circle class="star" cx="60" cy="60" r="2" style="animation-delay:-.2s"/>
+      <circle class="star" cx="140" cy="150" r="1.6" style="animation-delay:-1.1s"/>
+      <circle class="star" cx="235" cy="85" r="2.2" style="animation-delay:-.6s"/>
+      <circle class="star" cx="330" cy="185" r="1.5" style="animation-delay:-1.8s"/>
+      <circle class="star" cx="415" cy="60" r="1.8" style="animation-delay:-.9s"/>
+      <circle class="star" cx="505" cy="155" r="2" style="animation-delay:-2.2s"/>
+      <circle class="star" cx="585" cy="95" r="1.5" style="animation-delay:-.4s"/>
+      <circle class="star" cx="665" cy="205" r="1.7" style="animation-delay:-1.4s"/>
+      <circle class="star" cx="745" cy="70" r="2.1" style="animation-delay:-.1s"/>
+      <circle class="star" cx="825" cy="165" r="1.6" style="animation-delay:-2.6s"/>
+      <circle class="star" cx="905" cy="105" r="2.3" style="animation-delay:-1.6s"/>
+      <circle class="star" cx="985" cy="50" r="1.7" style="animation-delay:-.7s"/>
+      <circle class="star" cx="1085" cy="205" r="1.9" style="animation-delay:-2.9s"/>
+      <circle class="star" cx="1145" cy="125" r="1.6" style="animation-delay:-1.2s"/>
+      <circle class="star" cx="85" cy="245" r="1.5" style="animation-delay:-2.4s"/>
+      <circle class="star" cx="365" cy="265" r="1.4" style="animation-delay:-.5s"/>
+      <circle class="star" cx="625" cy="285" r="1.5" style="animation-delay:-1.9s"/>
+      <circle class="star" cx="905" cy="255" r="1.4" style="animation-delay:-2.7s"/>
+      <circle class="star" cx="205" cy="325" r="1.3" style="animation-delay:-.8s"/>
+      <circle class="star" cx="765" cy="305" r="1.3" style="animation-delay:-2.1s"/>
+    </g>
+
+    <!-- СОЛНЦЕ / ЛУНА -->
+    <g class="sun" style="opacity:var(--sunO)">
+      <circle cx="1040" cy="120" r="80" fill="#ffd75e" opacity=".16"/>
+      <g class="rays" stroke="#ffd75e" stroke-width="7" stroke-linecap="round">
+        <line x1="1110" y1="120" x2="1132" y2="120"/><line x1="1089.5" y1="169.5" x2="1105" y2="185"/>
+        <line x1="1040" y1="190" x2="1040" y2="212"/><line x1="990.5" y1="169.5" x2="975" y2="185"/>
+        <line x1="970" y1="120" x2="948" y2="120"/><line x1="990.5" y1="70.5" x2="975" y2="55"/>
+        <line x1="1040" y1="50" x2="1040" y2="28"/><line x1="1089.5" y1="70.5" x2="1105" y2="55"/>
+      </g>
+      <circle cx="1040" cy="120" r="54" fill="#ffcf4d"/>
+      <circle cx="1040" cy="120" r="42" fill="none" stroke="#ffde8a" stroke-width="6" opacity=".55"/>
+    </g>
+    <g class="moon" style="opacity:var(--moonO)">
+      <circle cx="1040" cy="120" r="42" fill="#f2f0e2"/>
+      <circle cx="1024" cy="106" r="8" fill="#d9d6c3"/>
+      <circle cx="1052" cy="132" r="10" fill="#d9d6c3"/>
+      <circle cx="1038" cy="146" r="5" fill="#d9d6c3"/>
+    </g>
+
+    <!-- ОБЛАКА (2 параллакс-слоя) -->
+    <g class="clouds cloudsA" style="fill:var(--cloud)" opacity=".97">
+      <g id="cloudSetA">
+        <use href="#cloud" transform="translate(170,120)"/>
+        <use href="#cloud" transform="translate(620,86) scale(.85)"/>
+        <use href="#cloud" transform="translate(1010,150) scale(1.15)"/>
+        <path class="bird" d="M 396 208 q 8 -9 16 0 q 8 -9 16 0" fill="none" stroke="#33291f" stroke-width="3" stroke-linecap="round" style="opacity:var(--birdO)"/>
+        <path class="bird" d="M 872 172 q 7 -8 14 0 q 7 -8 14 0" fill="none" stroke="#33291f" stroke-width="3" stroke-linecap="round" style="opacity:var(--birdO)"/>
+      </g>
+      <use href="#cloudSetA" x="1200"/>
+    </g>
+    <g class="clouds cloudsB" style="fill:var(--cloud)" opacity=".8">
+      <g id="cloudSetB">
+        <use href="#cloud" transform="translate(320,245) scale(.5)"/>
+        <use href="#cloud" transform="translate(770,215) scale(.45)"/>
+        <use href="#cloud" transform="translate(1130,262) scale(.55)"/>
+      </g>
+      <use href="#cloudSetB" x="1200"/>
+    </g>
+
+    <!-- ХОЛМЫ -->
+    <g class="hillsFar" style="fill:var(--hills-far)">
+      <path id="hillsFarP" d="M 0 622 L 0 552 C 60 552,140 496,240 552 C 320 592,420 592,500 552 C 580 500,660 500,740 552 C 820 592,920 592,1000 552 C 1060 520,1140 552,1200 552 L 1200 622 Z"/>
+      <use href="#hillsFarP" x="1200"/>
+    </g>
+    <g class="hillsNear" style="fill:var(--hills-near)">
+      <path id="hillsNearP" d="M 0 622 L 0 578 C 70 578,130 520,230 578 C 310 616,390 616,470 578 C 560 516,660 516,750 578 C 830 616,910 616,990 578 C 1060 540,1140 578,1200 578 L 1200 622 Z"/>
+      <use href="#hillsNearP" x="1200"/>
+    </g>
+
+    <!-- ТРАВА -->
+    <rect x="0" y="598" width="1200" height="26" style="fill:var(--grass)"/>
+    <rect x="0" y="617" width="1200" height="5" style="fill:var(--grass-dark)"/>
+
+    <!-- ОБОРОНА: деревья, кусты, цветы, указатель (прокручивается под колёсами) -->
+    <g class="scenery">
+      <g id="scenSet">
+        <rect x="114" y="546" width="12" height="74" rx="4" style="fill:var(--trunk)"/>
+        <circle cx="120" cy="514" r="46" style="fill:var(--tree)"/>
+        <circle cx="86" cy="538" r="30" style="fill:var(--tree)"/>
+        <circle cx="154" cy="538" r="30" style="fill:var(--tree)"/>
+        <circle cx="104" cy="500" r="13" fill="#ffffff" opacity=".18"/>
+        <rect x="554" y="572" width="11" height="48" rx="4" style="fill:var(--trunk)"/>
+        <circle cx="560" cy="548" r="33" style="fill:var(--tree)"/>
+        <circle cx="535" cy="566" r="23" style="fill:var(--tree)"/>
+        <circle cx="585" cy="566" r="23" style="fill:var(--tree)"/>
+        <g style="fill:var(--tree)">
+          <circle cx="350" cy="606" r="20"/><circle cx="331" cy="612" r="14"/><circle cx="369" cy="612" r="13"/>
+          <circle cx="760" cy="607" r="18"/><circle cx="743" cy="613" r="13"/><circle cx="777" cy="613" r="12"/>
+          <circle cx="1055" cy="606" r="20"/><circle cx="1036" cy="612" r="14"/><circle cx="1074" cy="612" r="13"/>
+        </g>
+        <rect x="876" y="558" width="8" height="62" rx="3" style="fill:var(--trunk)"/>
+        <rect x="846" y="534" width="68" height="30" rx="7" fill="#ffcf4d" stroke="#33291f" stroke-width="3"/>
+        <path d="M 858 549 h 30 m -9 -8 l 11 8 l -11 8" fill="none" stroke="#33291f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <g>
+          <line x1="270" y1="620" x2="270" y2="605" stroke="var(--grass-dark)" stroke-width="3"/>
+          <circle cx="270" cy="600" r="5.5" style="fill:var(--flower)"/><circle cx="270" cy="600" r="2.4" fill="#fff6e6"/>
+          <line x1="480" y1="620" x2="480" y2="606" stroke="var(--grass-dark)" stroke-width="3"/>
+          <circle cx="480" cy="601" r="5.5" style="fill:var(--flower)"/><circle cx="480" cy="601" r="2.4" fill="#fff6e6"/>
+          <line x1="640" y1="620" x2="640" y2="605" stroke="var(--grass-dark)" stroke-width="3"/>
+          <circle cx="640" cy="600" r="5.5" style="fill:var(--flower)"/><circle cx="640" cy="600" r="2.4" fill="#fff6e6"/>
+          <line x1="940" y1="620" x2="940" y2="606" stroke="var(--grass-dark)" stroke-width="3"/>
+          <circle cx="940" cy="601" r="5.5" style="fill:var(--flower)"/><circle cx="940" cy="601" r="2.4" fill="#fff6e6"/>
+          <line x1="1150" y1="620" x2="1150" y2="605" stroke="var(--grass-dark)" stroke-width="3"/>
+          <circle cx="1150" cy="600" r="5.5" style="fill:var(--flower)"/><circle cx="1150" cy="600" r="2.4" fill="#fff6e6"/>
+        </g>
+      </g>
+      <use href="#scenSet" x="1200"/>
+    </g>
+
+    <!-- ДОРОГА -->
+    <rect x="0" y="622" width="1200" height="78" fill="url(#roadGrad)"/>
+    <rect x="0" y="622" width="1200" height="5" style="fill:var(--dash)" opacity=".28"/>
+    <g class="roadDash">
+      <g id="dashSet">
+        <g style="fill:var(--dash)" opacity=".9">
+          <rect x="20" y="655" width="64" height="9" rx="4.5"/><rect x="140" y="655" width="64" height="9" rx="4.5"/>
+          <rect x="260" y="655" width="64" height="9" rx="4.5"/><rect x="380" y="655" width="64" height="9" rx="4.5"/>
+          <rect x="500" y="655" width="64" height="9" rx="4.5"/><rect x="620" y="655" width="64" height="9" rx="4.5"/>
+          <rect x="740" y="655" width="64" height="9" rx="4.5"/><rect x="860" y="655" width="64" height="9" rx="4.5"/>
+          <rect x="980" y="655" width="64" height="9" rx="4.5"/><rect x="1100" y="655" width="64" height="9" rx="4.5"/>
+        </g>
+        <g fill="#000" opacity=".12">
+          <ellipse cx="90" cy="641" rx="7" ry="2"/><ellipse cx="300" cy="678" rx="9" ry="2.5"/>
+          <ellipse cx="520" cy="646" rx="6" ry="2"/><ellipse cx="705" cy="686" rx="7" ry="2"/>
+          <ellipse cx="885" cy="642" rx="6" ry="2"/><ellipse cx="1055" cy="670" rx="7" ry="2"/>
+        </g>
+      </g>
+      <use href="#dashSet" x="1200"/>
+    </g>
+
+    <!-- ТЕНЬ, ЛИНИИ СКОРОСТИ, ПЫЛЬ -->
+    <ellipse cx="590" cy="625" rx="195" ry="9" fill="#1a1d24" style="opacity:var(--shadowO)"/>
+    <g stroke="#ffffff" stroke-width="6" stroke-linecap="round" fill="none">
+      <path class="speedline s1" d="M 344 398 H 452"/>
+      <path class="speedline s2" d="M 322 452 H 458"/>
+      <path class="speedline s3" d="M 352 506 H 462"/>
+    </g>
+    <g style="fill:var(--dust)">
+      <circle class="dust d1" cx="436" cy="610" r="8"/>
+      <circle class="dust d2" cx="420" cy="616" r="5.5"/>
+      <circle class="dust d3" cx="448" cy="617" r="4.5"/>
+    </g>
+
+    <!-- ============ ВЕЛОСИПЕД + ПЕЛИКАН ============ -->
+    <g class="rider">
+
+      <!-- дальняя нога (фазовый сдвиг 180°) -->
+      <g class="leg legFar">
+        <g class="thigh">
+          <line x1="525" y1="432" x2="599.9" y2="474.3" style="stroke:var(--leg-far)" stroke-width="17" stroke-linecap="round"/>
+          <g class="shin">
+            <line x1="599.9" y1="474.3" x2="593" y2="560" style="stroke:var(--leg-far)" stroke-width="14" stroke-linecap="round"/>
+            <path d="M 588 550 L 600 550 L 613 570 L 602 563 L 596 572 L 589 564 L 579 570 Z" style="fill:var(--leg-far)"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- дальний кривошип -->
+      <g class="crank crankFar">
+        <line x1="555" y1="560" x2="517" y2="560" stroke="#3a3f4c" stroke-width="8" stroke-linecap="round"/>
+        <g class="pedal pedal2"><rect x="505" y="554" width="24" height="9" rx="3" fill="#23262f"/></g>
+      </g>
+
+      <!-- рама и колёса -->
+      <g class="bike">
+        <g class="wheel w1">
+          <circle cx="470" cy="560" r="62" fill="none" style="stroke:var(--tire)" stroke-width="11"/>
+          <circle cx="470" cy="560" r="51" fill="none" style="stroke:var(--rim)" stroke-width="4"/>
+          <g style="stroke:var(--spoke)" stroke-width="2.5">
+            <line x1="421" y1="560" x2="519" y2="560"/>
+            <line x1="430.4" y1="588.8" x2="509.6" y2="531.2"/>
+            <line x1="454.9" y1="606.6" x2="485.1" y2="513.4"/>
+            <line x1="454.9" y1="513.4" x2="485.1" y2="606.6"/>
+            <line x1="430.4" y1="531.2" x2="509.6" y2="588.8"/>
+          </g>
+          <circle cx="470" cy="560" r="7" fill="#5a6170"/>
+          <circle cx="501" cy="522" r="3" style="fill:var(--ink)"/>
+        </g>
+        <g class="wheel w2">
+          <circle cx="710" cy="560" r="62" fill="none" style="stroke:var(--tire)" stroke-width="11"/>
+          <circle cx="710" cy="560" r="51" fill="none" style="stroke:var(--rim)" stroke-width="4"/>
+          <g style="stroke:var(--spoke)" stroke-width="2.5">
+            <line x1="661" y1="560" x2="759" y2="560"/>
+            <line x1="670.4" y1="588.8" x2="749.6" y2="531.2"/>
+            <line x1="694.9" y1="606.6" x2="725.1" y2="513.4"/>
+            <line x1="694.9" y1="513.4" x2="725.1" y2="606.6"/>
+            <line x1="670.4" y1="531.2" x2="749.6" y2="588.8"/>
+          </g>
+          <circle cx="710" cy="560" r="7" fill="#5a6170"/>
+          <circle cx="741" cy="522" r="3" style="fill:var(--ink)"/>
+        </g>
+
+        <g fill="none" style="stroke:var(--frame)" stroke-linecap="round">
+          <path d="M 470 560 L 555 560 L 512 450 L 470 560" stroke-width="9"/>
+          <path d="M 513 452 L 686 448" stroke-width="8"/>
+          <path d="M 555 560 L 682 452" stroke-width="9"/>
+          <path d="M 682 446 L 692 464" stroke-width="10"/>
+          <path d="M 690 460 C 700 492,706 522,710 558" stroke-width="7"/>
+          <path d="M 512 450 L 507 442" stroke-width="6"/>
+          <path d="M 686 448 C 690 434,696 426,702 422" stroke-width="6"/>
+        </g>
+        <circle cx="703" cy="421" r="5.5" style="fill:var(--ink)"/>
+        <rect x="470" y="436" width="88" height="14" rx="7" style="fill:var(--ink)"/>
+        <circle cx="555" cy="560" r="15" fill="none" stroke="#454b59" stroke-width="6"/>
+        <circle cx="470" cy="560" r="9" fill="none" stroke="#454b59" stroke-width="5"/>
+        <path class="chain" d="M 470 551 L 555 545 A 15 15 0 0 1 555 575 L 470 569 A 9 9 0 0 1 470 551 Z"
+              fill="none" stroke="#59606f" stroke-width="4.5" stroke-dasharray="7 5"/>
+        <g class="lampWrap" style="opacity:var(--lamp-glow)">
+          <circle class="glow" cx="708" cy="414" r="12" style="fill:var(--lamp)"/>
+        </g>
+        <circle cx="708" cy="414" r="5" style="fill:var(--lamp)" stroke="#33291f" stroke-width="2"/>
+      </g>
+
+      <!-- ближний кривошип -->
+      <g class="crank crankNear">
+        <line x1="555" y1="560" x2="593" y2="560" stroke="#4a5060" stroke-width="8" stroke-linecap="round"/>
+        <g class="pedal pedal1"><rect x="581" y="554" width="24" height="9" rx="3" fill="#2b2e3a"/></g>
+      </g>
+
+      <!-- ближняя нога -->
+      <g class="leg legNear">
+        <g class="thigh">
+          <line x1="525" y1="432" x2="599.9" y2="474.3" style="stroke:var(--leg)" stroke-width="17" stroke-linecap="round"/>
+          <g class="shin">
+            <line x1="599.9" y1="474.3" x2="593" y2="560" style="stroke:var(--leg)" stroke-width="14" stroke-linecap="round"/>
+            <path d="M 588 550 L 600 550 L 613 570 L 602 563 L 596 572 L 589 564 L 579 570 Z"
+                  style="fill:var(--leg)" stroke="#33291f" stroke-width="2"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- ПЕЛИКАН -->
+      <g class="pelican">
+        <path d="M 452 384 C 432 372,414 368,402 374 C 416 380,418 386,406 394 C 420 396,424 402,410 414 C 428 408,444 404,456 406 Z"
+              style="fill:var(--body)" stroke="#33291f" stroke-width="3"/>
+        <path d="M 546 362 C 574 370,584 398,576 426 C 568 446,540 454,512 452 C 478 450,452 436,446 412 C 440 386,460 364,488 358 C 510 353,532 355,546 362 Z"
+              style="fill:var(--body)" stroke="#33291f" stroke-width="3.5"/>
+        <ellipse cx="520" cy="436" rx="40" ry="13" fill="#f2dcab" opacity=".5"/>
+        <ellipse cx="492" cy="378" rx="20" ry="11" fill="#ffffff" opacity=".5"/>
+
+        <g class="wing">
+          <path d="M 512 416 C 566 426,636 427,692 419 L 696 427 C 695 433,688 436,678 436 C 620 444,552 442,516 432 C 508 428,508 420,512 416 Z"
+                style="fill:var(--wing)" stroke="#33291f" stroke-width="3"/>
+          <path d="M 566 435 q 12 6 26 5 M 612 437 q 12 5 26 4" fill="none" stroke="#33291f" stroke-width="2" opacity=".45"/>
+        </g>
+
+        <g class="head">
+          <path d="M 544 376 C 570 370,588 356,598 332" fill="none" stroke="#33291f" stroke-width="30" stroke-linecap="round"/>
+          <path d="M 544 376 C 570 370,588 356,598 332" fill="none" style="stroke:var(--body)" stroke-width="23" stroke-linecap="round"/>
+          <circle cx="606" cy="326" r="21" style="fill:var(--body)" stroke="#33291f" stroke-width="3.5"/>
+          <path d="M 596 308 C 590 296,592 288,600 282 C 600 292,602 298,604 304 Z" style="fill:var(--body)" stroke="#33291f" stroke-width="2.5"/>
+          <ellipse cx="598" cy="338" rx="6.5" ry="4" fill="#ffb27a" opacity=".5"/>
+          <g class="eye">
+            <circle cx="612" cy="320" r="7" fill="#ffffff" stroke="#33291f" stroke-width="2"/>
+            <circle cx="614" cy="321" r="3.4" fill="#33291f"/>
+            <circle cx="615.6" cy="319" r="1.2" fill="#ffffff"/>
+          </g>
+          <path d="M 602 308 L 621 303" stroke="#33291f" stroke-width="4" stroke-linecap="round"/>
+          <path d="M 620 318 C 654 317,688 325,708 334 C 710 337,709 340,705 340 C 676 334,646 330,620 331 C 616 327,616 322,620 318 Z"
+                style="fill:var(--beak)" stroke="#33291f" stroke-width="3"/>
+          <path d="M 646 324 q 7 2 12 1" fill="none" stroke="#33291f" stroke-width="2" stroke-linecap="round"/>
+          <g class="pouch">
+            <path d="M 618 332 C 622 364,640 388,666 388 C 690 386,703 364,707 337 C 678 346,646 342,620 335 Z"
+                  fill="url(#pouchGrad)" stroke="#33291f" stroke-width="3"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </svg>
+
+  <!-- HUD -->
+  <div class="hud">
+    <div class="title">
+      <h1>Пеликан-гонщик</h1>
+      <p>SVG + CSS keyframes · без JS и библиотек</p>
+    </div>
+    <label class="btn btn-night" for="night" title="День / ночь">
+      <svg class="ic-moon" width="22" height="22" viewBox="0 0 24 24"><path d="M20.4 14.2A8.6 8.6 0 0 1 9.8 3.6 8.6 8.6 0 1 0 20.4 14.2Z" fill="#f6c945" stroke="#33291f" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <svg class="ic-sun" width="22" height="22" viewBox="0 0 24 24">
+        <g stroke="#e8930c" stroke-width="2" stroke-linecap="round">
+          <line x1="12" y1="1.5" x2="12" y2="4.5"/><line x1="12" y1="19.5" x2="12" y2="22.5"/>
+          <line x1="1.5" y1="12" x2="4.5" y2="12"/><line x1="19.5" y1="12" x2="22.5" y2="12"/>
+          <line x1="4.6" y1="4.6" x2="6.7" y2="6.7"/><line x1="17.3" y1="17.3" x2="19.4" y2="19.4"/>
+          <line x1="17.3" y1="6.7" x2="19.4" y2="4.6"/><line x1="4.6" y1="19.4" x2="6.7" y2="17.3"/>
+        </g>
+        <circle cx="12" cy="12" r="5.4" fill="#ffcf4d" stroke="#e8930c" stroke-width="1.6"/>
+      </svg>
+    </label>
+    <label class="btn btn-pause" for="pause" title="Пауза / продолжить">
+      <svg class="ic-pause" width="20" height="20" viewBox="0 0 24 24"><g fill="#33291f"><rect x="5" y="4" width="5" height="16" rx="1.5"/><rect x="14" y="4" width="5" height="16" rx="1.5"/></g></svg>
+      <svg class="ic-play" width="20" height="20" viewBox="0 0 24 24"><path d="M7 4.5 L 19 12 L 7 19.5 Z" fill="#33291f"/></svg>
+    </label>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f7f7ed" />
+  <title>Попутного ветра — маленькая прогулка</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f7f7ed;
+      --ink: #294f3c;
+      --muted: #788571;
+      --frog-outline: #35583a;
+      /* A penny-farthing's pedals turn together with its large wheel. */
+      --cycle: 2.4s;
+      --half-cycle: -1.2s;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 280px;
+      min-height: 100svh;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Segoe UI", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .page { width: min(1280px, 100%); margin: 0 auto; padding: 0 48px; }
+    .masthead {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 92px;
+      border-bottom: 1px solid #dce2d2;
+      gap: 20px;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; font-size: 13px; font-weight: 700; letter-spacing: 2px; }
+    .brand svg { width: 35px; height: 35px; }
+    .edition { color: var(--muted); font-size: 10px; font-weight: 500; letter-spacing: 2px; text-align: right; }
+    .intro { position: relative; z-index: 1; padding: 42px 0 0; text-align: center; }
+    .eyebrow { margin: 0 0 12px; color: #819174; font-size: 10px; font-weight: 600; letter-spacing: 3.2px; }
+    h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(35px, 4.6vw, 62px); font-weight: 400; line-height: 1.12; letter-spacing: -2px; }
+    .subtitle { margin: 14px 0 0; color: var(--muted); font-size: 13px; line-height: 1.6; letter-spacing: .3px; }
+    .scene { margin: -10px -24px 0; overflow: hidden; }
+    .landscape { display: block; width: 100%; height: auto; overflow: hidden; }
+    .footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 23px 0 29px; border-top: 1px solid #dce2d2; }
+    .caption { display: flex; gap: 12px; align-items: center; color: #748369; font-size: 10px; letter-spacing: 1.6px; }
+    .caption-dot { width: 6px; height: 6px; border-radius: 50%; background: #a7b98b; }
+    .transport { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-width: 112px; min-height: 40px; padding: 9px 16px; border: 1px solid #ced8c4; border-radius: 24px; cursor: pointer; font-size: 12px; font-weight: 500; user-select: none; transition: background .2s, border-color .2s; }
+    .transport:hover { background: #eaf0df; border-color: #a8b895; }
+    .transport svg { width: 12px; height: 12px; fill: currentColor; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+    #ride-pause:focus-visible ~ .footer .transport { outline: 3px solid #85a461; outline-offset: 4px; }
+    .play-icon, .resume-text, .motion-note { display: none; }
+    #ride-pause:checked ~ .scene * { animation-play-state: paused !important; }
+    #ride-pause:checked ~ .footer .pause-icon,
+    #ride-pause:checked ~ .footer .pause-text { display: none; }
+    #ride-pause:checked ~ .footer .play-icon,
+    #ride-pause:checked ~ .footer .resume-text { display: inline; }
+
+    /* Every moving SVG part uses a local origin inside a static translated group. */
+    .clouds { animation: scenery 90s linear infinite; }
+    .distant-hills { animation: scenery 48s linear infinite; }
+    .near-hills { animation: scenery 26s linear infinite; }
+    /* 1200 / (2π × 124 / 2.4) = 3.6966 seconds: road speed matches the tire. */
+    .roadside { animation: scenery 3.6966s linear infinite; }
+    .front-spin, .crank { animation: spin var(--cycle) linear infinite; }
+    /* The small wheel has the same ground speed: 2.4 × 42 / 124. */
+    .rear-spin { animation: spin .812903s linear infinite; }
+    .pedal-level { animation: counter-spin var(--cycle) linear infinite; }
+    .rig { animation: bicycle-bob var(--cycle) ease-in-out infinite; }
+    .scarf { animation: scarf-wave .8s ease-in-out infinite alternate; }
+    .eye-white { transform-box: fill-box; transform-origin: center; animation: blink 6.8s linear infinite; }
+    .dragonfly { animation: hover 3.6s ease-in-out infinite; }
+    .wing { transform-origin: 0 0; animation: wing-beat .15s ease-in-out infinite alternate; }
+    .wing-other { animation-delay: -.075s; }
+    .leg { --limb-color: #92c75f; }
+    .leg-far { --limb-color: #6da653; }
+    .limb-outline { fill: none; stroke: var(--frog-outline); stroke-linecap: round; }
+    .limb-fill { fill: none; stroke: var(--limb-color); stroke-linecap: round; }
+    .webbed-foot { fill: var(--limb-color); stroke: var(--frog-outline); stroke-width: 3; stroke-linejoin: round; }
+    .thigh { animation: thigh-turn var(--cycle) linear infinite; }
+    .shin { animation: shin-turn var(--cycle) linear infinite; }
+    .foot { animation: foot-turn var(--cycle) linear infinite; }
+    .leg-far .thigh, .leg-far .shin, .leg-far .foot { animation-delay: var(--half-cycle); }
+    .spokes { fill: none; stroke: #8f9a78; stroke-width: 1.7; }
+    .bike-outline { fill: none; stroke: #344c3d; stroke-width: 13; stroke-linecap: round; stroke-linejoin: round; }
+    .bike-brass { fill: none; stroke: #cba465; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+
+    @keyframes scenery { to { transform: translateX(-1200px); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes counter-spin { to { transform: rotate(-360deg); } }
+    @keyframes bicycle-bob { 0%, 50%, 100% { transform: translateY(0); } 25%, 75% { transform: translateY(-1.3px); } }
+    @keyframes scarf-wave { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
+    @keyframes blink { 0%, 43%, 47%, 100% { transform: scaleY(1); } 44.5%, 45.5% { transform: scaleY(.06); } }
+    @keyframes hover { 0%, 100% { transform: translate(0, 0) rotate(-3deg); } 50% { transform: translate(-13px, -15px) rotate(4deg); } }
+    @keyframes wing-beat { from { transform: scaleY(1); } to { transform: scaleY(.3); } }
+
+    /* Two-link leg geometry sampled around the crank; feet stay level on the pedals. */
+    @keyframes thigh-turn {
+      0% { transform: rotate(32.4280deg); }
+      3.125% { transform: rotate(36.1656deg); }
+      6.25% { transform: rotate(39.9795deg); }
+      9.375% { transform: rotate(43.6946deg); }
+      12.5% { transform: rotate(47.0971deg); }
+      15.625% { transform: rotate(49.9418deg); }
+      18.75% { transform: rotate(52.0036deg); }
+      21.875% { transform: rotate(53.1682deg); }
+      25% { transform: rotate(53.4802deg); }
+      28.125% { transform: rotate(53.0892deg); }
+      31.25% { transform: rotate(52.1584deg); }
+      34.375% { transform: rotate(50.8149deg); }
+      37.5% { transform: rotate(49.1430deg); }
+      40.625% { transform: rotate(47.1941deg); }
+      43.75% { transform: rotate(44.9993deg); }
+      46.875% { transform: rotate(42.5793deg); }
+      50% { transform: rotate(39.9537deg); }
+      53.125% { transform: rotate(37.1498deg); }
+      56.25% { transform: rotate(34.2108deg); }
+      59.375% { transform: rotate(31.2043deg); }
+      62.5% { transform: rotate(28.2280deg); }
+      65.625% { transform: rotate(25.4095deg); }
+      68.75% { transform: rotate(22.8983deg); }
+      71.875% { transform: rotate(20.8488deg); }
+      75% { transform: rotate(19.3987deg); }
+      78.125% { transform: rotate(18.6492deg); }
+      81.25% { transform: rotate(18.6537deg); }
+      84.375% { transform: rotate(19.4169deg); }
+      87.5% { transform: rotate(20.9021deg); }
+      90.625% { transform: rotate(23.0413deg); }
+      93.75% { transform: rotate(25.7457deg); }
+      96.875% { transform: rotate(28.9126deg); }
+      100% { transform: rotate(32.4280deg); }
+    }
+
+    @keyframes shin-turn {
+      0% { transform: rotate(55.6254deg); }
+      3.125% { transform: rotate(49.8969deg); }
+      6.25% { transform: rotate(44.4543deg); }
+      9.375% { transform: rotate(39.5691deg); }
+      12.5% { transform: rotate(35.5985deg); }
+      15.625% { transform: rotate(32.9693deg); }
+      18.75% { transform: rotate(32.0697deg); }
+      21.875% { transform: rotate(33.0586deg); }
+      25% { transform: rotate(35.7622deg); }
+      28.125% { transform: rotate(39.7862deg); }
+      31.25% { transform: rotate(44.7057deg); }
+      34.375% { transform: rotate(50.1676deg); }
+      37.5% { transform: rotate(55.9042deg); }
+      40.625% { transform: rotate(61.7120deg); }
+      43.75% { transform: rotate(67.4275deg); }
+      46.875% { transform: rotate(72.9093deg); }
+      50% { transform: rotate(78.0266deg); }
+      53.125% { transform: rotate(82.6521deg); }
+      56.25% { transform: rotate(86.6606deg); }
+      59.375% { transform: rotate(89.9311deg); }
+      62.5% { transform: rotate(92.3531deg); }
+      65.625% { transform: rotate(93.8362deg); }
+      68.75% { transform: rotate(94.3210deg); }
+      71.875% { transform: rotate(93.7874deg); }
+      75% { transform: rotate(92.2575deg); }
+      78.125% { transform: rotate(89.7925deg); }
+      81.25% { transform: rotate(86.4839deg); }
+      84.375% { transform: rotate(82.4429deg); }
+      87.5% { transform: rotate(77.7908deg); }
+      90.625% { transform: rotate(72.6532deg); }
+      93.75% { transform: rotate(67.1570deg); }
+      96.875% { transform: rotate(61.4338deg); }
+      100% { transform: rotate(55.6254deg); }
+    }
+
+    @keyframes foot-turn {
+      0% { transform: rotate(-88.0535deg); }
+      3.125% { transform: rotate(-86.0625deg); }
+      6.25% { transform: rotate(-84.4338deg); }
+      9.375% { transform: rotate(-83.2637deg); }
+      12.5% { transform: rotate(-82.6956deg); }
+      15.625% { transform: rotate(-82.9111deg); }
+      18.75% { transform: rotate(-84.0734deg); }
+      21.875% { transform: rotate(-86.2268deg); }
+      25% { transform: rotate(-89.2424deg); }
+      28.125% { transform: rotate(-92.8754deg); }
+      31.25% { transform: rotate(-96.8640deg); }
+      34.375% { transform: rotate(-100.9825deg); }
+      37.5% { transform: rotate(-105.0472deg); }
+      40.625% { transform: rotate(-108.9061deg); }
+      43.75% { transform: rotate(-112.4268deg); }
+      46.875% { transform: rotate(-115.4886deg); }
+      50% { transform: rotate(-117.9803deg); }
+      53.125% { transform: rotate(-119.8019deg); }
+      56.25% { transform: rotate(-120.8714deg); }
+      59.375% { transform: rotate(-121.1355deg); }
+      62.5% { transform: rotate(-120.5811deg); }
+      65.625% { transform: rotate(-119.2457deg); }
+      68.75% { transform: rotate(-117.2193deg); }
+      71.875% { transform: rotate(-114.6362deg); }
+      75% { transform: rotate(-111.6562deg); }
+      78.125% { transform: rotate(-108.4417deg); }
+      81.25% { transform: rotate(-105.1376deg); }
+      84.375% { transform: rotate(-101.8598deg); }
+      87.5% { transform: rotate(-98.6930deg); }
+      90.625% { transform: rotate(-95.6945deg); }
+      93.75% { transform: rotate(-92.9028deg); }
+      96.875% { transform: rotate(-90.3464deg); }
+      100% { transform: rotate(-88.0535deg); }
+    }
+
+    @media (max-width: 640px) {
+      .page { padding: 0 22px; }
+      .masthead { min-height: 76px; }
+      .brand { font-size: 11px; letter-spacing: 1.5px; gap: 8px; }
+      .edition { max-width: 115px; font-size: 8px; line-height: 1.7; letter-spacing: 1.4px; }
+      .intro { padding-top: 38px; }
+      .eyebrow { font-size: 8px; letter-spacing: 2.2px; }
+      h1 { letter-spacing: -1.4px; }
+      .subtitle { max-width: 260px; margin: 12px auto 0; font-size: 12px; }
+      .scene { margin: 7px -22px 0; }
+      .landscape { width: 170%; max-width: none; margin-left: -35%; }
+      .footer { padding: 19px 0; gap: 10px; }
+      .caption { font-size: 8px; letter-spacing: 1px; gap: 7px; }
+      .transport { min-width: 94px; min-height: 40px; padding: 9px 12px; font-size: 11px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .scene * { animation-play-state: paused !important; }
+      .transport { display: none; }
+      .motion-note { display: block; max-width: 145px; color: var(--muted); font-size: 10px; line-height: 1.5; text-align: right; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="masthead">
+      <div class="brand">
+        <svg viewBox="0 0 40 40" aria-hidden="true">
+          <path d="M7 22C3 14 10 7 17 13Q20 11 23 13C31 7 38 14 33 23Q36 33 20 34Q4 33 7 22Z" fill="#a9cd7b" stroke="#35583a" stroke-width="1.7" />
+          <ellipse cx="12.5" cy="18" rx="5" ry="6" fill="#fbfae9" />
+          <ellipse cx="27.5" cy="18" rx="5" ry="6" fill="#fbfae9" />
+          <circle cx="14" cy="18.5" r="2.1" fill="#294f3c" />
+          <circle cx="29" cy="18.5" r="2.1" fill="#294f3c" />
+          <path d="M14 26Q20 30 26 26" fill="none" stroke="#35583a" stroke-width="1.7" stroke-linecap="round" />
+        </svg>
+        КВА! ВЕЛОКЛУБ
+      </div>
+      <span class="edition">МАЛЕНЬКИЕ ПУТЕШЕСТВИЯ &nbsp; / &nbsp; № 01</span>
+    </header>
+
+    <main>
+      <input class="visually-hidden" type="checkbox" id="ride-pause" aria-label="Приостановить анимацию" />
+      <div class="intro">
+        <p class="eyebrow">НИКУДА НЕ ТОРОПИМСЯ</p>
+        <h1>Попутного ветра.</h1>
+        <p class="subtitle">Два колеса, зелёные лапки и целый день впереди.</p>
+      </div>
+
+      <figure class="scene" aria-label="Лягушка на старинном велосипеде едет по загородной дорожке">
+        <svg class="landscape" viewBox="0 0 1200 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="scene-title scene-description">
+          <title id="scene-title">Маленькая велосипедная прогулка</title>
+          <desc id="scene-description">Зелёная лягушка с жёлтым животиком и большими глазами крутит педали пенни-фартинга. Большое переднее и маленькое заднее колёса вращаются, а облака, холмы и цветы плывут назад.</desc>
+          <defs>
+            <linearGradient id="sky" x2="0" y2="1">
+              <stop stop-color="#f7f7ed" />
+              <stop offset="1" stop-color="#eff2df" />
+            </linearGradient>
+            <linearGradient id="frog-green" x1="0" y1="0" x2=".8" y2="1">
+              <stop stop-color="#b1d77d" />
+              <stop offset="1" stop-color="#89bd5b" />
+            </linearGradient>
+            <linearGradient id="belly" x2=".5" y2="1">
+              <stop stop-color="#f5efb3" />
+              <stop offset="1" stop-color="#e7e59e" />
+            </linearGradient>
+            <path id="front-spoke" d="M0 0V-114" />
+            <path id="rear-spoke" d="M0 0V-34" />
+            <g id="cloud">
+              <path d="M0 25C-1 15 10 10 20 13C22-5 47-7 54 10C68 3 82 13 79 24C95 21 104 30 96 34H5C-4 34-8 27 0 25Z" fill="#fffef7" />
+              <path d="M7 39H70" fill="none" stroke="#e6ead9" stroke-width="1.5" stroke-linecap="round" />
+            </g>
+            <g id="cloud-strip">
+              <use href="#cloud" x="90" y="134" />
+              <use href="#cloud" transform="translate(413 68) scale(.72)" />
+              <use href="#cloud" transform="translate(792 191) scale(.75)" />
+              <use href="#cloud" transform="translate(1080 98) scale(.9)" />
+            </g>
+            <g id="far-strip">
+              <path d="M0 490C90 486 138 400 248 408S397 496 510 475S654 356 776 381S978 497 1100 490Q1150 490 1200 490V640H0Z" fill="#e2e9d0" />
+              <path d="M0 522C101 481 168 488 262 512S411 533 489 511S663 445 757 474S946 543 1042 518S1132 497 1200 522V640H0Z" fill="#d7e2c2" />
+            </g>
+            <g id="tree">
+              <path d="M0 0V-63" stroke="#8ba47b" stroke-width="2.2" stroke-linecap="round" />
+              <path d="M0-17C-34-18-24-61 0-89C24-60 34-19 0-17Z" fill="#bfcea8" />
+              <path d="M0-13V-65M0-33-11-43M0-43 10-52" fill="none" stroke="#93ad82" stroke-width="1.6" stroke-linecap="round" />
+            </g>
+            <g id="near-strip">
+              <use href="#tree" transform="translate(145 492) scale(.85)" />
+              <use href="#tree" transform="translate(183 507) scale(.65)" />
+              <use href="#tree" transform="translate(934 511) scale(1.1)" />
+              <use href="#tree" transform="translate(987 505) scale(.8)" />
+              <path d="M0 538C119 543 182 505 291 517S466 561 605 543S793 506 917 524S1096 553 1200 538V640H0Z" fill="#c4d6ae" />
+              <path d="M28 540Q153 522 230 531M887 539Q951 536 1001 547" fill="none" stroke="#b1c69b" stroke-width="2" stroke-linecap="round" />
+              <g fill="#a9c394">
+                <ellipse cx="85" cy="528" rx="24" ry="12" /><ellipse cx="112" cy="532" rx="19" ry="10" />
+                <ellipse cx="1085" cy="537" rx="27" ry="13" /><ellipse cx="1113" cy="542" rx="22" ry="10" />
+              </g>
+            </g>
+            <g id="daisy">
+              <path d="M0 0Q4-12 0-26M1-7Q-11-17-12-10Q-8-5 1-7" fill="none" stroke="#82996b" stroke-width="2" stroke-linecap="round" />
+              <g transform="translate(0 -27)" fill="#fffdf0">
+                <ellipse cy="-5" rx="3" ry="5" />
+                <ellipse cy="-5" rx="3" ry="5" transform="rotate(72)" />
+                <ellipse cy="-5" rx="3" ry="5" transform="rotate(144)" />
+                <ellipse cy="-5" rx="3" ry="5" transform="rotate(216)" />
+                <ellipse cy="-5" rx="3" ry="5" transform="rotate(288)" />
+                <circle r="3.4" fill="#dcc471" />
+              </g>
+            </g>
+            <g id="road-strip">
+              <g fill="none" stroke="#a1b68a" stroke-width="2" stroke-linecap="round">
+                <path d="M91 580 88 572M91 580 96 570M226 583 222 575M226 583 231 572M508 581 505 574M508 581 513 571M876 581 872 572M876 581 881 574M1134 581 1130 573M1134 581 1139 570" />
+                <path d="M14 614H43M196 606H213M345 626H389M628 612H664M817 627H845M1032 612H1072" stroke="#c5ceb2" />
+              </g>
+              <use href="#daisy" transform="translate(152 588) scale(.7)" />
+              <use href="#daisy" transform="translate(843 589) scale(.83)" />
+              <use href="#daisy" transform="translate(865 587) scale(.52)" />
+              <g fill="#b0bd98"><ellipse cx="474" cy="602" rx="3" ry="1.5" /><ellipse cx="925" cy="618" rx="4" ry="2" /></g>
+            </g>
+          </defs>
+
+          <path fill="url(#sky)" d="M0 0H1200V640H0Z" />
+          <circle cx="939" cy="134" r="53" fill="#efdfa0" opacity=".68" />
+          <circle cx="939" cy="134" r="64" fill="none" stroke="#eee7bd" stroke-width="1" />
+          <!-- Each landscape strip has an identical neighbour for seamless loops. -->
+          <g class="clouds"><use href="#cloud-strip" /><use href="#cloud-strip" x="1200" /></g>
+          <g class="distant-hills"><use href="#far-strip" /><use href="#far-strip" x="1200" /></g>
+          <g class="near-hills"><use href="#near-strip" /><use href="#near-strip" x="1200" /></g>
+          <path d="M0 589H1200V640H0Z" fill="#e9ecd9" />
+          <path d="M0 589H1200" fill="none" stroke="#a7ba90" stroke-width="2" />
+          <g class="roadside"><use href="#road-strip" /><use href="#road-strip" x="1200" /></g>
+          <ellipse cx="559" cy="593" rx="218" ry="8" fill="#64754c" opacity=".1" />
+
+          <g transform="translate(883 294)">
+            <g class="dragonfly">
+              <g class="wing" fill="#fffdf0" stroke="#c5d1b6" stroke-width="1.1">
+                <ellipse cx="-8" cy="-8" rx="11" ry="4" transform="rotate(25)" />
+                <ellipse cx="8" cy="-8" rx="11" ry="4" transform="rotate(-25)" />
+              </g>
+              <g class="wing wing-other" fill="#fffdf0" opacity=".8">
+                <ellipse cx="-8" cy="-2" rx="10" ry="3" transform="rotate(-10)" />
+                <ellipse cx="8" cy="-2" rx="10" ry="3" transform="rotate(10)" />
+              </g>
+              <path d="M0-6V12" stroke="#7a9973" stroke-width="3" stroke-linecap="round" />
+              <circle cy="-8" r="3.3" fill="#62875c" />
+            </g>
+          </g>
+
+          <g class="rig">
+            <!-- Radial spokes rotate around each axle, in local SVG coordinates. -->
+            <g transform="translate(379 547)">
+              <circle r="42" fill="#f7f7ed" fill-opacity=".7" stroke="#344c3d" stroke-width="8" />
+              <circle r="36.5" fill="none" stroke="#c3b88b" stroke-width="2" />
+              <g class="rear-spin spokes">
+              <use href="#rear-spoke" transform="rotate(0)" />
+              <use href="#rear-spoke" transform="rotate(30)" />
+              <use href="#rear-spoke" transform="rotate(60)" />
+              <use href="#rear-spoke" transform="rotate(90)" />
+              <use href="#rear-spoke" transform="rotate(120)" />
+              <use href="#rear-spoke" transform="rotate(150)" />
+              <use href="#rear-spoke" transform="rotate(180)" />
+              <use href="#rear-spoke" transform="rotate(210)" />
+              <use href="#rear-spoke" transform="rotate(240)" />
+              <use href="#rear-spoke" transform="rotate(270)" />
+              <use href="#rear-spoke" transform="rotate(300)" />
+              <use href="#rear-spoke" transform="rotate(330)" />
+                <circle cx="0" cy="-36.5" r="2" fill="#c8a16a" stroke="none" />
+              </g>
+              <circle r="6" fill="#c8a16a" stroke="#344c3d" stroke-width="3" />
+            </g>
+            <g transform="translate(650 465)">
+              <circle r="124" fill="#f7f7ed" fill-opacity=".64" stroke="#344c3d" stroke-width="9" />
+              <circle r="118" fill="none" stroke="#c3b88b" stroke-width="2.5" />
+              <g class="front-spin spokes">
+              <use href="#front-spoke" transform="rotate(0)" />
+              <use href="#front-spoke" transform="rotate(18)" />
+              <use href="#front-spoke" transform="rotate(36)" />
+              <use href="#front-spoke" transform="rotate(54)" />
+              <use href="#front-spoke" transform="rotate(72)" />
+              <use href="#front-spoke" transform="rotate(90)" />
+              <use href="#front-spoke" transform="rotate(108)" />
+              <use href="#front-spoke" transform="rotate(126)" />
+              <use href="#front-spoke" transform="rotate(144)" />
+              <use href="#front-spoke" transform="rotate(162)" />
+              <use href="#front-spoke" transform="rotate(180)" />
+              <use href="#front-spoke" transform="rotate(198)" />
+              <use href="#front-spoke" transform="rotate(216)" />
+              <use href="#front-spoke" transform="rotate(234)" />
+              <use href="#front-spoke" transform="rotate(252)" />
+              <use href="#front-spoke" transform="rotate(270)" />
+              <use href="#front-spoke" transform="rotate(288)" />
+              <use href="#front-spoke" transform="rotate(306)" />
+              <use href="#front-spoke" transform="rotate(324)" />
+              <use href="#front-spoke" transform="rotate(342)" />
+                <circle cx="0" cy="-118" r="2.4" fill="#c8a16a" stroke="none" />
+              </g>
+            </g>
+
+          <g transform="translate(582 303)" aria-hidden="true">
+            <g class="leg leg-far">
+              <g class="thigh">
+                <path class="limb-outline" d="M0 0 Q48 -9 112 0" stroke-width="32" />
+                <path class="limb-fill" d="M0 0 Q48 -9 112 0" stroke-width="24" />
+                <g transform="translate(112 0)">
+                  <g class="shin">
+                    <path class="limb-outline" d="M0 0 Q50 8 102 0" stroke-width="23" />
+                    <path class="limb-fill" d="M0 0 Q50 8 102 0" stroke-width="15" />
+                    <g transform="translate(102 0)">
+                      <g class="foot">
+                        <path class="webbed-foot" d="M-9 -7 Q-2 -12 7 -5 L24 -2 Q31 -3 32 1 L27 4 Q38 5 34 9 L-8 9 Q-15 5 -9 -7Z" />
+                        <path d="M16 3 26 4 M16 7 28 8" fill="none" stroke="var(--frog-outline)" stroke-width="1.7" stroke-linecap="round" />
+                      </g>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+
+            <!-- The curved backbone links the saddle to the tiny trailing wheel. -->
+            <path class="bike-outline" d="M379 547Q450 519 504 443Q547 386 567 339Q572 326 591 333L650 353" />
+            <path class="bike-brass" d="M379 547Q450 519 504 443Q547 386 567 339Q572 326 591 333L650 353" />
+            <path class="bike-outline" d="M650 465V340Q650 322 662 311L675 299" />
+            <path class="bike-brass" d="M650 465V340Q650 322 662 311L675 299" />
+            <path d="M643 304Q661 316 675 299H700" fill="none" stroke="#344c3d" stroke-width="7" stroke-linecap="round" />
+            <path d="M687 299H704" fill="none" stroke="#926349" stroke-width="10" stroke-linecap="round" />
+            <path d="M578 330 575 317" fill="none" stroke="#344c3d" stroke-width="6" />
+            <path d="M552 315Q571 312 588 316L607 316Q615 321 605 326Q579 333 554 325Q546 321 552 315Z" fill="#926349" stroke="#344c3d" stroke-width="3.5" />
+            <path d="M558 319Q578 323 597 320" fill="none" stroke="#b38a63" stroke-width="2" stroke-linecap="round" />
+
+            <g transform="translate(650 465)">
+              <g class="crank">
+                <path d="M-30 0H30" stroke="#344c3d" stroke-width="7" stroke-linecap="round" />
+                <path d="M-30 0H30" stroke="#d2b079" stroke-width="3" stroke-linecap="round" />
+                <g transform="translate(-30 0)"><g class="pedal-level"><rect x="-13" y="8" width="30" height="7" rx="3" fill="#344c3d" /><path d="M0 0V9" stroke="#344c3d" stroke-width="3" /></g></g>
+                <g transform="translate(30 0)"><g class="pedal-level"><rect x="-13" y="8" width="30" height="7" rx="3" fill="#344c3d" /><path d="M0 0V9" stroke="#344c3d" stroke-width="3" /></g></g>
+              </g>
+              <circle r="10" fill="#cda96c" stroke="#344c3d" stroke-width="3.5" />
+              <circle r="3.4" fill="#344c3d" />
+            </g>
+
+            <!-- A warm yellow belly and oversized eyes make the rider unmistakably a frog. -->
+            <path d="M583 231Q563 250 560 282Q555 311 581 320Q614 333 636 307Q651 285 640 244Z" fill="url(#frog-green)" stroke="#35583a" stroke-width="4" />
+            <path d="M618 245Q638 250 639 276Q640 309 611 316Q589 319 587 305Q596 302 600 282Q604 260 618 245Z" fill="url(#belly)" />
+            <path d="M575 253Q566 271 568 282" fill="none" stroke="#c4e292" stroke-width="5" stroke-linecap="round" />
+            <g fill="#75a64e" opacity=".75"><ellipse cx="573" cy="294" rx="4" ry="5" /><circle cx="577" cy="282" r="3" /><circle cx="583" cy="291" r="2" /></g>
+
+            <g transform="translate(578 240)">
+              <g class="scarf">
+                <path d="M3-6Q-28-25-67-11L-53-1-68 11Q-37 0-4 9Z" fill="#ca795c" stroke="#8f5645" stroke-width="2.5" stroke-linejoin="round" />
+                <path d="M-11-1Q-31-10-48-6" fill="none" stroke="#e6a07d" stroke-width="3" stroke-linecap="round" />
+              </g>
+            </g>
+            <path d="M579 233Q607 249 637 239L639 249Q605 263 577 245Z" fill="#cc7c5d" stroke="#8f5645" stroke-width="2.3" />
+            <path d="M578 236Q567 232 568 242Q569 252 580 247Q586 242 578 236Z" fill="#df9270" stroke="#8f5645" stroke-width="2.3" />
+
+            <ellipse cx="591" cy="179" rx="31" ry="39" transform="rotate(-9 591 179)" fill="url(#frog-green)" stroke="#35583a" stroke-width="4" />
+            <ellipse cx="650" cy="173" rx="32" ry="40" transform="rotate(8 650 173)" fill="url(#frog-green)" stroke="#35583a" stroke-width="4" />
+            <path d="M563 201Q560 177 589 183Q620 192 645 190Q678 185 697 209Q711 226 687 240Q657 256 613 248Q579 245 567 230Q561 219 563 201Z" fill="url(#frog-green)" stroke="#35583a" stroke-width="4" />
+            <path d="M580 231Q628 254 683 230Q671 249 632 248Q599 247 580 231Z" fill="#e7e6a1" />
+            <g class="eye-white">
+              <ellipse cx="593" cy="174" rx="22" ry="28" fill="#fffdeb" stroke="#557747" stroke-width="2.3" />
+              <ellipse cx="603" cy="176" rx="9" ry="13" fill="#263f30" />
+              <circle cx="606" cy="171" r="3.6" fill="#fff" />
+              <circle cx="600" cy="181" r="1.6" fill="#fff" opacity=".65" />
+            </g>
+            <g class="eye-white">
+              <ellipse cx="652" cy="168" rx="23" ry="29" fill="#fffdeb" stroke="#557747" stroke-width="2.3" />
+              <ellipse cx="662" cy="170" rx="9.5" ry="13.5" fill="#263f30" />
+              <circle cx="665" cy="165" r="3.8" fill="#fff" />
+              <circle cx="659" cy="176" r="1.7" fill="#fff" opacity=".65" />
+            </g>
+            <ellipse cx="582" cy="220" rx="11" ry="6" fill="#d7aa75" opacity=".6" />
+            <path d="M603 225Q639 242 680 220" fill="none" stroke="#35583a" stroke-width="3" stroke-linecap="round" />
+            <path d="M675 219Q681 216 685 221" fill="none" stroke="#35583a" stroke-width="2.2" stroke-linecap="round" />
+            <g fill="#507943"><ellipse cx="675" cy="205" rx="2.3" ry="1.8" /><ellipse cx="687" cy="211" rx="2" ry="1.6" /><circle cx="584" cy="207" r="2.2" /><circle cx="575" cy="211" r="1.7" /></g>
+
+          <g transform="translate(582 303)" aria-hidden="true">
+            <g class="leg leg-near">
+              <g class="thigh">
+                <path class="limb-outline" d="M0 0 Q48 -9 112 0" stroke-width="32" />
+                <path class="limb-fill" d="M0 0 Q48 -9 112 0" stroke-width="24" />
+                <g transform="translate(112 0)">
+                  <g class="shin">
+                    <path class="limb-outline" d="M0 0 Q50 8 102 0" stroke-width="23" />
+                    <path class="limb-fill" d="M0 0 Q50 8 102 0" stroke-width="15" />
+                    <g transform="translate(102 0)">
+                      <g class="foot">
+                        <path class="webbed-foot" d="M-9 -7 Q-2 -12 7 -5 L24 -2 Q31 -3 32 1 L27 4 Q38 5 34 9 L-8 9 Q-15 5 -9 -7Z" />
+                        <path d="M16 3 26 4 M16 7 28 8" fill="none" stroke="var(--frog-outline)" stroke-width="1.7" stroke-linecap="round" />
+                      </g>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </g>
+
+            <path d="M631 258Q643 280 661 285L686 299" fill="none" stroke="#35583a" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M631 258Q643 280 661 285L686 299" fill="none" stroke="#a5ce6d" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M627 257Q633 267 637 270" fill="none" stroke="#c5e28f" stroke-width="3" stroke-linecap="round" />
+            <path d="M684 292Q690 288 694 294L702 300Q704 305 699 306L689 302Q685 306 682 300Z" fill="#a5ce6d" stroke="#35583a" stroke-width="2.7" stroke-linejoin="round" />
+            <path d="M690 295 697 301M687 298 693 303" fill="none" stroke="#6f9951" stroke-width="1.5" stroke-linecap="round" />
+          </g>
+
+          <g fill="none" stroke="#b9c8a5" stroke-width="2" stroke-linecap="round" opacity=".8">
+            <path d="M312 359H346M328 370H348M295 371H306" />
+          </g>
+        </svg>
+      </figure>
+
+      <footer class="footer">
+        <span class="caption"><span class="caption-dot" aria-hidden="true"></span>01 &nbsp; / &nbsp; ПРОГУЛКА У ПРУДА</span>
+        <label class="transport" for="ride-pause">
+          <svg class="pause-icon" viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="1.5" width="2.5" height="9" rx=".6" /><rect x="7.5" y="1.5" width="2.5" height="9" rx=".6" /></svg>
+          <svg class="play-icon" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 1 8 5-8 5Z" /></svg>
+          <span class="pause-text">Пауза</span><span class="resume-text">В путь</span>
+        </label>
+        <span class="motion-note">Анимация отключена в настройках устройства</span>
+      </footer>
+    </main>
+  </div>
+</body>
+</html>
+

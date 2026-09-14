@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Пеликан против Скайнета · постапокалипсис</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0b0f1a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+    }
+
+    /* Апокалиптическая пустыня — выжженная земля, красное небо */
+    .wasteland {
+      position: relative;
+      width: 1000px;
+      height: 500px;
+      background: linear-gradient(180deg, #2a1e1a 0%, #4a2e1e 40%, #1f1410 100%);
+      border: 4px solid #8b5a2b;
+      border-radius: 24px;
+      box-shadow: 0 0 60px rgba(255, 80, 0, 0.3), inset 0 0 40px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+    }
+
+    /* зловещее небо скайнета */
+    .sky {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 55%;
+      background: linear-gradient(180deg, #1a0c0c 0%, #3d1e1a 50%, #6b2e1a 100%);
+      overflow: hidden;
+    }
+
+    /* Красные глаза дронов в небе */
+    .sky::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 30%, rgba(255, 40, 40, 0.3) 0%, transparent 8%),
+                  radial-gradient(circle at 70% 20%, rgba(255, 0, 0, 0.4) 0%, transparent 6%),
+                  radial-gradient(circle at 45% 60%, rgba(255, 60, 0, 0.3) 0%, transparent 7%),
+                  radial-gradient(circle at 85% 70%, rgba(255, 0, 0, 0.5) 0%, transparent 9%);
+      animation: droneEyes 3s infinite alternate;
+    }
+
+    @keyframes droneEyes {
+      0% { opacity: 0.4; filter: blur(2px); }
+      100% { opacity: 1; filter: blur(0px); }
+    }
+
+    /* дым/пыль */
+    .dust {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 200%;
+      height: 60%;
+      background: repeating-linear-gradient(90deg, 
+        rgba(180, 120, 60, 0.1) 0px, 
+        rgba(120, 80, 40, 0.2) 40px, 
+        rgba(80, 50, 30, 0.1) 80px,
+        rgba(200, 140, 80, 0.15) 120px);
+      animation: dustMove 1.2s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes dustMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Фоновый скролл — руины, обломки, провода */
+    .bg-scroll {
+      position: absolute;
+      top: 30%;
+      left: 0;
+      width: 200%;
+      height: 40%;
+      animation: bgMove 3s linear infinite;
+      opacity: 0.7;
+    }
+
+    @keyframes bgMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* руины на фоне */
+    .ruin {
+      position: absolute;
+      background: #2b1e14;
+      border: 2px solid #5a3a22;
+      border-radius: 4px 4px 0 0;
+      box-shadow: 0 0 10px #ff4d0066;
+    }
+
+    .ruin::after {
+      content: "";
+      position: absolute;
+      top: -8px;
+      left: 30%;
+      width: 40%;
+      height: 8px;
+      background: #7a4a2a;
+      clip-path: polygon(0% 100%, 20% 0%, 80% 0%, 100% 100%);
+    }
+
+    /* Велосипед и пеликан */
+    .scene {
+      position: absolute;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 350px;
+      z-index: 10;
+    }
+
+    /* Анимация покачивания при езде */
+    .rider {
+      animation: bounce 0.4s ease-in-out infinite alternate;
+      transform-origin: center 70%;
+    }
+
+    @keyframes bounce {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-3px); }
+    }
+
+    /* Вращение колес — радиальные спицы */
+    .wheel {
+      transform-origin: center center;
+      animation: spin 1.2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Ноги крутят педали */
+    .leg-left {
+      transform-origin: 248px 210px;
+      animation: pedalLeft 1.2s linear infinite;
+    }
+
+    .leg-right {
+      transform-origin: 290px 210px;
+      animation: pedalRight 1.2s linear infinite;
+    }
+
+    @keyframes pedalLeft {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes pedalRight {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Клюв пеликана — большой зоб */
+    .pelican-body {
+      filter: drop-shadow(0 0 8px rgba(255, 200, 100, 0.5));
+    }
+
+    /* Лучи скайнета — помехи */
+    .scanlines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(0deg, rgba(255, 0, 0, 0.05) 0px, rgba(0, 0, 0, 0.2) 2px, transparent 4px);
+      pointer-events: none;
+      z-index: 20;
+      animation: scanPulse 0.1s infinite;
+    }
+
+    @keyframes scanPulse {
+      0% { opacity: 0.3; }
+      100% { opacity: 0.5; }
+    }
+
+    /* Текст на фоне — предупреждение */
+    .warning {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: #ff4d4d;
+      font-size: 14px;
+      font-weight: bold;
+      text-shadow: 0 0 12px red;
+      letter-spacing: 2px;
+      opacity: 0.8;
+      animation: flicker 1.5s infinite;
+      z-index: 15;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 4px 12px;
+      border-radius: 4px;
+      border-left: 3px solid #ff2200;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 1; }
+      50% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+
+    /* Дополнительные обломки на земле */
+    .ground-debris {
+      position: absolute;
+      bottom: 40px;
+      left: 0;
+      width: 200%;
+      height: 60px;
+      background: repeating-linear-gradient(90deg, 
+        #3a2618 0px, #2a1a0e 10px, #4a3020 20px, #1a1008 35px);
+      animation: debrisMove 2s linear infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes debrisMove {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wasteland">
+    <!-- Небо Скайнета -->
+    <div class="sky"></div>
+
+    <!-- Фоновые руины (движутся) -->
+    <div class="bg-scroll">
+      <div class="ruin" style="left: 5%; top: 20px; width: 60px; height: 100px;"></div>
+      <div class="ruin" style="left: 20%; top: 40px; width: 90px; height: 70px; background: #3d281a;"></div>
+      <div class="ruin" style="left: 40%; top: 10px; width: 70px; height: 120px; border-color: #7a4a2a;"></div>
+      <div class="ruin" style="left: 58%; top: 30px; width: 110px; height: 90px; background: #2e1d12;"></div>
+      <div class="ruin" style="left: 75%; top: 50px; width: 50px; height: 80px;"></div>
+      <div class="ruin" style="left: 88%; top: 15px; width: 130px; height: 100px; background: #3d281a;"></div>
+      <!-- повтор для скролла -->
+      <div class="ruin" style="left: 105%; top: 25px; width: 60px; height: 90px;"></div>
+      <div class="ruin" style="left: 120%; top: 40px; width: 90px; height: 70px; background: #3d281a;"></div>
+      <div class="ruin" style="left: 140%; top: 10px; width: 70px; height: 120px;"></div>
+      <div class="ruin" style="left: 158%; top: 30px; width: 110px; height: 90px; background: #2e1d12;"></div>
+      <div class="ruin" style="left: 175%; top: 50px; width: 50px; height: 80px;"></div>
+      <div class="ruin" style="left: 188%; top: 15px; width: 130px; height: 100px;"></div>
+    </div>
+
+    <!-- Земля и обломки -->
+    <div class="ground-debris"></div>
+    <div class="dust"></div>
+
+    <!-- Предупреждение Скайнета -->
+    <div class="warning">⚠ SKYNET: ОБНАРУЖЕН БИО-ОБЪЕКТ</div>
+
+    <!-- Основная сцена: пеликан на велосипеде -->
+    <div class="scene">
+      <svg width="500" height="350" viewBox="0 0 500 350" class="rider">
+        <!-- Тень под велосипедом -->
+        <ellipse cx="250" cy="320" rx="140" ry="12" fill="#0a0503" opacity="0.6" />
+
+        <!-- ЗАДНЕЕ КОЛЕСО (радиальные спицы) -->
+        <g>
+          <!-- обод -->
+          <circle cx="150" cy="270" r="48" fill="none" stroke="#3a2a1a" stroke-width="7" />
+          <circle cx="150" cy="270" r="43" fill="none" stroke="#5a3a22" stroke-width="2" />
+          <!-- резина -->
+          <circle cx="150" cy="270" r="52" fill="none" stroke="#2a1e14" stroke-width="6" />
+          <!-- спицы (радиальные) - анимируются вращением -->
+          <g class="wheel" style="transform-origin: 150px 270px;">
+            <!-- 12 спиц -->
+            <line x1="150" y1="218" x2="150" y2="322" stroke="#7a5a3a" stroke-width="2.5" />
+            <line x1="150" y1="218" x2="150" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(30 150 270)" />
+            <line x1="150" y1="218" x2="150" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(60 150 270)" />
+            <line x1="150" y1="218" x2="150" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(90 150 270)" />
+            <line x1="150" y1="218" x2="150" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(120 150 270)" />
+            <line x1="150" y1="218" x2="150" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(150 150 270)" />
+            <line x1="150" y1="218" x2="150" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(180 150 270)" />
+            <line x1="150" y1="218" x2="150" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(210 150 270)" />
+            <line x1="150" y1="218" x2="150" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(240 150 270)" />
+            <line x1="150" y1="218" x2="150" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(270 150 270)" />
+            <line x1="150" y1="218" x2="150" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(300 150 270)" />
+            <line x1="150" y1="218" x2="150" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(330 150 270)" />
+            <!-- втулка -->
+            <circle cx="150" cy="270" r="8" fill="#4a3020" stroke="#8a6a4a" stroke-width="2" />
+          </g>
+        </g>
+
+        <!-- ПЕРЕДНЕЕ КОЛЕСО (радиальные спицы) -->
+        <g>
+          <circle cx="360" cy="270" r="48" fill="none" stroke="#3a2a1a" stroke-width="7" />
+          <circle cx="360" cy="270" r="43" fill="none" stroke="#5a3a22" stroke-width="2" />
+          <circle cx="360" cy="270" r="52" fill="none" stroke="#2a1e14" stroke-width="6" />
+          <g class="wheel" style="transform-origin: 360px 270px;">
+            <line x1="360" y1="218" x2="360" y2="322" stroke="#7a5a3a" stroke-width="2.5" />
+            <line x1="360" y1="218" x2="360" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(30 360 270)" />
+            <line x1="360" y1="218" x2="360" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(60 360 270)" />
+            <line x1="360" y1="218" x2="360" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(90 360 270)" />
+            <line x1="360" y1="218" x2="360" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(120 360 270)" />
+            <line x1="360" y1="218" x2="360" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(150 360 270)" />
+            <line x1="360" y1="218" x2="360" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(180 360 270)" />
+            <line x1="360" y1="218" x2="360" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(210 360 270)" />
+            <line x1="360" y1="218" x2="360" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(240 360 270)" />
+            <line x1="360" y1="218" x2="360" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(270 360 270)" />
+            <line x1="360" y1="218" x2="360" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(300 360 270)" />
+            <line x1="360" y1="218" x2="360" y2="322" stroke="#7a5a3a" stroke-width="2.5" transform="rotate(330 360 270)" />
+            <circle cx="360" cy="270" r="8" fill="#4a3020" stroke="#8a6a4a" stroke-width="2" />
+          </g>
+        </g>
+
+        <!-- Рама велосипеда (постапокалиптическая, сколоченная) -->
+        <line x1="150" y1="270" x2="250" y2="200" stroke="#6a4a2a" stroke-width="7" stroke-linecap="round" />
+        <line x1="250" y1="200" x2="360" y2="270" stroke="#6a4a2a" stroke-width="7" stroke-linecap="round" />
+        <line x1="250" y1="200" x2="270" y2="150" stroke="#5a3a1a" stroke-width="6" stroke-linecap="round" />
+        <line x1="270" y1="150" x2="340" y2="170" stroke="#5a3a1a" stroke-width="5" stroke-linecap="round" />
+        <!-- руль -->
+        <line x1="340" y1="170" x2="370" y2="150" stroke="#8a6a4a" stroke-width="5" stroke-linecap="round" />
+        <circle cx="370" cy="148" r="6" fill="#3a2a1a" stroke="#aa8a5a" stroke-width="2" />
+        <!-- седло -->
+        <ellipse cx="240" cy="145" rx="22" ry="9" fill="#3a2a1a" stroke="#7a5a3a" stroke-width="2" />
+
+        <!-- ЦЕПЬ / педали (анимированные) -->
+        <!-- левая педаль -->
+        <g class="leg-left">
+          <line x1="248" y1="210" x2="230" y2="250" stroke="#7a5a3a" stroke-width="5" stroke-linecap="round" />
+          <circle cx="230" cy="250" r="7" fill="#4a3020" stroke="#aa8a5a" stroke-width="2" />
+        </g>
+        <!-- правая педаль -->
+        <g class="leg-right">
+          <line x1="290" y1="210" x2="310" y2="250" stroke="#7a5a3a" stroke-width="5" stroke-linecap="round" />
+          <circle cx="310" cy="250" r="7" fill="#4a3020" stroke="#aa8a5a" stroke-width="2" />
+        </g>
+
+        <!-- НОГИ ПЕЛИКАНА (соединены с педалями) -->
+        <!-- левая нога -->
+        <path d="M 235 195 Q 225 220 230 248" stroke="#d4a56a" stroke-width="7" fill="none" stroke-linecap="round" />
+        <!-- правая нога -->
+        <path d="M 275 195 Q 300 220 308 248" stroke="#d4a56a" stroke-width="7" fill="none" stroke-linecap="round" />
+
+        <!-- ТЕЛО ПЕЛИКАНА (мультяшное, белый/светло-жёлтый) -->
+        <g class="pelican-body">
+          <!-- большое тело с зобом -->
+          <ellipse cx="260" cy="160" rx="70" ry="50" fill="#fef7e0" stroke="#d4a56a" stroke-width="3" />
+          <!-- зоб (огромный) -->
+          <ellipse cx="290" cy="175" rx="45" ry="35" fill="#f5e6b0" stroke="#d4a56a" stroke-width="3" />
+          <!-- крыло -->
+          <ellipse cx="225" cy="155" rx="30" ry="25" fill="#e8d8a8" stroke="#c0a060" stroke-width="2.5" />
+          <!-- шея -->
+          <path d="M 290 130 Q 310 100 330 100" stroke="#fef7e0" stroke-width="18" fill="none" stroke-linecap="round" />
+          <!-- голова -->
+          <circle cx="340" cy="95" r="28" fill="#fef7e0" stroke="#d4a56a" stroke-width="3" />
+          <!-- хохолок -->
+          <path d="M 345 68 Q 355 50 365 65" stroke="#d4a56a" stroke-width="4" fill="none" stroke-linecap="round" />
+          <!-- глаз (злой, красный — скайнет) -->
+          <circle cx="352" cy="88" r="6" fill="#ff2200" stroke="#000" stroke-width="1.5" />
+          <circle cx="354" cy="86" r="2" fill="#ffaa00" />
+          <!-- клюв верхний -->
+          <path d="M 365 92 L 410 88 L 405 100 L 365 102 Z" fill="#e8a838" stroke="#b07a20" stroke-width="2" />
+          <!-- клюв нижний + мешок (зоб) -->
+          <path d="M 365 102 Q 395 130 370 140 Q 350 130 365 102" fill="#e8a838" stroke="#b07a20" stroke-width="2" />
+          <!-- мешок под клювом (большой зоб) -->
+          <path d="M 365 102 Q 380 135 355 150 Q 335 135 350 105 Z" fill="#f0c060" stroke="#c09030" stroke-width="2" />
+        </g>
+
+        <!-- Следы войны: царапины, провода на велосипеде -->
+        <path d="M 270 150 L 275 160 L 280 155" stroke="#aa3333" stroke-width="2" fill="none" />
+        <path d="M 200 210 L 210 215 L 205 225" stroke="#555" stroke-width="2" fill="none" />
+        <circle cx="220" cy="180" r="3" fill="#ff4d4d" opacity="0.8" />
+        <circle cx="320" cy="200" r="2.5" fill="#ff4d4d" opacity="0.8" />
+      </svg>
+    </div>
+
+    <!-- Помехи Скайнета -->
+    <div class="scanlines"></div>
+  </div>
+</body>
+</html>

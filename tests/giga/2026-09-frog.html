@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Лягушка на пенни-фартинге</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background-color: #a8dadc; /* Светло-голубой фон */
+            font-family: sans-serif;
+        }
+
+        .scene {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            perspective: 500px;
+        }
+
+        /* Фон для имитации движения (параллакс) */
+        .background {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 300%;
+            height: 60%;
+            background-image:
+                radial-circle(40% at 20% 90%, rgba(255,255,255,0.3), transparent 70%),
+                linear-gradient(to top, #f1faee 0%, #transparent 60%);
+            animation: move-bg 10s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes move-bg {
+            from { transform: translateX(0); }
+            to { transform: translateX(-33.33%); }
+        }
+
+        /* Контейнер велосипеда и лягушки */
+        .vehicle {
+            position: absolute;
+            bottom: 15%;
+            left: 10%;
+            width: 200px;
+            height: 200px;
+            transform-origin: center bottom;
+            z-index: 2;
+            animation: bounce 0.6s ease-in-out infinite alternate;
+        }
+
+        /* Легкая тряска при езде */
+        @keyframes bounce {
+            from { transform: scaleY(1); }
+            to { transform: scaleY(0.98) rotate(-2deg); }
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            overflow: visible;
+        }
+
+        /* Вращение переднего колеса */
+        .big-wheel {
+            animation: spin-front 0.5s linear infinite;
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+
+        @keyframes spin-front {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Вращение заднего колеса */
+        .small-wheel {
+            animation: spin-back 1.2s linear infinite;
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+
+        @keyframes spin-back {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Кручение педалей */
+        .pedal-crank {
+            animation: pedal 0.5s ease-in-out infinite alternate;
+            transform-origin: 50px 50px;
+            transform-box: fill-box;
+        }
+
+        @keyframes pedal {
+            from { transform: rotate(20deg); }
+            to { transform: rotate(-20deg); }
+        }
+
+        /* Движение ног лягушки */
+        .leg-left, .leg-right {
+            transform-origin: top center;
+            transform-box: fill-box;
+        }
+
+        .leg-left {
+            animation: kick-left 0.5s ease-in-out infinite alternate;
+        }
+
+        .leg-right {
+            animation: kick-right 0.5s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes kick-left {
+            from { transform: rotate(-10deg); }
+            to { transform: rotate(20deg); }
+        }
+
+        @keyframes kick-right {
+            from { transform: rotate(10deg); }
+            to { transform: rotate(-20deg); }
+        }
+
+        /* Моргунье глазами */
+        .eye-pupil {
+            animation: blink 8s steps(1, start) infinite;
+        }
+
+        @keyframes blink {
+            0%, 95%, 100% { transform: scaleY(1); }
+            96% { transform: scaleY(0); }
+            97% { transform: scaleY(1); }
+            98% { transform: scaleY(0); }
+            99% { transform: scaleY(1); }
+        }
+    </style>
+</head>
+<body>
+<div class="scene">
+    <!-- Слой фона -->
+    <div class="background"></div>
+
+    <!-- Велосипед и лягушка -->
+    <div class="vehicle">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+
+            <!-- Рама велосипеда (стилизованная под старину) -->
+            <path d="M100,120 Q130,80 160,110 L165,115 L165,125 L100,190 Z" fill="#c76e5b" stroke="#8b4f3e" stroke-width="2"/>
+
+            <!-- Большое переднее колесо (Пенни) -->
+            <g class="big-wheel">
+                <circle cx="165" cy="120" r="60" fill="none" stroke="#434343" stroke-width="4"/>
+                <!-- Радиальные спицы -->
+                <line x1="165" y1="120" x2="225" y2="120" stroke="#888" stroke-width="1"/>
+                <line x1="165" y1="120" x2="135" y2="65" stroke="#888" stroke-width="1"/>
+                <line x1="165" y1="120" x2="195" y2="65" stroke="#888" stroke-width="1"/>
+                <line x1="165" y1="120" x2="105" y2="65" stroke="#888" stroke-width="1"/>
+                <line x1="165" y1="120" x2="135" y2="175" stroke="#888" stroke-width="1"/>
+                <line x1="165" y1="120" x2="195" y2="175" stroke="#888" stroke-width="1"/>
+                <line x1="165" y1="120" x2="105" y2="175" stroke="#888" stroke-width="1"/>
+            </g>
+
+            <!-- Маленькое заднее колесо -->
+            <g class="small-wheel">
+                <circle cx="70" cy="130" r="25" fill="none" stroke="#434343" stroke-width="4"/>
+                <circle cx="70" cy="130" r="5" fill="#fff"/>
+                <circle cx="70" cy="130" r="3" fill="#434343"/>
+            </g>
+
+            <!-- Педали и шатуны -->
+            <g class="pedal-crank">
+                <line x1="165" y1="120" x2="110" y2="120" stroke="#8b4f3e" stroke-width="4"/>
+                <!-- Левая педаль -->
+                <rect x="100" y="115" width="10" width="10" height="20" rx="5" fill="#d67d5e"/>
+                <!-- Правая педаль -->
+                <rect x="165" y="115" width="10" height="20" rx="5" fill="#d67d5e"/>
+            </g>
+
+            <!-- Седло -->
+            <ellipse cx="110" cy="100" rx="20" ry="8" fill="#8b4f3e"/>
+
+            <!-- Лягушка -->
+            <g transform="translate(135, 100)" style="transform-origin: center;">
+
+                <!-- Тело -->
+                <ellipse cx="0" cy="0" rx="25" ry="30" fill="#76c893" stroke="#3a7558" stroke-width="2"/>
+
+                <!-- Голова -->
+                <ellipse cx="0" cy="-35" rx="22" ry="25" fill="#76c893" stroke="#3a7558" stroke-width="2"/>
+
+                <!-- Глаза (белки) -->
+                <ellipse cx="-12" cy="-45" rx="10" ry="12" fill="#fff" stroke="#3a7558" stroke-width="2"/>
+                <ellipse cx="12" cy="-45" rx="10" ry="12" fill="#fff" stroke="#3a7558" stroke-width="2"/>
+
+                <!-- Зрачки -->
+                <ellipse class="eye-pupil" cx="-12" cy="-48" rx="4" ry="6" fill="#2a5a45"/>
+                <ellipse class="eye-pupil" cx="12" cy="-48" rx="4" ry="6" fill="#2a5a45"/>
+
+                <!-- Блики в глазах -->
+                <circle cx="-10" cy="-50" r="2" fill="#fff"/>
+                <circle cx="14" cy="-50" r="2" fill="#fff"/>
+
+                <!-- Рот -->
+                <path d="M -10,-30 q 20,5 20,0" fill="none" stroke="#2a5a45" stroke-width="3" stroke-linecap="round"/>
+
+                <!-- Ноги (крепятся к педалям визуально) -->
+                <g class="leg-left" transform="translate(-15, 10)">
+                    <path d="M 0,0 C 5,20 5,40 0,60" fill="none" stroke="#5a9c73" stroke-width="6" stroke-linecap="round"/>
+                    <ellipse cx="0" cy="65" rx="8" ry="6" fill="#5a9c73"/>
+                </g>
+                <g class="leg-right" transform="translate(15, 10)">
+                    <path d="M 0,0 C -5,20 -5,40 0,60" fill="none" stroke="#5a9c73" stroke-width="6" stroke-linecap="round"/>
+                    <ellipse cx="0" cy="65" rx="8" ry="6" fill="#5a9c73"/>
+                </g>
+
+                <!-- Светло-желтое пузико -->
+                <ellipse cx="0" cy="15" rx="18" ry="12" fill="#fef9c3" stroke="#3a7558" stroke-width="1"/>
+            </g>
+        </svg>
+    </div>
+</div>
+</body>
+</html>

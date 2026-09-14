@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pelican vs Skynet</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #1a0b0b; /* Dark reddish background */
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* --- Animations --- */
+
+        /* Scrolling Background */
+        @keyframes scroll-bg {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-800px); }
+        }
+
+        /* Wheel Rotation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Leg Pedaling */
+        @keyframes pedal-leg {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Bike Body Bounce */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Pelican Head Bob */
+        @keyframes head-bob {
+            0%, 100% { transform: rotate(0deg) translateY(0); }
+            25% { transform: rotate(2deg) translateY(2px); }
+            75% { transform: rotate(-1deg) translateY(-2px); }
+        }
+
+        /* Dust particles */
+        @keyframes dust {
+            0% { opacity: 0.2; transform: translate(800px, 400px); }
+            100% { opacity: 0; transform: translate(0px, 450px); }
+        }
+
+        /* --- Classes --- */
+
+        .scene {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1600px; /* 2 * 800px for looping */
+            height: 100%;
+            animation: scroll-bg 12s linear infinite;
+        }
+
+        .bike-wrapper {
+            position: absolute;
+            bottom: 25%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 400px;
+            animation: bounce 0.4s ease-in-out infinite;
+        }
+
+        .wheel {
+            animation: spin 0.6s linear infinite;
+            transform-origin: center;
+        }
+
+        .wheel-back { transform-origin: 180px 380px; }
+        .wheel-front { transform-origin: 500px 380px; }
+
+        .leg-l {
+            transform-origin: 330px 320px; /* Pedal axle center */
+            animation: pedal-leg 1.2s linear infinite;
+        }
+
+        .leg-r {
+            transform-origin: 330px 320px;
+            animation: pedal-leg 1.2s linear infinite;
+            animation-delay: -0.6s; /* Offset for second leg (if separate crank arms, but usually linked) */
+            /* Actually, on a bike legs move opposite. If linked to one crank, they move same.
+               To simulate real cycling, we assume separate crank arms rotated 180 deg. */
+            transform: rotate(180deg) translate(330px, 320px) rotate(0deg);
+            /* This math is tricky in pure SVG without nested groups.
+               Let's simplify: Just animate a "leg" that moves in a circle. */
+        }
+
+        /* Simplified Leg Animation Approach */
+        .leg-group {
+            transform-origin: 330px 320px;
+            animation: pedal-leg 1.2s linear infinite;
+        }
+
+        .leg-group-back {
+            transform-origin: 330px 320px;
+            animation: pedal-leg 1.2s linear infinite;
+            transform: rotate(180deg) translate(330px, 320px);
+        }
+
+        /* HUD / Skynet Overlay */
+        .hud-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            box-shadow: inset 0 0 100px rgba(255, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        .scanline {
+            width: 100%;
+            height: 100px;
+            z-index: 10;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(255, 0, 0, 0.2) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0.1;
+            position: absolute;
+            bottom: 100%;
+            animation: scan 10s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes scan {
+            0% { bottom: 100%; }
+            100% { bottom: -100%; }
+        }
+
+        .text-skynet {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #ff3333;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px #ff0000;
+            letter-spacing: 2px;
+            animation: flicker 2s infinite;
+            z-index: 20;
+        }
+
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+            20%, 24%, 55% { opacity: 0.4; }
+        }
+
+        /* Pelican specific styles */
+        .pouch {
+            fill: #ffcc00;
+            stroke: #cc9900;
+            stroke-width: 2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scene">
+        <!-- HUD / UI -->
+        <div class="hud-overlay"></div>
+        <div class="scanline"></div>
+        <div class="text-skynet">TARGET: PELICAN<br>STATUS: ESCAPING</div>
+
+        <!-- Background Layer (The Ruined City) -->
+        <svg class="bg-layer" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+            <!-- Sky -->
+            <defs>
+                <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#2b0000;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#5c2a15;stop-opacity:1" />
+                </linearGradient>
+            </defs>
+            <rect width="800" height="600" fill="url(#skyGrad)" />
+
+            <!-- Sun/Moon -->
+            <circle cx="650" cy="100" r="60" fill="#ff3333" opacity="0.8" />
+
+            <!-- Distant Ruins -->
+            <path d="M0,600 L0,300 L50,300 L50,250 L120,250 L120,320 L200,320 L200,180 L280,180 L280,350 L350,350 L350,200 L450,200 L450,280 L550,280 L550,150 L650,150 L650,300 L750,300 L750,220 L800,220 L800,600 Z" fill="#110505" />
+
+            <!-- Close Ruins -->
+            <path d="M0,600 L0,400 L80,400 L80,380 L150,380 L150,450 L250,450 L250,350 L350,350 L350,420 L500,420 L500,380 L600,380 L600,460 L800,460 L800,600 Z" fill="#0a0303" />
+
+            <!-- Toxic Ground -->
+            <rect x="0" y="550" width="800" height="50" fill="#221100" />
+            <!-- Road texture -->
+            <path d="M0,575 L800,575" stroke="#333" stroke-width="5" stroke-dasharray="20,20" />
+        </svg>
+
+        <!-- Main Animation Wrapper -->
+        <div class="bike-wrapper">
+            <svg viewBox="0 0 680 450" width="100%" height="100%">
+                <defs>
+                    <radialGradient id="metalGrad">
+                        <stop offset="0%" style="stop-color:#777;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#333;stop-opacity:1" />
+                    </radialGradient>
+                </defs>
+
+                <!-- The Bike Frame -->
+                <g stroke="#cc0000" stroke-width="8" stroke-linecap="round" fill="none">
+                    <!-- Back Wheel to Pedal -->
+                    <path d="M180,380 L280,320" />
+                    <!-- Pedal to Seat -->
+                    <path d="M280,320 L320,250" />
+                    <!-- Seat to Handlebars -->
+                    <path d="M320,250 L500,200" />
+                    <!-- Handlebars to Front Wheel -->
+                    <path d="M500,200 L500,380" />
+                    <!-- Front Wheel to Pedal (Bottom Bracket) -->
+                    <path d="M500,380 L330,320" /> <!-- Frame bar -->
+                </g>
+
+                <!-- Seat -->
+                <path d="M290,250 Q330,240 340,250 L330,255 L295,255 Z" fill="#222" />
+
+                <!-- HANDLEBARS -->
+                <path d="M500,200 L510,180 L490,180" stroke-width="6" stroke="#555" fill="none"/>
+
+                <!-- WHEELS -->
+                <!-- Back Wheel -->
+                <g class="wheel wheel-back">
+                    <circle cx="180" cy="380" r="60" fill="none" stroke="#111" stroke-width="12" /> <!-- Tire -->
+                    <circle cx="180" cy="380" r="54" fill="none" stroke="#444" stroke-width="2" /> <!-- Rim -->
+                    <!-- Spokes -->
+                    <path d="M180,320 L180,440 M120,380 L240,380 M137,337 L223,423 M137,423 L223,337" stroke="#666" stroke-width="2" />
+                </g>
+
+                <!-- Front Wheel -->
+                <g class="wheel wheel-front">
+                    <circle cx="500" cy="380" r="60" fill="none" stroke="#111" stroke-width="12" />
+                    <circle cx="500" cy="380" r="54" fill="none" stroke="#444" stroke-width="2" />
+                    <!-- Spokes -->
+                    <path d="M500,320 L500,440 M440,380 L560,380 M457,337 L543,423 M457,423 L543,337" stroke="#666" stroke-width="2" />
+                </g>
+
+                <!-- CRANKS (The central axle) -->
+                <circle cx="330" cy="320" r="8" fill="#444" />
+
+                <!-- LEGS (Pedaling) -->
+                <!-- Leg 1 (Right Leg - Visible in front usually) -->
+                <g class="leg-group">
+                    <!-- Thigh/Calf shape -->
+                    <path d="M330,320 L350,320 L340,380 Z" fill="#dcdcdc" stroke="#999" stroke-width="2"/>
+                    <!-- Foot on pedal -->
+                    <rect x="335" y="375" width="10" height="10" fill="#222" />
+                    <!-- Pedal -->
+                    <rect x="320" y="370" width="30" height="5" fill="#555" />
+                </g>
+
+                <!-- Leg 2 (Left Leg - Behind) -->
+                <g class="leg-group-back">
+                     <!-- Thigh/Calf shape -->
+                    <path d="M330,320 L310,320 L320,380 Z" fill="#bcbcbc" stroke="#777" stroke-width="2"/>
+                    <!-- Foot on pedal -->
+                    <rect x="325" y="375" width="10" height="10" fill="#222" />
+                    <!-- Pedal (Same physical pedal, but drawn behind) -->
+                    <rect x="320" y="370" width="30" height="5" fill="#555" />
+                </g>
+
+
+                <!-- THE PELICAN -->
+                <g id="pelican">
+                    <!-- Head Group -->
+                    <g style="transform-origin: 480px 160px; animation: head-bob 2s ease-in-out infinite;">
+
+                        <!-- Head Base -->
+                        <circle cx="480" cy="160" r="25" fill="#fffbe6" />
+
+                        <!-- Goggles (Skynet style) -->
+                        <rect x="465" y="150" width="30" height="20" rx="5" fill="#222" stroke="#cc0000" stroke-width="2" />
+                        <line x1="470" y1="155" x2="490" y2="165" stroke="rgba(255,0,0,0.5)" stroke-width="1" /> <!-- Glint -->
+
+                        <!-- Beak -->
+                        <path d="M490,155 L580,170 L490,170 Z" fill="#ffcc00" stroke="#e6b800" stroke-width="1" />
+
+                        <!-- The Big Pouch -->
+                        <path class="pouch" d="M490,160 Q530,230 570,170 L490,170 Z" />
+
+                        <!-- Wing (resting on handlebars) -->
+                        <path d="M460,180 Q480,220 490,180" fill="#fffbe6" stroke="#e6b800" stroke-width="1"/>
+                    </g>
+
+                    <!-- Torso -->
+                    <ellipse cx="400" cy="220" rx="40" ry="50" fill="#fffbe6" stroke="#e6b800" stroke-width="2" />
+
+                    <!-- Scarf/Bandana (Wind blowing back) -->
+                    <path d="M380,200 Q350,220 300,210" fill="none" stroke="#cc0000" stroke-width="8" stroke-linecap="round" />
+                    <path d="M380,210 Q350,230 310,240" fill="none" stroke="#cc0000" stroke-width="6" stroke-linecap="round" />
+
+                </g>
+            </svg>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frog on a Penny-Farthing — Pure CSS Keyframes</title>
+<style>
+  :root { --crank: 2s; }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 28px 16px;
+    background: radial-gradient(1100px 650px at 50% 12%, #1b4a63 0%, #0e2838 55%, #081925 100%);
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    color: #cfe8f5;
+  }
+  h1 { margin: 0; font-size: clamp(1.05rem, 2.2vw, 1.5rem); font-weight: 650; letter-spacing: .4px; }
+  h1 small { display: block; font-size: .62em; font-weight: 400; color: #8fd0ea; margin-top: 4px; }
+  .frame {
+    width: min(1060px, 100%);
+    height: auto;
+    border-radius: 18px;
+    box-shadow: 0 30px 70px rgba(0,0,0,.5), 0 4px 18px rgba(0,0,0,.35);
+    background: #a5dcfa;
+  }
+  p.note { margin: 0; font-size: .85rem; color: #7fb2c9; }
+
+  svg * { transform-box: view-box; }
+
+  /* ---- scrolling scenery (tile = 450 user units) ---- */
+  .clouds  { animation: scroll-x 9s   linear infinite; }
+  .hills   { animation: scroll-x 6.5s linear infinite; }
+  .trees   { animation: scroll-x 1.2s linear infinite; }
+  .dashes  { animation: scroll-x 1.2s linear infinite; }
+  .roadside{ animation: scroll-x .96s linear infinite; }
+
+  /* ---- the whole bike + frog bobs twice per pedal turn ---- */
+  .rig { animation: bob 1s ease-in-out infinite; }
+
+  /* ---- wheels, cranks, pedals ---- */
+  .spin-f, .crank-near, .crank-far { transform-origin: 560px 380px; animation: spin var(--crank) linear infinite; }
+  .spin-r   { transform-origin: 280px 455px; animation: spin .75s linear infinite; }
+  .pedal-near { transform-origin: 594px 380px; animation: spin-rev var(--crank) linear infinite; }
+  .pedal-far  { transform-origin: 526px 380px; animation: spin-rev var(--crank) linear infinite; }
+
+  /* ---- legs: hip / knee / foot, far leg half a cycle behind ---- */
+  .leg-near, .leg-far  { transform-origin: 510px 262px;   animation: leg-swing var(--crank) linear infinite; }
+  .shin-near, .shin-far{ transform-origin: 575.5px 291.9px; animation: shin-bend var(--crank) linear infinite; }
+  .foot-near, .foot-far{ transform-origin: 594px 380px;   animation: foot-roll var(--crank) linear infinite; }
+  .leg-far, .shin-far, .foot-far { animation-delay: -1s; }
+
+  /* ---- face & ambience ---- */
+  .blink   { animation: blink 4.4s ease-in-out infinite; }
+  .blink-1 { transform-origin: 480px 152px; }
+  .blink-2 { transform-origin: 548px 152px; animation-delay: .08s; }
+  .sun     { transform-origin: 88px 88px;   animation: sun-pulse 5s ease-in-out infinite; }
+  .streak  { opacity: .12; animation: streak 1.1s ease-in-out infinite; }
+
+  @keyframes spin     { to { transform: rotate(1turn); } }
+  @keyframes spin-rev { to { transform: rotate(-1turn); } }
+  @keyframes scroll-x { to { transform: translateX(-450px); } }
+  @keyframes bob      { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+  @keyframes blink    { 0%,90.5% { transform: scaleY(1); } 93.5% { transform: scaleY(.07); } 96.5%,100% { transform: scaleY(1); } }
+  @keyframes sun-pulse{ 50% { transform: scale(1.06); } }
+  @keyframes streak   { 0%,100% { opacity: .1; } 50% { opacity: .5; } }
+
+  /* ---- IK-baked pedalling (one crank revolution, 12 samples) ---- */
+  @keyframes leg-swing {
+    0%      { transform: rotate(0deg); }
+    8.333%  { transform: rotate(18.49deg); }
+    16.667% { transform: rotate(39.99deg); }
+    25%     { transform: rotate(37.18deg); }
+    33.333% { transform: rotate(29.05deg); }
+    41.667% { transform: rotate(19.97deg); }
+    50%     { transform: rotate(8.82deg); }
+    58.333% { transform: rotate(-4.71deg); }
+    66.667% { transform: rotate(-18.84deg); }
+    75%     { transform: rotate(-27.13deg); }
+    83.333% { transform: rotate(-25.61deg); }
+    91.667% { transform: rotate(-15.46deg); }
+    100%    { transform: rotate(0deg); }
+  }
+  @keyframes shin-bend {
+    0%      { transform: rotate(0deg); }
+    8.333%  { transform: rotate(-24.06deg); }
+    16.667% { transform: rotate(-51.8deg); }
+    25%     { transform: rotate(-35.62deg); }
+    33.333% { transform: rotate(-11.16deg); }
+    41.667% { transform: rotate(11.63deg); }
+    50%     { transform: rotate(32.39deg); }
+    58.333% { transform: rotate(48.39deg); }
+    66.667% { transform: rotate(56.1deg); }
+    75%     { transform: rotate(53.03deg); }
+    83.333% { transform: rotate(40.55deg); }
+    91.667% { transform: rotate(21.91deg); }
+    100%    { transform: rotate(0deg); }
+  }
+  @keyframes foot-roll {
+    0%      { transform: rotate(0deg); }
+    8.333%  { transform: rotate(5.57deg); }
+    16.667% { transform: rotate(11.81deg); }
+    25%     { transform: rotate(-1.56deg); }
+    33.333% { transform: rotate(-17.89deg); }
+    41.667% { transform: rotate(-31.6deg); }
+    50%     { transform: rotate(-41.21deg); }
+    58.333% { transform: rotate(-43.68deg); }
+    66.667% { transform: rotate(-37.26deg); }
+    75%     { transform: rotate(-25.9deg); }
+    83.333% { transform: rotate(-14.94deg); }
+    91.667% { transform: rotate(-6.45deg); }
+    100%    { transform: rotate(0deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    svg * { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Frog on a Penny-Farthing<small>SVG + CSS keyframes only — no libraries, no JS</small></h1>
+
+<svg class="frame" viewBox="0 0 900 600" role="img"
+     aria-label="Cartoon frog riding a penny-farthing bicycle, wheels spinning, scenery streaming past">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#57b8f2"/>
+      <stop offset=".55" stop-color="#a5dcfa"/>
+      <stop offset="1" stop-color="#e6f8ff"/>
+    </linearGradient>
+
+    <!-- one tile of each scrolling layer (450 units wide, tiles seamlessly) -->
+    <g id="tileClouds" fill="#ffffff">
+      <g opacity=".92">
+        <ellipse cx="112" cy="98" rx="36" ry="18"/><ellipse cx="84" cy="106" rx="22" ry="13"/>
+        <ellipse cx="142" cy="106" rx="25" ry="14"/><ellipse cx="114" cy="86" rx="22" ry="14"/>
+      </g>
+      <g opacity=".8">
+        <ellipse cx="350" cy="164" rx="27" ry="13"/><ellipse cx="329" cy="169" rx="16" ry="9"/>
+        <ellipse cx="372" cy="168" rx="17" ry="10"/>
+      </g>
+      <ellipse cx="240" cy="55" rx="30" ry="9" opacity=".65"/>
+    </g>
+
+    <g id="tileHills">
+      <path d="M180 500Q330 380 450 500Z" fill="#bce4a2"/>
+      <path d="M0 500Q115 340 230 500Z" fill="#9ed584"/>
+    </g>
+
+    <g id="tileTrees">
+      <rect x="85" y="452" width="10" height="48" rx="3" fill="#7a4a2b"/>
+      <circle cx="90" cy="428" r="32" fill="#4caf50"/>
+      <circle cx="70" cy="442" r="19" fill="#43a047"/>
+      <circle cx="110" cy="441" r="21" fill="#4caf50"/>
+      <circle cx="82" cy="419" r="12" fill="#66bb6a"/>
+      <ellipse cx="250" cy="490" rx="30" ry="15" fill="#58b368"/>
+      <ellipse cx="273" cy="494" rx="16" ry="9" fill="#4aa05a"/>
+      <rect x="376" y="462" width="8" height="38" rx="3" fill="#7a4a2b"/>
+      <circle cx="380" cy="446" r="22" fill="#58b368"/>
+      <circle cx="366" cy="455" r="12" fill="#4aa05a"/>
+    </g>
+
+    <g id="tileDashes" fill="#e0d2b4">
+      <rect x="12"  y="519" width="36" height="7" rx="3.5"/>
+      <rect x="87"  y="519" width="36" height="7" rx="3.5"/>
+      <rect x="162" y="519" width="36" height="7" rx="3.5"/>
+      <rect x="237" y="519" width="36" height="7" rx="3.5"/>
+      <rect x="312" y="519" width="36" height="7" rx="3.5"/>
+      <rect x="387" y="519" width="36" height="7" rx="3.5"/>
+    </g>
+
+    <g id="tileRoadside">
+      <path d="M54 599Q55 578 45 565Q61 574 61 593Z" fill="#3e7d33"/>
+      <path d="M63 599Q62 575 58 558Q73 571 71 596Z" fill="#35702c"/>
+      <path d="M73 599Q77 580 88 570Q77 584 78 599Z" fill="#3e7d33"/>
+      <line x1="180" y1="599" x2="180" y2="572" stroke="#3e7d33" stroke-width="3"/>
+      <circle cx="180" cy="557.5" r="4.2" fill="#ff8fb2"/><circle cx="187.6" cy="563" r="4.2" fill="#ff8fb2"/>
+      <circle cx="184.7" cy="571.9" r="4.2" fill="#ff8fb2"/><circle cx="175.3" cy="571.9" r="4.2" fill="#ff8fb2"/>
+      <circle cx="172.4" cy="563" r="4.2" fill="#ff8fb2"/><circle cx="180" cy="565.5" r="3.4" fill="#ffd93b"/>
+      <path d="M285 599Q284 580 275 569Q289 578 289 594Z" fill="#3e7d33"/>
+      <path d="M295 599Q296 576 301 560Q288 572 287 597Z" fill="#35702c"/>
+      <path d="M305 599Q302 581 293 572Q304 585 303 599Z" fill="#3e7d33"/>
+      <line x1="402" y1="599" x2="402" y2="578" stroke="#3e7d33" stroke-width="2.5"/>
+      <circle cx="402" cy="566" r="3.6" fill="#c79bf2"/><circle cx="408" cy="570.5" r="3.6" fill="#c79bf2"/>
+      <circle cx="405.7" cy="578" r="3.6" fill="#c79bf2"/><circle cx="398.3" cy="578" r="3.6" fill="#c79bf2"/>
+      <circle cx="396" cy="570.5" r="3.6" fill="#c79bf2"/><circle cx="402" cy="573.5" r="2.8" fill="#ffd93b"/>
+      <ellipse cx="345" cy="596" rx="7" ry="3" fill="#8d8d99" opacity=".8"/>
+    </g>
+  </defs>
+
+  <!-- ======================= SKY & PARALLAX ======================= -->
+  <rect width="900" height="600" fill="url(#sky)"/>
+  <g class="sun">
+    <circle cx="88" cy="88" r="56" fill="#ffd23f" opacity=".25"/>
+    <circle cx="88" cy="88" r="40" fill="#ffd23f"/>
+  </g>
+  <g class="clouds"><use href="#tileClouds"/><use href="#tileClouds" x="450"/></g>
+  <g class="hills"><use href="#tileHills"/><use href="#tileHills" x="450"/></g>
+  <g class="trees"><use href="#tileTrees"/><use href="#tileTrees" x="450"/></g>
+
+  <!-- ground -->
+  <rect y="500" width="900" height="54" fill="#b39b7d"/>
+  <rect y="500" width="900" height="3"  fill="#8f7a5e"/>
+  <g class="dashes"><use href="#tileDashes"/><use href="#tileDashes" x="450"/></g>
+  <rect y="552" width="900" height="48" fill="#63ad4b"/>
+  <rect y="552" width="900" height="5"  fill="#4c8f3a"/>
+  <g class="roadside"><use href="#tileRoadside"/><use href="#tileRoadside" x="450"/></g>
+
+  <ellipse cx="457" cy="504" rx="218" ry="9" fill="#14331f" opacity=".16"/>
+
+  <g stroke="#ffffff" stroke-width="5" stroke-linecap="round">
+    <line class="streak" x1="140" y1="180" x2="205" y2="180"/>
+    <line class="streak" x1="95"  y1="260" x2="180" y2="260" style="animation-delay:.3s"/>
+    <line class="streak" x1="150" y1="345" x2="230" y2="345" style="animation-delay:.55s"/>
+    <line class="streak" x1="110" y1="430" x2="175" y2="430" style="animation-delay:.18s"/>
+  </g>
+
+  <!-- ======================= BIKE + FROG ======================= -->
+  <g class="rig">
+    <!-- far arm (behind everything) -->
+    <path d="M512 234C544 240 566 254 584 288" fill="none" stroke="#3f9e43" stroke-width="11" stroke-linecap="round"/>
+    <circle cx="585" cy="290" r="7" fill="#3f9e43"/>
+
+    <!-- body & head (behind the front wheel) -->
+    <g>
+      <ellipse cx="508" cy="238" rx="42" ry="34" fill="#57c04b"/>
+      <ellipse cx="516" cy="248" rx="25" ry="21" fill="#eef3a6"/>
+      <ellipse cx="508" cy="186" rx="58" ry="41" fill="#57c04b"/>
+      <ellipse cx="480" cy="158" rx="28" ry="21" fill="#57c04b"/>
+      <ellipse cx="548" cy="158" rx="28" ry="21" fill="#57c04b"/>
+      <g class="blink blink-1">
+        <circle cx="480" cy="152" r="22" fill="#fff"/>
+        <circle cx="488" cy="156" r="9.5" fill="#1c1c1c"/>
+        <circle cx="484.5" cy="150.5" r="3" fill="#fff"/>
+      </g>
+      <g class="blink blink-2">
+        <circle cx="548" cy="152" r="22" fill="#fff"/>
+        <circle cx="556" cy="156" r="9.5" fill="#1c1c1c"/>
+        <circle cx="552.5" cy="150.5" r="3" fill="#fff"/>
+      </g>
+      <circle cx="540" cy="178" r="2.5" fill="#2f7a35"/>
+      <circle cx="554" cy="182" r="2.5" fill="#2f7a35"/>
+      <path d="M462 208Q514 236 558 204" fill="none" stroke="#2f7a35" stroke-width="5" stroke-linecap="round"/>
+      <ellipse cx="462" cy="198" rx="8" ry="5" fill="#ffdf8a" opacity=".7"/>
+      <ellipse cx="556" cy="194" rx="6" ry="4.5" fill="#ffdf8a" opacity=".7"/>
+    </g>
+
+    <!-- far crank + pedal (pedal counter-rotates to stay level) -->
+    <g class="crank-far">
+      <line x1="560" y1="380" x2="526" y2="380" stroke="#26262e" stroke-width="7" stroke-linecap="round"/>
+      <g class="pedal-far"><rect x="513" y="377.5" width="26" height="7" rx="3" fill="#1d1d24"/></g>
+    </g>
+
+    <!-- far leg -->
+    <g transform="translate(-5 -3)">
+      <g class="leg-far">
+        <line x1="510" y1="262" x2="575.5" y2="291.9" stroke="#3f9e43" stroke-width="14" stroke-linecap="round"/>
+        <g class="shin-far">
+          <line x1="575.5" y1="291.9" x2="594" y2="380" stroke="#3f9e43" stroke-width="10" stroke-linecap="round"/>
+          <g class="foot-far">
+            <rect x="584" y="368" width="38" height="11" rx="5.5" fill="#3f9e43"/>
+            <circle cx="617" cy="369" r="4" fill="#3f9e43"/>
+            <circle cx="621" cy="375" r="4" fill="#3f9e43"/>
+            <circle cx="615" cy="378" r="3.6" fill="#3f9e43"/>
+          </g>
+        </g>
+      </g>
+    </g>
+
+    <!-- rear wheel -->
+    <g>
+      <g class="spin-r">
+        <circle cx="280" cy="455" r="45" fill="none" stroke="#23232b" stroke-width="8"/>
+        <circle cx="280" cy="455" r="45" fill="none" stroke="#34343f" stroke-width="8" pathLength="100" stroke-dasharray="2 4.25"/>
+        <circle cx="280" cy="455" r="38.5" fill="none" stroke="#b5762f" stroke-width="3"/>
+        <path d="M318 455H242M312.9 474 247.1 436M299 487.9 261 422.1M280 493V417M261 487.9 299 422.1M247.1 474 312.9 436"
+              stroke="#c9ccd4" stroke-width="1.8"/>
+        <circle cx="242" cy="455" r="3" fill="#d9a441"/>
+      </g>
+      <circle cx="280" cy="455" r="5" fill="#23232b"/>
+    </g>
+
+    <!-- front wheel: radial spokes, rotating tread notches, valve -->
+    <g>
+      <g class="spin-f">
+        <circle cx="560" cy="380" r="120" fill="none" stroke="#23232b" stroke-width="11"/>
+        <circle cx="560" cy="380" r="120" fill="none" stroke="#34343f" stroke-width="11" pathLength="100" stroke-dasharray="1.7 2.466667"/>
+        <circle cx="560" cy="380" r="111" fill="none" stroke="#b5762f" stroke-width="4"/>
+        <circle cx="560" cy="380" r="105" fill="none" stroke="#8a5a2b" stroke-width="1.5"/>
+        <path d="M665 380H455M657 420.2 463 339.8M634.3 454.3 485.7 305.8M600.2 477 519.8 283M560 485V275M519.8 477 600.2 283M485.7 454.3 634.3 305.8M463 420.2 657 339.8"
+              stroke="#c9ccd4" stroke-width="2.2"/>
+        <circle cx="668" cy="380" r="5.5" fill="#d9a441"/>
+      </g>
+      <circle cx="560" cy="380" r="8" fill="#23232b"/>
+    </g>
+
+    <!-- frame (near side) -->
+    <g fill="none" stroke-linecap="round">
+      <line x1="494" y1="254" x2="280" y2="455" stroke="#4a4a55" stroke-width="6"/>
+      <line x1="560" y1="380" x2="494" y2="254" stroke="#4a4a55" stroke-width="9"/>
+      <path d="M560 380L663.9 440M560 380L628.8 478.3" stroke="#4a4a55" stroke-width="7"/>
+      <path d="M560 380C584 344 596 318 604 296" stroke="#4a4a55" stroke-width="6"/>
+      <path d="M584 294Q604 284 624 294" stroke="#2f2f38" stroke-width="5.5"/>
+    </g>
+    <circle cx="585" cy="294" r="4.5" fill="#23232b"/>
+    <circle cx="623" cy="294" r="4.5" fill="#23232b"/>
+    <path d="M458 252Q486 234 514 252Q486 266 458 252Z" fill="#7a4a2b"/>
+    <path d="M462 250Q486 238 510 250" fill="none" stroke="#93603c" stroke-width="2"/>
+    <circle cx="560" cy="380" r="11.5" fill="#3a3a44"/>
+
+    <!-- near crank + pedal -->
+    <g class="crank-near">
+      <line x1="560" y1="380" x2="594" y2="380" stroke="#2f2f38" stroke-width="8" stroke-linecap="round"/>
+      <g class="pedal-near">
+        <rect x="581" y="376" width="28" height="8" rx="3.5" fill="#23232b"/>
+        <line x1="584" y1="378.5" x2="606" y2="378.5" stroke="#4a4a55" stroke-width="1.5"/>
+      </g>
+    </g>
+
+    <!-- near arm -->
+    <path d="M548 230C584 238 610 256 620 289" fill="none" stroke="#57c04b" stroke-width="13" stroke-linecap="round"/>
+    <circle cx="621" cy="291" r="8.5" fill="#4db356"/>
+    <circle cx="611" cy="296" r="4" fill="#4db356"/>
+
+    <!-- near leg -->
+    <g class="leg-near">
+      <line x1="510" y1="262" x2="575.5" y2="291.9" stroke="#5ecb52" stroke-width="17" stroke-linecap="round"/>
+      <g class="shin-near">
+        <line x1="575.5" y1="291.9" x2="594" y2="380" stroke="#5ecb52" stroke-width="12" stroke-linecap="round"/>
+        <g class="foot-near">
+          <rect x="584" y="368" width="38" height="11" rx="5.5" fill="#4db356"/>
+          <circle cx="617" cy="369" r="4" fill="#4db356"/>
+          <circle cx="621" cy="375" r="4" fill="#4db356"/>
+          <circle cx="615" cy="378" r="3.6" fill="#4db356"/>
+          <path d="M600 370V377M608 369.5V377" stroke="#3f9e43" stroke-width="1.2" fill="none"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
+
+<p class="note">Big wheel 1 turn / 2 s · small wheel 1 turn / 0.75 s · scenery speeds matched to wheel ground speed</p>
+
+</body>
+</html>

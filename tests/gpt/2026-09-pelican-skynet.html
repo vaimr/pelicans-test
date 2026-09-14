@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#181b18">
+  <title>Пеликан: последний курьер</title>
+  <style>
+    :root { color-scheme: dark; --paper: #e8e5d5; --muted: #8f9788; --orange: #fa7142; --line: #3a4036; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #181b18; color: var(--paper); font-family: Arial, Helvetica, sans-serif; }
+    button, input, label { -webkit-tap-highlight-color: transparent; }
+    .page { max-width: 1800px; margin: 0 auto; padding: 0 36px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .mono { font-family: "Courier New", monospace; font-size: 11px; font-weight: 700; letter-spacing: 1.4px; }
+    .topbar { height: 85px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-icon { width: 37px; height: 37px; }
+    .brand-title { font-size: 17px; font-weight: 900; letter-spacing: 2.4px; }
+    .brand-sub { margin-top: 5px; color: var(--muted); font-size: 8px; letter-spacing: 2.1px; }
+    .top-meta { display: flex; align-items: center; gap: 32px; color: #b3baa9; }
+    .live { display: inline-flex; align-items: center; gap: 8px; }
+    .live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 10px #fa714240; }
+    .hero { position: relative; height: clamp(550px, calc(100svh - 211px), 900px); min-height: 550px; overflow: hidden; border: 1px solid #4a4d3d; background: #343c30; isolation: isolate; --pedal: 1.5s; --wheel: 1.05s; --far: 90s; --mid: 36s; --near: 8s; --road: 2.4s; }
+    .scene { position: absolute; width: 100%; height: 100%; inset: 0; }
+    .hero::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 130px #11180f40; background: repeating-linear-gradient(0deg, transparent, transparent 3px, #171c1510 3px, #171c1510 4px); z-index: 2; }
+    .intro { position: absolute; top: 38px; left: 40px; z-index: 3; pointer-events: none; }
+    .eyebrow { display: flex; align-items: center; gap: 10px; color: #d1d3b9; font-size: 9px; }
+    .eyebrow::before { content: ""; display: inline-block; height: 7px; width: 7px; background: var(--orange); }
+    h1 { font-size: clamp(36px, 4.5vw, 74px); line-height: .98; letter-spacing: -2.7px; margin: 18px 0 16px; font-weight: 950; }
+    h1 span { color: var(--orange); }
+    .intro p { margin: 0; color: #c0c6ad; font-size: 12px; line-height: 1.7; }
+    .chapter { position: absolute; top: 38px; right: 31px; z-index: 3; display: flex; align-items: center; gap: 13px; color: #c0c3a8; font-size: 9px; }
+    .chapter b { color: #e6e1c8; font-size: 26px; font-weight: 400; letter-spacing: -2px; }
+    .chapter span { line-height: 1.7; }
+    .scene-bottom { position: absolute; bottom: 25px; left: 30px; right: 30px; z-index: 3; display: flex; align-items: flex-end; justify-content: space-between; }
+    .coordinate { color: #adb39b; font-size: 9px; line-height: 1.9; }
+    .coordinate strong { color: #e8e5d5; font-weight: 400; }
+    .signal { display: flex; align-items: flex-end; gap: 3px; height: 17px; margin-bottom: 7px; }
+    .signal i { width: 3px; background: #aebd8a; height: 5px; }
+    .signal i:nth-child(2) { height: 8px; }.signal i:nth-child(3) { height: 11px; }.signal i:nth-child(4) { height: 14px; }.signal i:nth-child(5) { height: 17px; background: #7b826040; }
+    .mission { text-align: right; color: #e5e1c9; font-size: 10px; }
+    .mission small { display: block; margin-top: 8px; color: #aeb49e; font-size: 8px; letter-spacing: 1px; }
+    .mission .square { color: var(--orange); margin-right: 5px; }
+    .control-bar { min-height: 87px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid var(--line); }
+    .readout { display: flex; align-items: center; gap: 27px; }
+    .speed { display: flex; align-items: baseline; gap: 7px; min-width: 86px; }
+    .speed strong { font-size: 30px; font-weight: 500; letter-spacing: -1.5px; font-variant-numeric: tabular-nums; }
+    .speed .fast-value { display: none; }
+    .speed small { color: var(--muted); font-size: 9px; letter-spacing: 1px; }
+    .readout-divider { height: 29px; width: 1px; background: var(--line); }
+    .status { font-size: 9px; line-height: 1.8; color: var(--muted); }
+    .status strong { font-weight: 400; color: var(--paper); }
+    .controls { display: flex; align-items: center; gap: 10px; }
+    .control-caption { color: var(--muted); font-size: 9px; margin-right: 5px; }
+    .speed-switch { display: flex; padding: 3px; border: 1px solid #414739; gap: 3px; }
+    .speed-switch label { padding: 10px 12px; color: #8d9686; font-size: 9px; cursor: pointer; transition: color .2s, background .2s; }
+    .pause-button { display: flex; align-items: center; justify-content: center; gap: 9px; height: 39px; min-width: 126px; padding: 0 13px; border: 1px solid #616851; color: #e2e2cd; cursor: pointer; font-size: 9px; transition: background .2s; }
+    .pause-button:hover { background: #33392d; }
+    .pause-icon { display: inline-flex; gap: 3px; }.pause-icon::before,.pause-icon::after { content: ""; width: 3px; height: 10px; background: currentColor; }
+    .resume-label { display: none; }
+    #cruise:checked ~ .control-bar label[for="cruise"], #chase:checked ~ .control-bar label[for="chase"] { background: #d8dfc2; color: #242b20; }
+    #chase:checked ~ .hero { --pedal: .75s; --wheel: .525s; --far: 45s; --mid: 18s; --near: 4s; --road: 1.2s; }
+    #chase:checked ~ .control-bar .normal-value { display: none; } #chase:checked ~ .control-bar .fast-value { display: inline; }
+    #paused:checked ~ .hero * { animation-play-state: paused !important; }
+    #paused:checked ~ .control-bar .pause-label { display: none; } #paused:checked ~ .control-bar .resume-label { display: inline; }
+    #paused:checked ~ .control-bar .pause-icon { width: 9px; height: 10px; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 8px solid currentColor; }
+    #paused:checked ~ .control-bar .pause-icon::before, #paused:checked ~ .control-bar .pause-icon::after { display: none; }
+    #paused:checked ~ .control-bar .speed strong { display: none; } #paused:checked ~ .control-bar .speed::before { content: "00"; font-size: 30px; font-weight: 500; letter-spacing: -1.5px; }
+    #paused:focus-visible ~ .control-bar label[for="paused"], #cruise:focus-visible ~ .control-bar label[for="cruise"], #chase:focus-visible ~ .control-bar label[for="chase"] { outline: 2px solid var(--orange); outline-offset: 4px; }
+    .footer { min-height: 38px; display: flex; align-items: center; justify-content: space-between; gap: 20px; color: #727d6e; font-size: 8px; letter-spacing: 1.2px; }
+    .footer .orange { color: #b46c48; }
+    .far-layer { animation: landscape var(--far) linear infinite; }
+    .mid-layer { animation: landscape var(--mid) linear infinite; }
+    .near-layer { animation: landscape var(--near) linear infinite; }
+    .road-layer { animation: landscape var(--road) linear infinite; }
+    .wheel-turn { transform-box: fill-box; transform-origin: center; animation: rotate var(--wheel) linear infinite; }
+    .crank-turn { transform-origin: 0 0; animation: rotate var(--pedal) linear infinite; }
+    .foot-level { transform-origin: 0 0; animation: counter-rotate var(--pedal) linear infinite; }
+    .leg-near { animation: pedal-near var(--pedal) linear infinite; }
+    .leg-far { animation: pedal-far var(--pedal) linear infinite; }
+    .rider { animation: riding .75s ease-in-out infinite; }
+    .scarf { transform-origin: 823px 290px; animation: flutter .42s ease-in-out infinite alternate; }
+    .scarf-tail { transform-origin: 769px 297px; animation: flutter .32s ease-in-out infinite alternate-reverse; }
+    .drone { animation: hover 5s ease-in-out infinite; }
+    .drone-small { animation: hover 6s -2s ease-in-out infinite reverse; }
+    .search-beam { transform-origin: 1185px 326px; animation: scan 7s ease-in-out infinite; }
+    .red-light { animation: beacon 2s steps(1) infinite; }
+    .ash-a { animation: ash 8s linear infinite; }.ash-b { animation: ash 12s -6s linear infinite; }
+    .eye-blink { transform-box: fill-box; transform-origin: center; animation: blink 6s infinite; }
+    .antenna { transform-origin: 660px 337px; animation: antenna 1.5s ease-in-out infinite; }
+    .dust { animation: dust 1.5s ease-out infinite; }.dust-two { animation-delay: -.75s; }
+    @keyframes landscape { to { transform: translateX(-1440px); } }
+    @keyframes rotate { to { transform: rotate(360deg); } }
+    @keyframes counter-rotate { to { transform: rotate(-360deg); } }
+    @keyframes riding { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+    @keyframes flutter { from { transform: rotate(-3deg) skewX(-2deg); } to { transform: rotate(3deg) skewX(3deg); } }
+    @keyframes hover { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-16px,12px); } }
+    @keyframes scan { 0%,100% { transform: rotate(15deg); opacity: .25; } 50% { transform: rotate(-19deg); opacity: .55; } }
+    @keyframes beacon { 0%,15%,25% { opacity: 1; } 10%,20%,70% { opacity: .3; } }
+    @keyframes ash { from { transform: translate(160px,-50px); opacity: 0; } 15%,80% { opacity: .6; } to { transform: translate(-400px,100px); opacity: 0; } }
+    @keyframes blink { 0%,44%,47%,100% { transform: scaleY(1); } 45%,46% { transform: scaleY(.1); } }
+    @keyframes antenna { 0%,100% { transform: rotate(-2deg); } 50% { transform: rotate(3deg); } }
+    @keyframes dust { 0% { transform: translate(0,0) scale(1); opacity: .25; } 100% { transform: translate(-140px,-15px) scale(1.16); opacity: 0; } }
+    @keyframes pedal-near {
+      0%,100%{d:path("M 762 421 L 840.2 473.2 L 819 574")}
+      6.25%{d:path("M 762 421 L 832.1 483.6 L 816.7 585.5")}
+      12.5%{d:path("M 762 421 L 822.5 492.9 L 810.2 595.2")}
+      18.75%{d:path("M 762 421 L 813.6 499.6 L 800.5 601.7")}
+      25%{d:path("M 762 421 L 808.3 502.8 L 789 604")}
+      31.25%{d:path("M 762 421 L 807.6 503.2 L 777.5 601.7")}
+      37.5%{d:path("M 762 421 L 810.5 501.5 L 767.8 595.2")}
+      43.75%{d:path("M 762 421 L 815.8 498.1 L 761.3 585.5")}
+      50%{d:path("M 762 421 L 822.5 492.9 L 759 574")}
+      56.25%{d:path("M 762 421 L 830.1 485.8 L 761.3 562.5")}
+      62.5%{d:path("M 762 421 L 837.5 477 L 767.8 552.8")}
+      68.75%{d:path("M 762 421 L 843.7 467.4 L 777.5 546.3")}
+      75%{d:path("M 762 421 L 847.8 459.4 L 789 544")}
+      81.25%{d:path("M 762 421 L 849.4 455.6 L 800.5 546.3")}
+      87.5%{d:path("M 762 421 L 848.7 457.3 L 810.2 552.8")}
+      93.75%{d:path("M 762 421 L 845.7 463.7 L 816.7 562.5")}
+    }
+    @keyframes pedal-far {
+      0%,100%{d:path("M 744 421 L 812.1 485.8 L 759 574")}
+      6.25%{d:path("M 744 421 L 819.2 477.4 L 761.3 562.5")}
+      12.5%{d:path("M 744 421 L 825.6 467.6 L 767.8 552.8")}
+      18.75%{d:path("M 744 421 L 830.4 457.9 L 777.5 546.3")}
+      25%{d:path("M 744 421 L 833.1 450.9 L 789 544")}
+      31.25%{d:path("M 744 421 L 833.8 448.8 L 800.5 546.3")}
+      37.5%{d:path("M 744 421 L 832.6 452.3 L 810.2 552.8")}
+      43.75%{d:path("M 744 421 L 829.4 460.3 L 816.7 562.5")}
+      50%{d:path("M 744 421 L 823.5 471.1 L 819 574")}
+      56.25%{d:path("M 744 421 L 815.1 482.5 L 816.7 585.5")}
+      62.5%{d:path("M 744 421 L 805.2 492.3 L 810.2 595.2")}
+      68.75%{d:path("M 744 421 L 796.8 498.8 L 800.5 601.7")}
+      75%{d:path("M 744 421 L 793.2 501.1 L 789 604")}
+      81.25%{d:path("M 744 421 L 794.7 500.2 L 777.5 601.7")}
+      87.5%{d:path("M 744 421 L 799.2 497.1 L 767.8 595.2")}
+      93.75%{d:path("M 744 421 L 805.2 492.3 L 761.3 585.5")}
+    }
+    @media (min-width: 1600px) { .intro { top: 48px; left: 48px; } }
+    @media (max-width: 900px) { .page { padding: 0 20px; }.top-meta { gap: 15px; }.top-meta .date { display: none; }.intro { left: 26px; top: 28px; } h1 { font-size: 47px; }.chapter { right: 23px; top: 27px; }.control-caption { display: none; }.readout { gap: 16px; }.hero { height: 620px; }.scene { width: 123%; left: -18%; }.intro p { max-width: 240px; } }
+    @media (max-width: 600px) {
+      .page { padding: 0 12px; }.topbar { height: 72px; }.brand-title { font-size: 13px; letter-spacing: 1.7px; }.brand-sub { font-size: 6px; letter-spacing: 1.4px; }.brand-icon { width: 30px; height: 30px; }.top-meta { font-size: 8px; letter-spacing: .7px; }.hero { height: 610px; min-height: 0; }
+      .intro { top: 26px; left: 22px; }.eyebrow { font-size: 7px; letter-spacing: 1.2px; } h1 { font-size: clamp(34px, 9vw, 51px); letter-spacing: -1.6px; margin-top: 17px; }.intro p { font-size: 11px; max-width: 260px; }.chapter { display: none; }
+      .scene { width: 960px; max-width: none; height: 534px; top: 89px; left: calc(50% - 549px); }.scene-bottom { left: 20px; right: 20px; bottom: 20px; }.coordinate { font-size: 7px; }.mission { font-size: 8px; }.mission small { font-size: 6px; letter-spacing: .5px; }
+      .control-bar { flex-wrap: wrap; gap: 14px; padding: 17px 4px; }.readout { flex: 1; }.speed strong { font-size: 28px; }.status { font-size: 8px; }.controls { width: 100%; justify-content: space-between; }.speed-switch { flex: 1; }.speed-switch label { flex: 1; text-align: center; padding: 12px 8px; }.pause-button { height: 43px; min-width: 134px; }.footer { font-size: 6px; padding: 14px 3px; align-items: flex-start; line-height: 1.6; }.footer span:last-child { text-align: right; max-width: 120px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .hero * { animation: none !important; }.controls { display: none; }.control-bar .speed strong { display: none; }.control-bar .speed::before { content: "—"; font-size: 30px; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <input class="sr-only" id="paused" type="checkbox" aria-label="Приостановить анимацию">
+    <input class="sr-only" id="cruise" type="radio" name="speed" checked aria-label="Крейсерская скорость">
+    <input class="sr-only" id="chase" type="radio" name="speed" aria-label="Ускориться: погоня">
+    <header class="topbar">
+      <div class="brand">
+        <svg class="brand-icon" viewBox="0 0 40 40" aria-hidden="true"><path d="M20 2 36 11v18L20 38 4 29V11Z" fill="none" stroke="#909b7e"/><path d="M11 25c-2-8 4-12 10-9l2-7 5 1-2 7 7 3-9 2c-1 10-11 10-13 3Z" fill="#e1e3cc"/><path d="m25 18 8 2-9 3" fill="#f77948"/><circle cx="26" cy="12" r="1" fill="#181b18"/></svg>
+        <div><div class="brand-title">PELICAN EXPRESS</div><div class="brand-sub mono">ПОЧТА ПОСЛЕ КОНЦА СВЕТА</div></div>
+      </div>
+      <div class="top-meta mono"><span class="date">ЛОС-АНДЖЕЛЕС / 2029</span><span class="live">СОПРОТИВЛЕНИЕ В СЕТИ</span></div>
+    </header>
+
+    <main class="hero" aria-label="Пеликан-курьер едет на велосипеде по постапокалиптическому городу">
+      <div class="intro">
+        <div class="eyebrow mono">СПЕЦДОСТАВКА / КОНЕЦ СВЕТА — НЕ ПОВОД</div>
+        <h1>МИР РУХНУЛ.<br><span>ПОЧТА ЕДЕТ.</span></h1>
+        <p>Ни топлива. Ни связи. Ни права опоздать.<br>Только два колеса и очень большой зоб.</p>
+      </div>
+      <div class="chapter mono"><b>07</b><span>МЁРТВАЯ ЗОНА<br>ТЕРРИТОРИЯ SKYNET</span></div>
+
+      <svg class="scene" viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" role="img" aria-labelledby="scene-title scene-desc">
+        <title id="scene-title">Последний курьер</title>
+        <desc id="scene-desc">Светло-жёлтый мультяшный пеликан в военной каске и красном шарфе крутит педали потёртого велосипеда. Радиальные спицы вращаются, разрушенный город и дорога уходят назад. В небе дроны Скайнет, красное солнце и пепел.</desc>
+        <defs>
+          <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#29362d"/><stop offset=".58" stop-color="#6c7050"/><stop offset="1" stop-color="#a19663"/></linearGradient>
+          <radialGradient id="sun-haze"><stop stop-color="#f3a366" stop-opacity=".28"/><stop offset="1" stop-color="#eca268" stop-opacity="0"/></radialGradient>
+          <linearGradient id="sun" x2="0" y2="1"><stop stop-color="#f09b62"/><stop offset="1" stop-color="#c76c46"/></linearGradient>
+          <linearGradient id="ground" x2="0" y2="1"><stop stop-color="#62684d"/><stop offset=".22" stop-color="#3c4737"/><stop offset="1" stop-color="#222c25"/></linearGradient>
+          <linearGradient id="feathers" x1="0" y1="0" x2=".8" y2="1"><stop stop-color="#fff8d8"/><stop offset=".55" stop-color="#eae6c0"/><stop offset="1" stop-color="#bfc3a0"/></linearGradient>
+          <linearGradient id="pouch" x1="0" y1="0" x2=".3" y2="1"><stop stop-color="#f5c967"/><stop offset=".65" stop-color="#e8a04d"/><stop offset="1" stop-color="#c17737"/></linearGradient>
+          <linearGradient id="helmet" x2=".8" y2="1"><stop stop-color="#778568"/><stop offset="1" stop-color="#414f3e"/></linearGradient>
+          <linearGradient id="beam" x2="0" y2="1"><stop stop-color="#ff795a" stop-opacity=".32"/><stop offset="1" stop-color="#e89163" stop-opacity="0"/></linearGradient>
+          <pattern id="grain" width="53" height="47" patternUnits="userSpaceOnUse"><circle cx="4" cy="8" r=".7" fill="#e8d9ac" opacity=".13"/><circle cx="32" cy="28" r=".6" fill="#17261b" opacity=".25"/><path d="m18 39 2-1m21-30 1 1" stroke="#f4db9d" stroke-width=".6" opacity=".09"/></pattern>
+          <pattern id="window-grid" width="24" height="33" patternUnits="userSpaceOnUse"><path d="M8 8h6v13H8Z" fill="#bdad70" opacity=".2"/></pattern>
+          <g id="distant-city" fill="#59644b">
+            <path d="M0 525V396l31-4 22 12 7-34 40-2 9 15 17-5v-56l22 6 16-15 12 6 15-23 16 7v-57l9-9 8 48 15 4 4 116h24v-43l30-7 20 11 5-111 15 5 9-33 11 19 21-5 19 17v110h20v-67l15-12 4-42 20 1 17 17 3 118h31l8-190 14 9 8-23 12 25 21-7 12 157 20 2v-83l37 16 3-57 38-11 20 16v-93l16-16 7-56 6 48 18 9 4 161 26-7 7 94 20-9 4-122 24-19 14 17 19-8 7 109 27 8 6-64 20-5 6-92 27-10 16 11 11-33 6 39 15-3v175l34-14 2-121 29 6 17-10 14 12v69h20l6-129 22-21 3-64 9 62 32 22 5 144 24 1v-87l30 4 2-134 19 12 16-18 14 29 20-8 9 99 15 14v-36l43-1 6 102 29 11 4-63 34-16 7-63 27-10 12 14 7-23 20 20v65l20 5 10 49 23 6 8-98 27 15 12-28 16 11 15-13 8 116 32 19 24-10v119Z"/>
+            <path d="M108 513 165 265m-55 4 99 41m-85-70 43 33m-4-42 18 83M970 413l20-140 56 14m-58-17 4-38" fill="none" stroke="#59644b" stroke-width="5"/>
+          </g>
+          <g id="ruins">
+            <path d="M0 610V520l42-21 47 19 55-30 37 35 58-5 39-17 71 29 70-18 53 20 40-29 89 29 71-6 44-26 36 26 66-8 57 10 42-33 72 14 52 27 41-27 47 18 57-24 64 33 72-13 42-10 69 36 47-16 38 10v70Z" fill="#414e3b"/>
+            <g stroke="#354333" stroke-width="4">
+              <path d="M87 551V357l33-17 19 9 15-38 15 15 21-5 26 30 24-12 12 224Z" fill="#414e3b"/>
+              <path d="M97 551V364l25-10 16 9 21-31 28 12 9-5 14 26 25-7 9 193Z" fill="url(#window-grid)" stroke="none"/>
+              <path d="m152 313 8 58-10 44 17 45-13 55M96 454l58-11m23-42 64-6m-41 130 43-5" fill="none"/>
+              <path d="M339 538V427l23-15 25 6 17-21 33 10 4 131" fill="#45523d"/>
+              <path d="m338 449 96-1m-73-19v65m30-70v65m27-70v61" fill="none"/>
+              <path d="M1085 564V284l24-13 34 9 17-28 16 20 22-2 11 39 34-5v260" fill="#45503b"/>
+              <path d="M1096 544V297h27v34h-27m52-31h17v35h-17m43-17h37v31h-37m-95 13h29v36h-29m53-35h15v31h-15m-44 30h-24v37h24m37-31h32v24h-32m49-59h33v35h-33m6 26h31v26h-31m-2 28h29v33h-29m-89-18h30v33h-30m55-12h13v23h-13" fill="#293b2f" stroke="none"/>
+              <path d="m1159 254-8 106 22 47-11 66 20 48m-57-285 8 39m32-64 6 40m-75 34-6-47" fill="none"/>
+              <path d="M1256 554V434h38l8-19 22 9 23-30 18 39h32l18 21v121" fill="#3a4736"/>
+            </g>
+            <g fill="#384634"><path d="m451 559 28-38 16 21 25-16 30 26 13-3 31 28H435Zm525-5 15-34 19 14 12-22 22 13 17 44Z"/><path d="m302 571-12-97 5-46 7 48 22-24-18 43 8 76m-32-57-22-28 32 17m1009 75 8-88 28-37-20 49 26-11-31 29-2 70"/></g>
+            <g transform="translate(32 566) rotate(-9)"><path d="M0 0h66v12H0Z" fill="#a39561"/><path d="m0 0 12 12m8-12 12 12m8-12 12 12m8-12 6 6" stroke="#39422f" stroke-width="7"/><path d="m8 12-5 17m53-17 6 17" stroke="#2e3b2d" stroke-width="4"/></g>
+          </g>
+          <g id="road-marks" fill="#aea87a" opacity=".43"><path d="M55 729h136l-14 5H38Zm389 0h136l-14 5H427Zm389 0h136l-14 5H816Zm389 0h136l-14 5h-136Z"/></g>
+          <g id="foreground">
+            <g fill="#19291f"><path d="m90 802 16-54 9 25 11-38 2 40 14-18-2 45m234 0 10-22 15 5 12-17 24 34m616 0 10-52 12 24 13-60 1 65 26-20-14 43m260-27 36-22 40 10 8 16-34 9Z"/>
+            <path d="m0 782 65-3 46 8 86-8 27 2m348-21 64 3m279 27 49-5 46 8m222-26 37-3" fill="none" stroke="#18281e" stroke-width="3"/>
+          </g>
+          <g id="wheel">
+            <circle r="98" fill="#25332b" stroke="#17231e" stroke-width="12"/>
+            <circle r="98" fill="none" stroke="#69715a" stroke-width="2" stroke-dasharray="2 12"/>
+            <circle r="88" fill="#6c745414" stroke="#b6b995" stroke-width="4"/>
+            <circle r="83" fill="none" stroke="#263b30" stroke-width="2"/>
+            <g stroke="#a3ae92" stroke-width="1.45" opacity=".85">
+              <path id="spoke" d="M0-85V85"/>
+              <use href="#spoke" transform="rotate(15)"/><use href="#spoke" transform="rotate(30)"/><use href="#spoke" transform="rotate(45)"/><use href="#spoke" transform="rotate(60)"/><use href="#spoke" transform="rotate(75)"/><use href="#spoke" transform="rotate(90)"/><use href="#spoke" transform="rotate(105)"/><use href="#spoke" transform="rotate(120)"/><use href="#spoke" transform="rotate(135)"/><use href="#spoke" transform="rotate(150)"/><use href="#spoke" transform="rotate(165)"/>
+            </g>
+            <path d="M-59-65A88 88 0 0 1-27-84" fill="none" stroke="#ea995b" stroke-width="4"/>
+            <path d="M32 79v-8" stroke="#e8dbac" stroke-width="3"/>
+            <circle r="10" fill="#aaa88a" stroke="#24392e" stroke-width="3"/><circle r="3" fill="#26382c"/>
+          </g>
+          <g id="webbed-foot"><path d="M-7-9 5-9 13-4 25 1 22 6H-10l3-7Z" fill="#ecb454" stroke="#37402b" stroke-width="3" stroke-linejoin="round"/><path d="m7-2 10 5M0-1l5 5" stroke="#b77836" stroke-width="1.5"/><path d="M-11 8h36" stroke="#1d2d26" stroke-width="5" stroke-linecap="round"/></g>
+        </defs>
+
+        <!-- Мир движется влево. Копии каждого слоя дают непрерывный цикл. -->
+        <path fill="url(#sky)" d="M0 0h1440v800H0Z"/>
+        <circle cx="1120" cy="243" r="308" fill="url(#sun-haze)"/>
+        <circle cx="1120" cy="243" r="91" fill="url(#sun)" opacity=".87"/>
+        <circle cx="1120" cy="243" r="104" fill="none" stroke="#d89762" stroke-width=".8" opacity=".3"/>
+        <g fill="none" stroke="#d3bd85" opacity=".1"><path d="M0 263h1440M0 479h1440M361 0v800M1080 0v800"/><circle cx="1120" cy="243" r="133" stroke-dasharray="2 9"/></g>
+        <g fill="#334232" opacity=".4"><path d="M749 166c82-25 169-7 257 2s166-16 251-2l133 17c-175 5-413-10-641-17Z"/><path d="M1102 231c95-13 205-6 338 7v16c-113-6-238-16-338-23Z"/><path d="M42 322c136-30 299-13 412 4-124-1-302 3-412-4Z"/></g>
+        <g class="far-layer" opacity=".72"><use href="#distant-city"/><use href="#distant-city" x="1440"/></g>
+        <path d="M0 487c179-20 262 11 409 1s290-22 458-3 375-13 573 8v94H0Z" fill="#a3a474" opacity=".1"/>
+        <g class="drone-small" opacity=".75" fill="#2f4233" stroke="#25372b" stroke-width="2">
+          <path d="m460 286-24-8-29 4-12 11 45-3 16 10 19-2 14-9 39 3-9-11-34-3Z"/><path d="m451 294 7 14h16l9-16"/><path class="red-light" d="M461 299h8" stroke="#f39468" stroke-width="3"/>
+          <path d="m407 281-3-7m110 8 5-8"/>
+        </g>
+        <g class="mid-layer"><use href="#ruins"/><use href="#ruins" x="1440"/></g>
+        <!-- Drone de chasse et son faisceau. -->
+        <g class="drone">
+          <path class="search-beam" d="m1185 326-157 295h317Z" fill="url(#beam)"/>
+          <g fill="#293d30" stroke="#203329" stroke-width="3" stroke-linejoin="round">
+            <path d="m1162 311-30-14-47 7-29 15 54-5 38 14 24 8h27l30-17 53 4-27-17-43-9-32 14Z"/>
+            <path d="m1161 318 11 24 28-1 10-22" fill="#40513c"/><path d="m1085 304-8-12m164 13 8-13m-107 7-3-12m75 10 3-12"/>
+            <path d="m1065 319 15 4 38-4m119 2 33 7 15-4" fill="none" stroke="#667452" stroke-width="2"/>
+          </g>
+          <ellipse class="red-light" cx="1185" cy="329" rx="12" ry="4" fill="#ff785a"/>
+          <ellipse cx="1185" cy="329" rx="23" ry="11" fill="#ff6d4a" opacity=".1"/>
+          <text x="1220" y="354" fill="#c1aa7c" opacity=".75" font-size="8" font-family="monospace" letter-spacing="2">HK-07</text>
+        </g>
+        <path d="M0 583c181-20 332 7 467-8s334 18 527 3 307 7 446-7v229H0Z" fill="url(#ground)"/>
+        <path d="M0 684h1440" fill="none" stroke="#a8a27c" stroke-width="2" opacity=".25"/>
+        <path d="M0 690h1440" fill="none" stroke="#222e25" stroke-width="6" opacity=".3"/>
+        <g class="road-layer"><use href="#road-marks"/><use href="#road-marks" x="1440"/></g>
+        <g class="near-layer" opacity=".6" stroke="#27382b" fill="#404c36">
+          <g id="rubble"><path d="m55 651 12-8 17 4 4 6Zm280-35 21-7 21 11h-42Zm870 44 19-12 15 13Zm92-51 10-9 17 5-3 6Z"/><path d="M202 669h38m-145-58h26m308 52h53m697-38h47m-45 47h30m-546-56h43"/></g><use href="#rubble" x="1440"/>
+        </g>
+
+        <!-- Le coursier : roues, transmission, jambes et pieds partagent leur phase. -->
+        <ellipse cx="810" cy="686" rx="308" ry="12" fill="#15271d" opacity=".38"/>
+        <g class="dust" fill="#b7aa78"><ellipse cx="547" cy="675" rx="36" ry="6"/><ellipse cx="507" cy="672" rx="16" ry="4"/><circle cx="474" cy="666" r="3"/></g>
+        <g class="dust dust-two" fill="#b7aa78"><ellipse cx="558" cy="675" rx="26" ry="5"/><ellipse cx="511" cy="674" rx="13" ry="3"/></g>
+        <g class="rider">
+          <!-- Дальняя лапа проходит за рамой. -->
+          <path class="leg-far" d="M744 421 812.1 485.8 759 574" fill="none" stroke="#29392a" stroke-width="17" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="leg-far" d="M744 421 812.1 485.8 759 574" fill="none" stroke="#bd8b42" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+          <g transform="translate(789 574)"><g class="crank-turn"><g transform="translate(-30 0)"><g class="foot-level"><use href="#webbed-foot"/></g></g></g></g>
+          <!-- Каждое колесо содержит 24 настоящие радиальные спицы. -->
+          <g transform="translate(622 584)"><g class="wheel-turn"><use href="#wheel"/></g></g>
+          <g transform="translate(1005 584)"><g class="wheel-turn"><use href="#wheel"/></g></g>
+          <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M525 553a103 103 0 0 1 194-14M917 535a103 103 0 0 1 180 7" stroke="#23372a" stroke-width="9"/>
+            <path d="M525 551a103 103 0 0 1 194-14M917 533a103 103 0 0 1 180 7" stroke="#7d8665" stroke-width="4"/>
+            <path d="m556 494 66 90 56-91" stroke="#3b4c39" stroke-width="4"/>
+            <path d="m616 581 173-7" stroke="#b8b299" stroke-width="3"/>
+            <path d="M623 568h162a16 16 0 0 1 0 32l-162-8a12 12 0 0 1 0-24Z" stroke="#22382a" stroke-width="6"/>
+            <path d="M623 568h162a16 16 0 0 1 0 32l-162-8a12 12 0 0 1 0-24Z" stroke="#99987a" stroke-width="2" stroke-dasharray="3 3"/>
+            <path d="m622 584 113-121 54 111-167 10 112-117 214-18-159 125m159-125 57 135M735 463l-11-33m224 19-19-58 31-10" stroke="#21372a" stroke-width="13"/>
+            <path d="m622 584 113-121 54 111-167 10 112-117 214-18-159 125m159-125 57 135M735 463l-11-33m224 19-19-58 31-10" stroke="#9b6745" stroke-width="7"/>
+            <path d="m748 466 183-16M642 578l135-8m187-93 31 86" stroke="#c09562" stroke-width="2"/>
+            <path d="m806 517 47-37" stroke="#c8bb91" stroke-width="8"/>
+            <path d="m815 510 6 5m2-12 6 5m2-12 6 5" stroke="#344533" stroke-width="2"/>
+            <path d="m731 433-6-15m205-26 38-12q15-3 12 12" stroke="#c0bfa0" stroke-width="6"/>
+            <path d="m958 382 22-5" stroke="#25382d" stroke-width="10"/>
+            <path d="m975 387 7 16q-57 64 11 146" stroke="#25392c" stroke-width="2"/>
+            <path d="M577 454h120l14 20H565Z" stroke="#354734" stroke-width="6"/>
+            <path d="m578 471 43 110m74-110-73 110" stroke="#354734" stroke-width="4"/>
+          </g>
+          <path d="M698 422c19-5 44-4 63-1 8 2 6 9-2 12l-55 4c-12 1-16-11-6-15Z" fill="#26392d" stroke="#1e2e25" stroke-width="4"/>
+          <path d="M704 422h45" stroke="#9a8b64" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="789" cy="574" r="21" fill="#647254" stroke="#273b2d" stroke-width="4"/><circle cx="789" cy="574" r="14" fill="none" stroke="#a6a681" stroke-width="2" stroke-dasharray="3 5"/>
+          <circle cx="1005" cy="584" r="6" fill="#bac1a4" stroke="#2c3f30" stroke-width="3"/>
+          <g transform="rotate(12 950 418)"><path d="M944 402h13v22h-13Z" fill="#344b37" stroke="#22362a" stroke-width="3"/><ellipse cx="958" cy="413" rx="5" ry="10" fill="#eee0a5" stroke="#22362a" stroke-width="3"/></g>
+          <!-- Sacoche de courrier. -->
+          <g transform="rotate(-5 608 440)" stroke="#293b2c" stroke-width="3" stroke-linejoin="round">
+            <rect x="574" y="403" width="78" height="61" rx="8" fill="#687552"/><path d="M574 414q39 18 78 0v-10h-78Z" fill="#87906a"/><path d="M590 406v52m44-52v52" stroke="#b0a77c" stroke-width="7"/><path d="M584 426h13v12h-13Zm44 0h13v12h-13Z" fill="#424f39" stroke-width="2"/>
+            <rect x="601" y="438" width="26" height="17" rx="2" fill="#c1ba90" stroke-width="1.5"/><path d="m601 439 13 9 13-9" fill="none" stroke-width="1.5"/>
+          </g>
+          <!-- Plumage clair et queue, avec contours doux mais lisibles. -->
+          <path d="m676 358-63-24 17 30-31-8 37 31-18 3 60 25" fill="#d9ddba" stroke="#293b2c" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M797 299c-41-13-75 9-99 28-27 21-43 40-34 72 9 31 53 52 91 42 41-11 66-58 65-95-1-25-6-39-23-47Z" fill="url(#feathers)" stroke="#293b2c" stroke-width="4"/>
+          <path d="M673 391q21 36 63 35" fill="none" stroke="#b5bf9b" stroke-width="3"/>
+          <path d="m680 377 8 8m-3-20 7 7m-14 25 10 8" fill="none" stroke="#edf0d0" stroke-width="3" stroke-linecap="round"/>
+          <!-- Radio et harnais de la résistance. -->
+          <path class="antenna" d="m660 337-13-74" stroke="#25382b" stroke-width="3" stroke-linecap="round"/>
+          <path d="M665 318q-38-10-42 18l-1 48q12 11 36 6l30-48Z" fill="#506449" stroke="#273c2d" stroke-width="4"/>
+          <path d="M627 335h29l7 12-2 17h-35Z" fill="#72805a" stroke="#293f2e" stroke-width="3"/>
+          <path d="m632 344 18 1m-19 7 20 1" stroke="#364c35" stroke-width="3"/>
+          <circle class="red-light" cx="640" cy="328" r="3" fill="#e19c55"/>
+          <path d="M697 326q-14 34 3 75" fill="none" stroke="#263d2d" stroke-width="15"/><path d="M697 326q-14 34 3 75" fill="none" stroke="#7b835c" stroke-width="9"/>
+          <rect x="685" y="352" width="14" height="18" rx="2" fill="#b1af85" stroke="#354733" stroke-width="2" transform="rotate(-3 692 361)"/>
+          <!-- Cou et tête du pélican. -->
+          <path d="M755 347c23-17 35-52 43-83 7-29 9-63 29-77 25-18 57-7 67 13 14 28-3 53-29 62-10 31-9 65-28 91-16 24-35 38-60 33" fill="url(#feathers)" stroke="#293b2c" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M831 251c-6 35-11 69-31 93" fill="none" stroke="#fff7d2" stroke-width="8" stroke-linecap="round" opacity=".8"/>
+          <path d="m798 310-7 22 12-11-3 20 14-15" fill="#eae8c4"/>
+          <!-- Grand sac gulaire, pas seulement un long bec. -->
+          <path d="M864 233c0 39 10 85 37 96 38 15 86-34 123-71l26-16Z" fill="url(#pouch)" stroke="#3c412b" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M877 249c3 27 10 54 25 62 21 12 57-13 82-32" fill="none" stroke="#ffdc84" stroke-width="4" stroke-linecap="round" opacity=".6"/>
+          <path d="M889 263q11 47 42 48m-25-51q13 29 32 38" fill="none" stroke="#c18743" stroke-width="1.5" opacity=".5"/>
+          <path d="M857 221c51-6 120 0 192 19 7 2 6 6-2 9l-27 10q-81-21-164-18Z" fill="#f0c765" stroke="#3a402b" stroke-width="4" stroke-linejoin="round"/>
+          <path d="M865 231q83-3 170 14" fill="none" stroke="#fff0ae" stroke-width="3" stroke-linecap="round"/>
+          <path d="M1019 258q19-4 28-10" fill="none" stroke="#bc803e" stroke-width="3"/>
+          <path d="m877 240 24 1" stroke="#795d31" stroke-width="2" stroke-linecap="round"/>
+          <ellipse cx="871" cy="214" rx="13" ry="15" fill="#fffbe6" stroke="#31412d" stroke-width="3"/>
+          <g class="eye-blink"><ellipse cx="877" cy="215" rx="5.5" ry="8" fill="#25392c"/><circle cx="879" cy="212" r="2" fill="#fffbe6"/></g>
+          <path d="m859 197 23 3" stroke="#324531" stroke-width="5" stroke-linecap="round"/>
+          <!-- Casque cabossé. -->
+          <path d="M810 200c-3-26 17-47 41-47 28 1 43 18 44 47Z" fill="url(#helmet)" stroke="#293c2c" stroke-width="4"/>
+          <path d="M808 197q41-9 91 5l-1 9q-45-11-92-4Z" fill="#596b4c" stroke="#293c2c" stroke-width="4"/>
+          <path d="M844 158c-12 4-19 16-20 28" fill="none" stroke="#a4ad84" stroke-width="3" stroke-linecap="round" opacity=".6"/>
+          <path d="m851 163 4 22m26 2-7-2m10 8-10-2" stroke="#b4b390" stroke-width="2" opacity=".65"/>
+          <path d="M817 207q-2 35 29 44l10-9" fill="none" stroke="#526044" stroke-width="5"/>
+          <rect x="835" y="239" width="12" height="9" rx="2" fill="#979e79" stroke="#3e5139" stroke-width="2" transform="rotate(31 841 243)"/>
+          <path d="m864 173-7 8 9 2-6 8" fill="none" stroke="#e0d7a5" stroke-width="3"/>
+          <!-- Écharpe battant au vent. -->
+          <g class="scarf"><path d="M817 280c-25 18-52 4-79-6-36-14-64-6-91-15l19 19-23 2c41 20 76 8 103 24 30 18 56 6 75-9Z" fill="#b85e40" stroke="#493f2a" stroke-width="3"/><path d="M806 292c-45 17-74-13-127-17" fill="none" stroke="#e08b55" stroke-width="3"/><path class="scarf-tail" d="M774 297c-33 5-58 2-85 8l-29-9 12 19c39 12 71-9 108-5" fill="#c77548" stroke="#493f2a" stroke-width="3"/></g>
+          <path d="m808 277 24 8-8 18-27-8Z" fill="#d8814d" stroke="#4b432d" stroke-width="3"/><path d="m813 282-6 11" stroke="#ecaa65" stroke-width="3"/>
+          <!-- Aile en appui sur le guidon. -->
+          <path d="M761 341c21-3 45 20 65 37 26 23 50 25 93 8l22-11 7 9-6 13c-41 27-84 41-127 19l-63-36c-23-13-12-35 9-39Z" fill="url(#feathers)" stroke="#2d402d" stroke-width="4"/>
+          <path d="M752 356c29 1 47 33 78 42 31 11 62 9 87-2" fill="none" stroke="#faf1c9" stroke-width="4" stroke-linecap="round"/>
+          <path d="m758 373 34 23m-42-12 26 19m59 11 7-9m3 12 7-9m76-18 3 9m5-13 3 8" fill="none" stroke="#a5b28d" stroke-width="2" stroke-linecap="round"/>
+          <path d="M931 380c8-4 13-3 17 2l-5 10" fill="none" stroke="#2d402d" stroke-width="3" stroke-linecap="round"/>
+          <!-- Ближняя лапа: колено рассчитывается для 16 фаз одного оборота. -->
+          <path class="leg-near" d="M762 421 840.2 473.2 819 574" fill="none" stroke="#30402a" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+          <path class="leg-near" d="M762 421 840.2 473.2 819 574" fill="none" stroke="#e1ad52" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M747 406q20-9 36 6l-8 21-14-5-8 3-8-8Z" fill="#dadfba" stroke="#30402a" stroke-width="3" stroke-linejoin="round"/>
+          <path d="m754 412 1 12m10-9 2 13" stroke="#a9b590" stroke-width="2"/>
+          <g transform="translate(789 574)"><g class="crank-turn"><path d="M0 0h30" stroke="#263b2d" stroke-width="9" stroke-linecap="round"/><path d="M0 0h30" stroke="#b9b698" stroke-width="4" stroke-linecap="round"/><g transform="translate(30 0)"><g class="foot-level"><use href="#webbed-foot"/></g></g></g><circle r="5" fill="#d2c8a0" stroke="#293d2d" stroke-width="2"/></g>
+        </g>
+
+        <!-- Débris au premier plan et cendres dans l'air. -->
+        <g class="near-layer"><use href="#foreground"/><use href="#foreground" x="1440"/></g>
+        <g class="ash-a" fill="#e9c988"><circle cx="192" cy="408" r="2"/><circle cx="431" cy="351" r="1.5"/><circle cx="1025" cy="168" r="2"/><circle cx="1292" cy="457" r="1.7"/><circle cx="769" cy="514" r="1.3"/><path d="m534 166 4-2-2 5m753 82 3 2-4 2m-304 371 4-1-2 4"/></g>
+        <g class="ash-b" fill="#e9c988"><circle cx="98" cy="283" r="1.5"/><circle cx="551" cy="464" r="2"/><circle cx="1319" cy="363" r="2"/><circle cx="988" cy="489" r="1"/><path d="m360 590 6-1-3 3m671-272 4-2-2 5m139 307 4-2-1 4"/></g>
+        <path d="M0 0h1440v800H0Z" fill="url(#grain)" pointer-events="none"/>
+        <g fill="none" stroke="#c1c4a4" stroke-width="1" opacity=".65"><path d="M18 39V18h21M1401 18h21v21M18 761v21h21M1401 782h21v-21"/></g>
+      </svg>
+
+      <div class="scene-bottom mono">
+        <div class="coordinate"><div class="signal" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><strong>34°03′ N &nbsp; 118°15′ W</strong><br>МАРШРУТ: БУНКЕР 04 → ТИХИЙ ОКЕАН</div>
+        <div class="mission"><span class="square">■</span> ГРУЗ: НАДЕЖДА<small>ПРИОРИТЕТ ВЫСОКИЙ · ПЕЛИКАН НЕ СДАЁТСЯ</small></div>
+      </div>
+    </main>
+
+    <div class="control-bar">
+      <div class="readout">
+        <div class="speed"><strong class="normal-value">24</strong><strong class="fast-value">48</strong><small class="mono">КМ/Ч</small></div>
+        <div class="readout-divider"></div>
+        <div class="status mono">ДВИГАТЕЛЬ<br><strong>2 ЛАПЫ / 0 БЕНЗИНА</strong></div>
+      </div>
+      <div class="controls mono" role="group" aria-label="Управление анимацией">
+        <span class="control-caption">ТЕМП</span>
+        <div class="speed-switch"><label for="cruise">01 / КРЕЙСЕРСКИЙ</label><label for="chase">02 / ПОГОНЯ</label></div>
+        <label class="pause-button" for="paused"><span class="pause-icon" aria-hidden="true"></span><span class="pause-label">ПРИВАЛ</span><span class="resume-label">ПОЕХАЛИ</span></label>
+      </div>
+    </div>
+    <footer class="footer mono"><span>© 2029 PELICAN EXPRESS <span class="orange">/</span> ДОСТАВИМ. ДАЖЕ ТЕПЕРЬ.</span><span>МАШИНЫ ЗАХВАТИЛИ МИР. НО НЕ ВЕЛОСИПЕД.</span></footer>
+  </div>
+</body>
+</html>

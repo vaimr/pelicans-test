@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Лягушка на пенни-фартинге</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  body {
+    display: flex; align-items: center; justify-content: center;
+    background: #87CEEB;
+    font-family: sans-serif;
+  }
+  .scene {
+    position: relative; width: 100vw; height: 100vh; overflow: hidden;
+  }
+
+  /* ── ОБЛАКА ── */
+  .clouds {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      radial-gradient(ellipse 60px 25px at 10% 18%, #fff 60%, transparent 62%),
+      radial-gradient(ellipse 80px 30px at 25% 12%, #fff 60%, transparent 62%),
+      radial-gradient(ellipse 50px 22px at 45% 22%, #fff 60%, transparent 62%),
+      radial-gradient(ellipse 70px 28px at 65% 14%, #fff 60%, transparent 62%),
+      radial-gradient(ellipse 55px 24px at 85% 20%, #fff 60%, transparent 62%),
+      radial-gradient(ellipse 65px 26px at 50% 30%, #fff 60%, transparent 62%);
+    background-repeat: repeat-x;
+    background-size: 100% 100%;
+    animation: clouds-move 18s linear infinite;
+  }
+  @keyframes clouds-move {
+    from { background-position: 0 0; }
+    to   { background-position: -100vw 0; }
+  }
+
+  /* ── ХОЛМЫ ── */
+  .hills {
+    position: absolute; bottom: 18%; left: 0; width: 200%; height: 30%;
+    z-index: 1;
+    animation: hills-move 12s linear infinite;
+  }
+  @keyframes hills-move {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ── ЗЕМЛЯ ── */
+  .ground {
+    position: absolute; bottom: 0; width: 100%; height: 18%;
+    background: linear-gradient(#8B7355 0%, #7B6533 100%);
+    z-index: 2;
+  }
+  .grass {
+    position: absolute; bottom: 17.5%; width: 100%; height: 12px;
+    background: linear-gradient(#7CC547, #5BA13A);
+    z-index: 2;
+  }
+  .grass-blades {
+    position: absolute; bottom: 17.5%; left: 0; width: 200%; height: 20px;
+    z-index: 3;
+    animation: grass-move 3s linear infinite;
+  }
+  @keyframes grass-move {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* ── ТЕНЬ ── */
+  .shadow {
+    position: absolute; bottom: 17%; left: 50%; width: 180px; height: 14px;
+    margin-left: -90px;
+    background: radial-gradient(ellipse, rgba(0,0,0,.25) 40%, transparent 72%);
+    z-index: 3;
+    animation: shadow-bob .6s ease-in-out infinite alternate;
+  }
+  @keyframes shadow-bob {
+    from { transform: scaleX(1)   translateY(0); opacity: .28; }
+    to   { transform: scaleX(.86) translateY(-2px); opacity: .18; }
+  }
+
+  /* ── ВЕЛОСИПЕД + ЛЯГУШКА ── */
+  .rider {
+    position: absolute; bottom: 17.5%; left: 50%;
+    width: 380px; height: 420px;
+    margin-left: -190px;
+    z-index: 4;
+    animation: bob .55s ease-in-out infinite alternate;
+  }
+  @keyframes bob {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-6px); }
+  }
+
+  /* ── КОЛЁСА ── */
+  .wheel-big {
+    transform-origin: 200px 340px;
+    animation: spin-big 1.2s linear infinite;
+  }
+  .wheel-small {
+    transform-origin: 295px 340px;
+    animation: spin-small .5s linear infinite;
+  }
+  @keyframes spin-big   { to { transform: rotate(360deg); } }
+  @keyframes spin-small { to { transform: rotate(360deg); } }
+
+  /* ── ПЕДАЛИ ── */
+  .pedal-arm {
+    transform-origin: 200px 340px;
+    animation: pedal-spin 1.2s linear infinite;
+  }
+  @keyframes pedal-spin { to { transform: rotate(360deg); } }
+
+  /* ── НОГИ ── */
+  .leg-left {
+    transform-origin: 200px 340px;
+    animation: leg-left-cycle 1.2s linear infinite;
+  }
+  .leg-right {
+    transform-origin: 200px 340px;
+    animation: leg-right-cycle 1.2s linear infinite;
+  }
+  @keyframes leg-left-cycle {
+    0%   { transform: rotate(0deg);   }
+    25%  { transform: rotate(90deg);  }
+    50%  { transform: rotate(180deg); }
+    75%  { transform: rotate(270deg); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes leg-right-cycle {
+    0%   { transform: rotate(180deg); }
+    25%  { transform: rotate(270deg); }
+    50%  { transform: rotate(360deg); }
+    75%  { transform: rotate(450deg); }
+    100% { transform: rotate(540deg); }
+  }
+
+  /* ── ТЕЛО ── */
+  .body-bounce {
+    transform-origin: center;
+    animation: body-sway .8s ease-in-out infinite alternate;
+  }
+  @keyframes body-sway {
+    from { transform: rotate(-1.2deg); }
+    to   { transform: rotate(1.2deg); }
+  }
+
+  /* ── МОРГАНИЕ ── */
+  .eyelid-left, .eyelid-right {
+    transform-origin: center;
+    animation: blink 4s ease-in-out infinite;
+  }
+  @keyframes blink {
+    0%, 88%, 100% { transform: scaleY(0); }
+    92%, 96%      { transform: scaleY(1); }
+  }
+
+  /* ── РУКИ ── */
+  .arm-left  { animation: arm-l .6s ease-in-out infinite alternate; transform-origin: 168px 215px; }
+  .arm-right { animation: arm-r .6s ease-in-out infinite alternate; transform-origin: 232px 215px; }
+  @keyframes arm-l { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+  @keyframes arm-r { from { transform: rotate(3deg); }  to { transform: rotate(-3deg); } }
+</style>
+</head>
+<body>
+
+<div class="scene">
+  <!-- облака -->
+  <div class="clouds"></div>
+
+  <!-- холмы -->
+  <svg class="hills" viewBox="0 0 1200 200" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="hg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#A8D26A"/>
+        <stop offset="1" stop-color="#7BAE4A"/>
+      </linearGradient>
+    </defs>
+    <path d="M0,200 L0,120 Q150,40 300,100 Q450,60 600,110 Q750,40 900,100 Q1050,50 1200,90 L1200,200 Z"
+          fill="url(#hg)"/>
+    <path d="M1200,200 L1200,120 Q1350,40 1500,100 Q1650,60 1800,110 Q1950,40 2100,100 Q2250,50 2400,90 L2400,200 Z"
+          fill="url(#hg)"/>
+  </svg>
+
+  <div class="grass"></div>
+  <div class="ground"></div>
+
+  <!-- травинки -->
+  <svg class="grass-blades" viewBox="0 0 1200 20" preserveAspectRatio="none">
+    <g fill="#5BA13A">
+      <path d="M20,20 L22,8 L24,20 Z"/><path d="M45,20 L47,4 L49,20 Z"/>
+      <path d="M70,20 L72,10 L74,20 Z"/><path d="M100,20 L102,6 L104,20 Z"/>
+      <path d="M130,20 L132,9 L134,20 Z"/><path d="M160,20 L162,3 L164,20 Z"/>
+      <path d="M190,20 L192,8 L194,20 Z"/><path d="M220,20 L222,11 L224,20 Z"/>
+      <path d="M250,20 L252,5 L254,20 Z"/><path d="M280,20 L282,7 L284,20 Z"/>
+      <path d="M310,20 L312,9 L314,20 Z"/><path d="M340,20 L342,4 L344,20 Z"/>
+      <path d="M370,20 L372,10 L374,20 Z"/><path d="M400,20 L402,6 L404,20 Z"/>
+      <path d="M430,20 L432,8 L434,20 Z"/><path d="M460,20 L462,3 L464,20 Z"/>
+      <path d="M490,20 L492,9 L494,20 Z"/><path d="M520,20 L522,5 L524,20 Z"/>
+      <path d="M550,20 L552,11 L554,20 Z"/><path d="M580,20 L582,7 L584,20 Z"/>
+      <!-- копия для бесшовности -->
+      <path d="M620,20 L622,8 L624,20 Z"/><path d="M645,20 L647,4 L649,20 Z"/>
+      <path d="M670,20 L672,10 L674,20 Z"/><path d="M700,20 L702,6 L704,20 Z"/>
+      <path d="M730,20 L732,9 L734,20 Z"/><path d="M760,20 L762,3 L764,20 Z"/>
+      <path d="M790,20 L792,8 L794,20 Z"/><path d="M820,20 L822,11 L824,20 Z"/>
+      <path d="M850,20 L852,5 L854,20 Z"/><path d="M880,20 L882,7 L884,20 Z"/>
+      <path d="M910,20 L912,9 L914,20 Z"/><path d="M940,20 L942,4 L944,20 Z"/>
+      <path d="M970,20 L972,10 L974,20 Z"/><path d="M1000,20 L1002,6 L1004,20 Z"/>
+      <path d="M1030,20 L1032,8 L1034,20 Z"/><path d="M1060,20 L1062,3 L1064,20 Z"/>
+      <path d="M1090,20 L1092,9 L1094,20 Z"/><path d="M1120,20 L1122,5 L1124,20 Z"/>
+      <path d="M1150,20 L1152,11 L1154,20 Z"/><path d="M1180,20 L1182,7 L1184,20 Z"/>
+    </g>
+  </svg>
+
+  <!-- тень -->
+  <div class="shadow"></div>
+
+  <!-- лягушка + велосипед -->
+  <svg class="rider" viewBox="0 0 400 420" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- градиенты тела -->
+      <radialGradient id="frogBody" cx="40%" cy="35%" r="70%">
+        <stop offset="0%"  stop-color="#BFEF5A"/>
+        <stop offset="55%" stop-color="#6FBF3A"/>
+        <stop offset="100%" stop-color="#4A8A2A"/>
+      </radialGradient>
+      <linearGradient id="frogBelly" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%"  stop-color="#FFF9C4"/>
+        <stop offset="100%" stop-color="#F0E68C"/>
+      </linearGradient>
+      <radialGradient id="eyeWhite" cx="40%" cy="35%" r="65%">
+        <stop offset="0%"  stop-color="#FFFFFF"/>
+        <stop offset="85%" stop-color="#F0F8E8"/>
+        <stop offset="100%" stop-color="#D8E8C8"/>
+      </radialGradient>
+      <radialGradient id="eyeBall" cx="40%" cy="35%" r="70%">
+        <stop offset="0%"  stop-color="#555"/>
+        <stop offset="100%" stop-color="#111"/>
+      </radialGradient>
+      <linearGradient id="metalFrame" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%"  stop-color="#B8860B"/>
+        <stop offset="50%" stop-color="#FFD700"/>
+        <stop offset="100%" stop-color="#B8860B"/>
+      </linearGradient>
+      <linearGradient id="metalThin" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%"  stop-color="#999"/>
+        <stop offset="50%" stop-color="#EEE"/>
+        <stop offset="100%" stop-color="#999"/>
+      </linearGradient>
+    </defs>
+
+    <!-- ════════ ВЕЛИКОСИПЕД ════════ -->
+
+    <!-- РАМА (рисуется под колёсами, статика) -->
+    <g class="frame">
+      <!-- основная рама: от задней оси к передней -->
+      <line x1="295" y1="340" x2="200" y2="340"
+            stroke="url(#metalFrame)" stroke-width="8" stroke-linecap="round"/>
+      <!-- от передней оси вверх к седлу -->
+      <path d="M200,340 Q195,260 175,200" fill="none"
+            stroke="url(#metalFrame)" stroke-width="8" stroke-linecap="round"/>
+      <!-- от центра вверх к рулю -->
+      <line x1="200" y1="340" x2="155" y2="160"
+            stroke="url(#metalFrame)" stroke-width="7" stroke-linecap="round"/>
+      <!-- задняя вилка -->
+      <line x1="295" y1="340" x2="295" y2="305"
+            stroke="url(#metalFrame)" stroke-width="5" stroke-linecap="round"/>
+      <!-- седло -->
+      <path d="M145,198 Q175,190 205,198 Q200,208 175,210 Q150,208 145,198 Z"
+            fill="#3A2A1A"/>
+      <!-- руль -->
+      <path d="M130,160 Q155,150 155,160" fill="none"
+            stroke="url(#metalFrame)" stroke-width="7" stroke-linecap="round"/>
+      <path d="M155,160 Q165,152 170,158" fill="none"
+            stroke="url(#metalFrame)" stroke-width="6" stroke-linecap="round"/>
+      <!-- рога руля -->
+      <circle cx="130" cy="160" r="5" fill="#3A2A1A"/>
+      <circle cx="170" cy="158" r="5" fill="#3A2A1A"/>
+    </g>
+
+    <!-- БОЛЬШОЕ КОЛЕСО (переднее) -->
+    <g class="wheel-big">
+      <!-- обод -->
+      <circle cx="200" cy="340" r="125" fill="none"
+              stroke="url(#metalThin)" stroke-width="6"/>
+      <circle cx="200" cy="340" r="121" fill="none"
+              stroke="#444" stroke-width="1.5"/>
+      <!-- шина -->
+      <circle cx="200" cy="340" r="128" fill="none"
+              stroke="#222" stroke-width="8"/>
+      <!-- спицы (10 штук) -->
+      <g stroke="url(#metalThin)" stroke-width="1.8" stroke-linecap="round">
+        <line x1="200" y1="215" x2="200" y2="465"/>
+        <line x1="75"  y1="340" x2="325" y2="340"/>
+        <line x1="113" y1="253" x2="287" y2="427"/>
+        <line x1="287" y1="253" x2="113" y2="427"/>
+        <line x1="200" y1="215" x2="287" y2="253" transform="rotate(36 200 340)"/>
+        <line x1="200" y1="215" x2="287" y2="253" transform="rotate(72 200 340)"/>
+        <line x1="200" y1="215" x2="287" y2="253" transform="rotate(108 200 340)"/>
+        <line x1="200" y1="215" x2="287" y2="253" transform="rotate(144 200 340)"/>
+        <line x1="200" y1="215" x2="287" y2="253" transform="rotate(216 200 340)"/>
+        <line x1="200" y1="215" x2="287" y2="253" transform="rotate(252 200 340)"/>
+        <line x1="200" y1="215" x2="287" y2="253" transform="rotate(288 200 340)"/>
+        <line x1="200" y1="215" x2="287" y2="253" transform="rotate(324 200 340)"/>
+      </g>
+      <!-- ступица -->
+      <circle cx="200" cy="340" r="12" fill="#666"/>
+      <circle cx="200" cy="340" r="8"  fill="#999"/>
+      <circle cx="200" cy="340" r="3"  fill="#333"/>
+    </g>
+
+    <!-- МАЛЕНЬКОЕ КОЛЕСО (заднее) -->
+    <g class="wheel-small">
+      <circle cx="295" cy="340" r="40" fill="none"
+              stroke="url(#metalThin)" stroke-width="4"/>
+      <circle cx="295" cy="340" r="38" fill="none"
+              stroke="#444" stroke-width="1"/>
+      <circle cx="295" cy="340" r="42" fill="none"
+              stroke="#222" stroke-width="6"/>
+      <!-- спицы (8 штук) -->
+      <g stroke="url(#metalThin)" stroke-width="1.2" stroke-linecap="round">
+        <line x1="295" y1="300" x2="295" y2="380"/>
+        <line x1="255" y1="340" x2="335" y2="340"/>
+        <line x1="267" y1="312" x2="323" y2="368"/>
+        <line x1="323" y1="312" x2="267" y2="368"/>
+        <line x1="295" y1="300" x2="335" y2="340" transform="rotate(45 295 340)"/>
+        <line x1="295" y1="300" x2="335" y2="340" transform="rotate(135 295 340)"/>
+        <line x1="295" y1="300" x2="335" y2="340" transform="rotate(225 295 340)"/>
+        <line x1="295" y1="300" x2="335" y2="340" transform="rotate(315 295 340)"/>
+      </g>
+      <circle cx="295" cy="340" r="8" fill="#666"/>
+      <circle cx="295" cy="340" r="5" fill="#999"/>
+      <circle cx="295" cy="340" r="2" fill="#333"/>
+    </g>
+
+    <!-- ПЕДАЛИ -->
+    <g class="pedal-arm">
+      <!-- кривошип -->
+      <line x1="200" y1="340" x2="200" y2="310" stroke="#555" stroke-width="5" stroke-linecap="round"/>
+      <line x1="200" y1="340" x2="200" y2="370" stroke="#555" stroke-width="5" stroke-linecap="round"/>
+      <!-- педаль верхняя -->
+      <rect x="188" y="306" width="24" height="7" rx="2" fill="#333"/>
+      <!-- педаль нижняя -->
+      <rect x="188" y="367" width="24" height="7" rx="2" fill="#333"/>
+    </g>
+
+    <!-- ════════ ЛЯГУШКА ════════ -->
+    <g class="body-bounce">
+
+      <!-- НОГА ПРАВАЯ (задняя) -->
+      <g class="leg-right">
+        <ellipse cx="200" cy="375" rx="11" ry="20" fill="url(#frogBody)" transform="rotate(0 200 340)"/>
+        <!-- стопа на педали -->
+        <ellipse cx="200" cy="370" rx="14" ry="7" fill="#5BA13A"/>
+      </g>
+
+      <!-- НОГА ЛЕВАЯ (передняя) -->
+      <g class="leg-left">
+        <ellipse cx="200" cy="375" rx="11" ry="20" fill="url(#frogBody)" transform="rotate(0 200 340)"/>
+        <!-- стопа -->
+        <ellipse cx="200" cy="370" rx="14" ry="7" fill="#4A8A2A"/>
+      </g>
+
+      <!-- ТЕЛО -->
+      <ellipse cx="180" cy="230" rx="55" ry="48" fill="url(#frogBody)"/>
+      <!-- брюшко -->
+      <ellipse cx="175" cy="245" rx="35" ry="30" fill="url(#frogBelly)"/>
+      <!-- пятнышки на спине -->
+      <circle cx="215" cy="205" r="5" fill="#4A8A2A" opacity=".6"/>
+      <circle cx="225" cy="225" r="4" fill="#4A8A2A" opacity=".6"/>
+      <circle cx="208" cy="250" r="3" fill="#4A8A2A" opacity=".5"/>
+
+      <!-- РУКА ЛЕВАЯ -->
+      <g class="arm-left">
+        <ellipse cx="155" cy="180" rx="8" ry="22 fill="url(#frogBody)" transform="rotate(-30 168 215)"/>
+        <!-- кисть -->
+        <circle cx="140" cy="168" r="7" fill="#6FBF3A"/>
+      </g>
+
+      <!-- РУКА ПРАВАЯ -->
+      <g class="arm-right">
+        <ellipse cx="205" cy="180" rx="8" ry="22" fill="url(#frogBody)" transform="rotate(30 232 215)"/>
+        <circle cx="220" cy="168" r="7" fill="#6FBF3A"/>
+      </g>
+
+      <!-- ГОЛОВА -->
+      <ellipse cx="170" cy="130" rx="62" ry="52" fill="url(#frogBody)"/>
+      <!-- щёки -->
+      <ellipse cx="140" cy="145" rx="15" ry="10" fill="#A8E045" opacity=".7"/>
+      <ellipse cx="200" cy="145" rx="15" ry="10" fill="#A8E045" opacity=".7"/>
+
+      <!-- ГЛАЗ ЛЕВЫЙ -->
+      <g>
+        <!-- глазное яблоко (выпуклое) -->
+        <circle cx="140" cy="78" r="28" fill="url(#frogBody)"/>
+        <circle cx="140" cy="78" r="24" fill="url(#eyeWhite)"/>
+        <circle cx="137" cy="75" r="14" fill="url(#eyeBall)"/>
+        <!-- блик -->
+        <ellipse cx="133" cy="71" rx="4" ry="5" fill="#fff" opacity=".85"/>
+        <circle cx="145" cy="82" r="2" fill="#fff" opacity=".5"/>
+        <!-- веко (для моргания) -->
+        <ellipse class="eyelid-left" cx="140" cy="78" rx="25" ry="24"
+                 fill="url(#frogBody)" style="transform: scaleY(0);"/>
+      </g>
+
+      <!-- ГЛАЗ ПРАВЫЙ -->
+      <g>
+        <circle cx="205" cy="78" r="28" fill="url(#frogBody)"/>
+        <circle cx="205" cy="78" r="24" fill="url(#eyeWhite)"/>
+        <circle cx="208" cy="75" r="14" fill="url(#eyeBall)"/>
+        <ellipse cx="212" cy="71" rx="4" ry="5" fill="#fff" opacity=".85"/>
+        <circle cx="200" cy="82" r="2" fill="#fff" opacity=".5"/>
+        <ellipse class="eyelid-right" cx="205" cy="78" rx="25" ry="24"
+                 fill="url(#frogBody)" style="transform: scaleY(0);"/>
+      </g>
+
+      <!-- НОЗДРИ -->
+      <ellipse cx="158" cy="138" rx="2.5" ry="2" fill="#3A6A1A"/>
+      <ellipse cx="185" cy="138" rx="2.5" ry="2" fill="#3A6A1A"/>
+
+      <!-- УЛЫБКА -->
+      <path d="M138,152 Q170,172 200,152" fill="none"
+            stroke="#2A5A1A" stroke-width="3" stroke-linecap="round"/>
+      <!-- язык (чуть виден) -->
+      <path d="M165,162 Q170,168 175,162" fill="#FF6B6B" opacity=".7"/>
+
+      <!-- РОТ (боковая линия) -->
+      <path d="M130,148 Q140,155 148,152" fill="none"
+            stroke="#2A5A1A" stroke-width="2" stroke-linecap="round"/>
+      <path d="M192,152 Q200,155 210,148" fill="none"
+            stroke="#2A5A1A" stroke-width="2" stroke-linecap="round"/>
+
+    </g>
+  </svg>
+</div>
+
+</body>
+</html>

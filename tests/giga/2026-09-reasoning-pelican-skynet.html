@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Пеликан Скайнета · Постапокалипсис</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a0a0a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+    }
+
+    .container {
+      filter: drop-shadow(0 0 30px #c0392b);
+      border: 2px solid #c0392b;
+      border-radius: 8px;
+      background: #0d0d0d;
+    }
+
+    /* ----- CSS Keyframes ----- */
+    @keyframes wheelSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes legSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes bgBack {
+      from { transform: translateX(0); }
+      to { transform: translateX(-1000px); }
+    }
+
+    @keyframes bgMid {
+      from { transform: translateX(0); }
+      to { transform: translateX(-1000px); }
+    }
+
+    @keyframes bgFront {
+      from { transform: translateX(0); }
+      to { transform: translateX(-1000px); }
+    }
+
+    @keyframes smokeMove {
+      0% { transform: translate(0, 0) opacity(0.7); }
+      100% { transform: translate(-200px, -50px) opacity(0); }
+    }
+
+    @keyframes droneHover {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-15px, -10px); }
+    }
+
+    @keyframes neonFlash {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes bodyBob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(3px); }
+    }
+
+    @keyframes eyeGlow {
+      0%, 100% { filter: drop-shadow(0 0 4px #c0392b); }
+      50% { filter: drop-shadow(0 0 18px #ff0000); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <svg width="1000" height="500" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+      <!-- =================== ФОН (3 слоя) =================== -->
+      <!-- Задний слой: руины, небо -->
+      <g class="bg-back" style="animation: bgBack 20s linear infinite; transform-origin: 0 0;">
+        <!-- Небо -->
+        <rect x="0" y="0" width="2000" height="500" fill="url(#skyGrad)"/>
+        <!-- Дым / смог -->
+        <circle cx="300" cy="150" r="120" fill="#332211" opacity="0.5" />
+        <circle cx="800" cy="200" r="150" fill="#221100" opacity="0.4" />
+        <circle cx="1300" cy="100" r="100" fill="#110000" opacity="0.5" />
+        <!-- Разрушенные башни -->
+        <path d="M150,500 L150,300 L170,280 L170,400 L190,380 L190,450 L210,430 L210,500 Z" fill="#333" stroke="#555" stroke-width="2"/>
+        <path d="M400,500 L400,250 L430,230 L430,480 Z" fill="#444" stroke="#666" stroke-width="2"/>
+        <path d="M700,500 L700,200 L740,180 L740,450 Z" fill="#333" stroke="#555" stroke-width="2"/>
+        <path d="M1000,500 L1000,280 L1030,260 L1030,470 Z" fill="#444" stroke="#666" stroke-width="2"/>
+        <path d="M1300,500 L1300,220 L1340,200 L1340,460 Z" fill="#333" stroke="#555" stroke-width="2"/>
+        <!-- Красные неоновые вывески -->
+        <line x1="160" y1="250" x2="200" y2="230" stroke="#c0392b" stroke-width="3" stroke-dasharray="4,6" opacity="0.7"/>
+        <line x1="410" y1="200" x2="460" y2="180" stroke="#c0392b" stroke-width="3" stroke-dasharray="4,6" opacity="0.7"/>
+        <line x1="720" y1="150" x2="780" y2="130" stroke="#c0392b" stroke-width="3" stroke-dasharray="4,6" opacity="0.7"/>
+      </g>
+
+      <!-- Средний слой: дорога, трещины, провода -->
+      <g class="bg-mid" style="animation: bgMid 10s linear infinite; transform-origin: 0 0;">
+        <!-- Дорога -->
+        <rect x="0" y="420" width="2000" height="120" fill="#2b2b2b"/>
+        <!-- Трещины -->
+        <path d="M0,480 L50,490 L100,470 L150,485 L200,460 L250,490 L300,470 L350,490 L400,465 L450,485 L500,470 L550,490 L600,470 L650,485 L700,460 L750,490 L800,470 L850,485 L900,465 L950,490 L1000,470 L1050,490 L1100,470 L1150,485 L1200,460 L1250,490 L1300,470 L1350,490 L1400,465 L1450,485 L1500,470 L1550,490 L1600,470 L1650,485 L1700,460 L1750,490 L1800,470 L1850,485 L1900,465 L1950,490 L2000,470 Z" fill="none" stroke="#554433" stroke-width="2" opacity="0.8"/>
+        <!-- Белые разделительные полосы -->
+        <rect x="0" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="100" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="200" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="300" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="400" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="500" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="600" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="700" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="800" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="900" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="1000" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="1100" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="1200" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="1300" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="1400" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="1500" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="1600" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="1700" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="1800" y="490" width="40" height="4" fill="#ddd"/>
+        <rect x="1900" y="490" width="40" height="4" fill="#ddd"/>
+        <!-- Провода -->
+        <line x1="0" y1="380" x2="2000" y2="370" stroke="#554433" stroke-width="2" stroke-dasharray="6,10" opacity="0.7"/>
+        <line x1="0" y1="390" x2="2000" y2="380" stroke="#554433" stroke-width="2" stroke-dasharray="6,10" opacity="0.7"/>
+      </g>
+
+      <!-- Передний слой: трещины, неон, дрон -->
+      <g class="bg-front" style="animation: bgFront 5s linear infinite; transform-origin: 0 0;">
+        <!-- Дрон (парит) -->
+        <g style="animation: droneHover 3s ease-in-out infinite; transform-origin: 500px 200px;">
+          <rect x="620" y="150" width="30" height="12" fill="#333" rx="3" stroke="#555" stroke-width="2"/>
+          <rect x="635" y="140" width="10" height="20" fill="#444" rx="2"/>
+          <circle cx="650" cy="155" r="4" fill="#c0392b"/>
+          <line x1="620" y1="162" x2="600" y2="170" stroke="#555" stroke-width="2"/>
+          <line x1="650" y1="162" x2="670" y2="170" stroke="#555" stroke-width="2"/>
+        </g>
+        <!-- Неоновая линия (передняя) -->
+        <line x1="0" y1="440" x2="2000" y2="440" stroke="#ff0000" stroke-width="3" opacity="0.6" style="animation: neonFlash 2s infinite;"/>
+        <!-- Текст SKYNET (мерцает) -->
+        <text x="900" y="60" font-family="'Courier New', monospace" font-size="22" fill="#c0392b" font-weight="bold" opacity="0.8" style="animation: neonFlash 1.5s infinite alternate;">
+          SKYNET
+        </text>
+        <!-- Дым (отдельный, движется быстро) -->
+        <g style="animation: smokeMove 8s linear infinite;">
+          <circle cx="1200" cy="300" r="60" fill="#332211" opacity="0.5"/>
+          <circle cx="1350" cy="280" r="40" fill="#221100" opacity="0.4"/>
+        </g>
+      </g>
+
+      <!-- =================== ВЕЛОСИПЕД + ПЕЛИКАН (передний план) =================== -->
+      <!-- Велосипедная рама -->
+      <g id="bike">
+        <!-- Руль -->
+        <path d="M300,380 Q340,340 360,360" fill="none" stroke="#555" stroke-width="6" stroke-linecap="round"/>
+        <!-- Верхняя труба -->
+        <path d="M360,360 Q440,340 500,380" fill="none" stroke="#555" stroke-width="8" stroke-linecap="round"/>
+        <!-- Нижняя труба -->
+        <path d="M360,380 Q460,420 500,420" fill="none" stroke="#555" stroke-width="8" stroke-linecap="round"/>
+        <!-- Седло -->
+        <path d="M480,390 Q500,380 520,390 Q510,400 490,410" fill="#444" stroke="#666" stroke-width="2"/>
+        <!-- Подседельная труба -->
+        <path d="M500,420 Q500,440 500,460" fill="none" stroke="#555" stroke-width="6" stroke-linecap="round"/>
+      </g>
+
+      <!-- Колёса -->
+      <g id="wheels">
+        <!-- Переднее колесо -->
+        <g class="wheel-front" style="animation: wheelSpin 1s linear infinite; transform-origin: 300px 400px;">
+          <circle cx="300" cy="400" r="80" fill="none" stroke="#3a3a3a" stroke-width="8"/>
+          <circle cx="300" cy="400" r="60" fill="none" stroke="#555" stroke-width="3"/>
+          <!-- Радиальные спицы (8) -->
+          <line cx="300" cy="400" x1="300" y1="320" x2="300" y2="400" stroke="#555" stroke-width="2"/>
+          <line cx="300" cy="400" x1="300" y1="400" x2="300" y2="480" stroke="#555" stroke-width="2"/>
+          <line cx="300" cy="400" x1="360" y1="360" x2="300" y2="400" stroke="#555" stroke-width="2"/>
+          <line cx="300" cy="400" x1="240" y1="360" x2="300" y2="400" stroke="#555" stroke-width="2"/>
+          <line cx="300" cy="400" x1="360" y1="440" x2="300" y2="400" stroke="#555" stroke-width="2"/>
+          <line cx="300" cy="400" x1="240" y1="440" x2="300" y2="400" stroke="#555" stroke-width="2"/>
+          <line cx="300" cy="400" x1="380" y1="400" x2="300" y2="400" stroke="#555" stroke-width="2"/>
+          <line cx="300" cy="400" x1="220" y1="400" x2="300" y2="400" stroke="#555" stroke-width="2"/>
+          <!-- Обод / шина -->
+          <circle cx="300" cy="400" r="84" fill="none" stroke="#2a2a2a" stroke-width="4"/>
+        </g>
+
+        <!-- Заднее колесо -->
+        <g class="wheel-rear" style="animation: wheelSpin 1s linear infinite; transform-origin: 700px 400px;">
+          <circle cx="700" cy="400" r="80" fill="none" stroke="#3a3a3a" stroke-width="8"/>
+          <circle cx="700" cy="400" r="60" fill="none" stroke="#555" stroke-width="3"/>
+          <line cx="700" cy="400" x1="700" y1="320" x2="700" y2="400" stroke="#555" stroke-width="2"/>
+          <line cx="700" cy="400" x1="700" y1="400" x2="700" y2="480" stroke="#555" stroke-width="2"/>
+          <line cx="700" cy="400" x1="760" y1="360" x2="700" y2="400" stroke="#555" stroke-width="2"/>
+          <line cx="700" cy="400" x1="640" y1="360" x2="700" y2="400" stroke="#555" stroke-width="2"/>
+          <line cx="700" cy="400" x1="760" y1="440" x2="700" y2="400" stroke="#555" stroke-width="2"/>
+          <line cx="700" cy="400" x1="640" y1="440" x2="700" y2="400" stroke="#555" stroke-width="2"/>
+          <line cx="700" cy="400" x1="780" y1="400" x2="700" y2="400" stroke="#555" stroke-width="2"/>
+          <line cx="700" cy="400" x1="620" y1="400" x2="700" y2="400" stroke="#555" stroke-width="2"/>
+          <circle cx="700" cy="400" r="84" fill="none" stroke="#2a2a2a" stroke-width="4"/>
+        </g>
+      </g>
+
+      <!-- Педальный узел + ноги -->
+      <!-- Правая нога (с педалью) -->
+      <g class="right-leg" style="animation: legSpin 1.8s linear infinite; transform-origin: 500px 420px;">
+        <!-- Шатун -->
+        <line x1="500" y1="420" x2="570" y2="380" stroke="#4a3a2a" stroke-width="8" stroke-linecap="round"/>
+        <!-- Педаль (овал) -->
+        <ellipse cx="570" cy="380" rx="12" ry="6" fill="#554433" stroke="#776655" stroke-width="2"/>
+        <!-- Стопа (лапа) -->
+        <ellipse cx="570" cy="375" rx="10" ry="5" fill="#ffe082" stroke="#d32f2f" stroke-width="2"/>
+        <ellipse cx="578" cy="372" rx="3" ry="3" fill="#d32f2f"/>
+        <ellipse cx="562" cy="372" rx="3" ry="3" fill="#d32f2f"/>
+        <ellipse cx="570" cy="378" rx="3" ry="3" fill="#d32f2f"/>
+      </g>
+
+      <!-- Левая нога (с педалью) -->
+      <g class="left-leg" style="animation: legSpin 1.8s linear infinite 0.9s; transform-origin: 500px 420px;">
+        <line x1="500" y1="420" x2="430" y2="460" stroke="#4a3a2a" stroke-width="8" stroke-linecap="round"/>
+        <ellipse cx="430" cy="460" rx="12" ry="6" fill="#554433" stroke="#776655" stroke-width="2"/>
+        <ellipse cx="430" cy="455" rx="10" ry="5" fill="#ffe082" stroke="#d32f2f" stroke-width="2"/>
+        <ellipse cx="438" cy="452" rx="3" ry="3" fill="#d32f2f"/>
+        <ellipse cx="422" cy="452" rx="3" ry="3" fill="#d32f2f"/>
+        <ellipse cx="430" cy="458" rx="3" ry="3" fill="#d32f2f"/>
+      </g>
+
+      <!-- Пеликан -->
+      <g id="pelican" style="animation: bodyBob 1.2s ease-in-out infinite;">
+        <!-- Зоб (большой) -->
+        <ellipse cx="520" cy="355" rx="35" ry="20" fill="#ffe0b3" stroke="#d32f2f" stroke-width="3" rx="35" ry="20"/>
+        <!-- Морщины зоба -->
+        <path d="M515,360 Q525,368 530,360" fill="none" stroke="#d32f2f" stroke-width="2" opacity="0.6"/>
+        <path d="M508,358 Q520,350 532,358" fill="none" stroke="#d32f2f" stroke-width="2" opacity="0.6"/>
+        <!-- Тело -->
+        <ellipse cx="500" cy="360" rx="75" ry="45" fill="#fff9c4" stroke="#d32f2f" stroke-width="4"/>
+        <!-- Крыло (левое) -->
+        <path d="M440,360 Q420,340 410,370 Q430,380 440,360" fill="#ffe0b3" stroke="#d32f2f" stroke-width="3" stroke-linejoin="round"/>
+        <!-- Голова -->
+        <circle cx="550" cy="330" r="24" fill="#fff9c4" stroke="#d32f2f" stroke-width="4"/>
+        <!-- Клюв -->
+        <polygon points="550,330 588,342 550,354" fill="#d32f2f" stroke="#553322" stroke-width="2"/>
+        <!-- Гребень (3 острия) -->
+        <polygon points="540,315 548,305 552,318" fill="#d32f2f"/>
+        <polygon points="555,310 562,302 568,314" fill="#d32f2f"/>
+        <polygon points="570,318 576,308 582,320" fill="#d32f2f"/>
+        <!-- Глаза (красные, Скайнет) -->
+        <circle cx="562" cy="324" r="6" fill="#c0392b" stroke="#ff0000" stroke-width="2"/>
+        <circle cx="562" cy="324" r="2" fill="#ff0000"/>
+        <circle cx="578" cy="320" r="5" fill="#c0392b" stroke="#ff0000" stroke-width="2"/>
+        <circle cx="578" cy="320" r="1.5" fill="#ff0000"/>
+        <!-- Второй глаз (кибернетический зрачок) -->
+        <circle cx="562" cy="336" r="3" fill="#000" opacity="0.5"/>
+        <!-- Ноздря -->
+        <circle cx="558" cy="338" r="3" fill="#333"/>
+      </g>
+
+      <!-- Дополнительные детали: цепь (пунктир) -->
+      <path d="M500,420 Q550,440 600,420" fill="none" stroke="#554433" stroke-width="3" stroke-dasharray="5,8" opacity="0.7"/>
+
+      <!-- Определения градиентов -->
+      <defs>
+        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#1a1a0a"/>
+          <stop offset="100%" stop-color="#332211"/>
+        </linearGradient>
+        <!-- Ржавый паттерн (шум) -->
+        <filter id="rustNoise" x="0" y="0" width="200%" height="200%">
+          <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="2" result="turbulence"/>
+          <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="20" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+      </defs>
+    </svg>
+  </div>
+</body>
+</html>

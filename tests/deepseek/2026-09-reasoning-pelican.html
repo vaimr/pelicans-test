@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Пеликан на велосипеде</title>
+<style>
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: radial-gradient(circle at 50% 30%, #1b3550, #0a1420 70%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  svg {
+    width: min(100vw, 1100px);
+    height: auto;
+    display: block;
+    border-radius: 14px;
+    box-shadow: 0 30px 70px rgba(0,0,0,.55);
+  }
+
+  /* ============ ВРАЩЕНИЕ КОЛЁС И ШАТУНОВ ============ */
+  .wheel {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: spin 0.6s linear infinite;
+  }
+  .crank {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: spin 1.1s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  /* ============ НОГИ (двухзвенная IK-анимация) ============ */
+  .thigh, .shin {
+    transform-box: fill-box;
+    transform-origin: 0 0;
+    animation: thigh-kf 1.1s linear infinite;
+  }
+  .shin { animation-name: shin-kf; }
+  .far  { animation-delay: -0.55s; }
+
+  @keyframes thigh-kf {
+    0%    { transform: translate(350px,272px) rotate(16.1deg); }
+    12.5% { transform: translate(350px,272px) rotate(40.2deg); }
+    25%   { transform: translate(350px,272px) rotate(59.8deg); }
+    37.5% { transform: translate(350px,272px) rotate(67.6deg); }
+    50%   { transform: translate(350px,272px) rotate(65.3deg); }
+    62.5% { transform: translate(350px,272px) rotate(52.0deg); }
+    75%   { transform: translate(350px,272px) rotate(18.7deg); }
+    87.5% { transform: translate(350px,272px) rotate(0.8deg); }
+    100%  { transform: translate(350px,272px) rotate(16.1deg); }
+  }
+  @keyframes shin-kf {
+    0%    { transform: translate(417.3px,291.4px) rotate(114.7deg); }
+    12.5% { transform: translate(403.5px,317.2px) rotate(112.4deg); }
+    25%   { transform: translate(385.2px,332.5px) rotate(120.2deg); }
+    37.5% { transform: translate(376.7px,336.7px) rotate(139.8deg); }
+    50%   { transform: translate(379.3px,335.6px) rotate(163.9deg); }
+    62.5% { transform: translate(393.1px,327.2px) rotate(179.3deg); }
+    75%   { transform: translate(416.3px,294.4px) rotate(161.2deg); }
+    87.5% { transform: translate(420.0px,273.0px) rotate(128.0deg); }
+    100%  { transform: translate(417.3px,291.4px) rotate(114.7deg); }
+  }
+
+  /* ============ ФОН ============ */
+  .clouds      { animation: drift900 24s linear infinite; }
+  .hills-back  { animation: drift450 9s  linear infinite; }
+  .hills-front { animation: drift450 5s  linear infinite; }
+  .ground-deco { animation: drift150 0.4s linear infinite; }
+
+  @keyframes drift900 { from { transform: translateX(0); }     to { transform: translateX(-900px); } }
+  @keyframes drift450 { from { transform: translateX(0); }     to { transform: translateX(-450px); } }
+  @keyframes drift150 { from { transform: translateX(0); }     to { transform: translateX(-150px); } }
+</style>
+</head>
+<body>
+
+<svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg"
+     aria-label="Мультяшный пеликан едет на велосипеде">
+
+  <defs>
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#9fd8ff"/>
+      <stop offset="100%" stop-color="#eaf8ff"/>
+    </linearGradient>
+
+    <linearGradient id="groundGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#93de6d"/>
+      <stop offset="100%" stop-color="#4aa64c"/>
+    </linearGradient>
+
+    <radialGradient id="sunGrad">
+      <stop offset="0%"   stop-color="#fffef2"/>
+      <stop offset="65%"  stop-color="#ffe891"/>
+      <stop offset="100%" stop-color="#ffd24a"/>
+    </radialGradient>
+
+    <g id="cloudSet">
+      <ellipse cx="130" cy="96"  rx="64" ry="27"/>
+      <ellipse cx="180" cy="78"  rx="46" ry="31"/>
+      <ellipse cx="80"  cy="84"  rx="42" ry="25"/>
+      <ellipse cx="490" cy="62"  rx="54" ry="23"/>
+      <ellipse cx="532" cy="48"  rx="38" ry="27"/>
+      <ellipse cx="720" cy="118" rx="58" ry="25"/>
+      <ellipse cx="768" cy="100" rx="42" ry="29"/>
+    </g>
+  </defs>
+
+  <!-- ================= ФОН ================= -->
+  <rect width="900" height="520" fill="url(#skyGrad)"/>
+  <circle cx="770" cy="86" r="48" fill="url(#sunGrad)"/>
+
+  <!-- облака -->
+  <g class="clouds" fill="#ffffff" opacity="0.95">
+    <use href="#cloudSet"/>
+    <use href="#cloudSet" x="900"/>
+  </g>
+
+  <!-- дальние холмы -->
+  <g class="hills-back" fill="#b8e79c">
+    <ellipse cx="-220" cy="442" rx="245" ry="132"/>
+    <ellipse cx="230"  cy="442" rx="245" ry="132"/>
+    <ellipse cx="680"  cy="442" rx="245" ry="132"/>
+    <ellipse cx="1130" cy="442" rx="245" ry="132"/>
+    <ellipse cx="1580" cy="442" rx="245" ry="132"/>
+  </g>
+
+  <!-- ближние холмы -->
+  <g class="hills-front" fill="#8ed46c">
+    <ellipse cx="-450" cy="470" rx="255" ry="112"/>
+    <ellipse cx="0"    cy="470" rx="255" ry="112"/>
+    <ellipse cx="450"  cy="470" rx="255" ry="112"/>
+    <ellipse cx="900"  cy="470" rx="255" ry="112"/>
+    <ellipse cx="1350" cy="470" rx="255" ry="112"/>
+  </g>
+
+  <!-- земля -->
+  <rect x="0" y="420" width="900" height="100" fill="url(#groundGrad)"/>
+  <ellipse cx="395" cy="424" rx="185" ry="14" fill="#000000" opacity="0.13"/>
+
+  <!-- разметка на земле (бесконечный скролл) -->
+  <g class="ground-deco" fill="#ffffff" opacity="0.22">
+    <rect x="-150" y="452" width="74" height="9" rx="4.5"/>
+    <rect x="0"    y="452" width="74" height="9" rx="4.5"/>
+    <rect x="150"  y="452" width="74" height="9" rx="4.5"/>
+    <rect x="300"  y="452" width="74" height="9" rx="4.5"/>
+    <rect x="450"  y="452" width="74" height="9" rx="4.5"/>
+    <rect x="600"  y="452" width="74" height="9" rx="4.5"/>
+    <rect x="750"  y="452" width="74" height="9" rx="4.5"/>
+    <rect x="900"  y="452" width="74" height="9" rx="4.5"/>
+    <rect x="1050" y="452" width="74" height="9" rx="4.5"/>
+
+    <rect x="-75"  y="488" width="52" height="7" rx="3.5"/>
+    <rect x="75"   y="488" width="52" height="7" rx="3.5"/>
+    <rect x="225"  y="488" width="52" height="7" rx="3.5"/>
+    <rect x="375"  y="488" width="52" height="7" rx="3.5"/>
+    <rect x="525"  y="488" width="52" height="7" rx="3.5"/>
+    <rect x="675"  y="488" width="52" height="7" rx="3.5"/>
+    <rect x="825"  y="488" width="52" height="7" rx="3.5"/>
+    <rect x="975"  y="488" width="52" height="7" rx="3.5"/>
+    <rect x="1125" y="488" width="52" height="7" rx="3.5"/>
+  </g>
+
+  <!-- ================= ДАЛЬНЯЯ НОГА ================= -->
+  <line class="thigh far" x1="0" y1="0" x2="70" y2="0"
+        stroke="#cf8f00" stroke-width="17" stroke-linecap="round"/>
+  <line class="shin far"  x1="0" y1="0" x2="70" y2="0"
+        stroke="#cf8f00" stroke-width="14" stroke-linecap="round"/>
+
+  <!-- ================= ЗАДНЕЕ КОЛЕСО ================= -->
+  <g class="wheel">
+    <circle cx="270" cy="360" r="60" fill="none" stroke="#2f3640" stroke-width="10"/>
+    <circle cx="270" cy="360" r="51" fill="none" stroke="#b9c4cf" stroke-width="3"/>
+    <g stroke="#c8d3de" stroke-width="2.4" stroke-linecap="round">
+      <line x1="270" y1="360" x2="321.0" y2="360.0"/>
+      <line x1="270" y1="360" x2="314.2" y2="385.5"/>
+      <line x1="270" y1="360" x2="295.5" y2="404.2"/>
+      <line x1="270" y1="360" x2="270.0" y2="411.0"/>
+      <line x1="270" y1="360" x2="244.5" y2="404.2"/>
+      <line x1="270" y1="360" x2="225.8" y2="385.5"/>
+      <line x1="270" y1="360" x2="219.0" y2="360.0"/>
+      <line x1="270" y1="360" x2="225.8" y2="334.5"/>
+      <line x1="270" y1="360" x2="244.5" y2="315.8"/>
+      <line x1="270" y1="360" x2="270.0" y2="309.0"/>
+      <line x1="270" y1="360" x2="295.5" y2="315.8"/>
+      <line x1="270" y1="360" x2="314.2" y2="334.5"/>
+    </g>
+    <circle cx="270" cy="360" r="8" fill="#2f3640"/>
+  </g>
+
+  <!-- ================= ПЕРЕДНЕЕ КОЛЕСО ================= -->
+  <g class="wheel">
+    <circle cx="520" cy="360" r="60" fill="none" stroke="#2f3640" stroke-width="10"/>
+    <circle cx="520" cy="360" r="51" fill="none" stroke="#b9c4cf" stroke-width="3"/>
+    <g stroke="#c8d3de" stroke-width="2.4" stroke-linecap="round">
+      <line x1="520" y1="360" x2="571.0" y2="360.0"/>
+      <line x1="520" y1="360" x2="564.2" y2="385.5"/>
+      <line x1="520" y1="360" x2="545.5" y2="404.2"/>
+      <line x1="520" y1="360" x2="520.0" y2="411.0"/>
+      <line x1="520" y1="360" x2="494.5" y2="404.2"/>
+      <line x1="520" y1="360" x2="475.8" y2="385.5"/>
+      <line x1="520" y1="360" x2="469.0" y2="360.0"/>
+      <line x1="520" y1="360" x2="475.8" y2="334.5"/>
+      <line x1="520" y1="360" x2="494.5" y2="315.8"/>
+      <line x1="520" y1="360" x2="520.0" y2="309.0"/>
+      <line x1="520" y1="360" x2="545.5" y2="315.8"/>
+      <line x1="520" y1="360" x2="564.2" y2="334.5"/>
+    </g>
+    <circle cx="520" cy="360" r="8" fill="#2f3640"/>
+  </g>
+
+  <!-- ================= РАМА ================= -->
+  <g fill="none" stroke="#e63946" stroke-width="9" stroke-linecap="round">
+    <path d="M270,360 L350,355"/>          <!-- нижнее перо -->
+    <path d="M270,360 L350,278"/>          <!-- верхнее перо -->
+    <path d="M350,355 L350,278"/>          <!-- подседельная труба -->
+    <path d="M350,355 L472,286"/>          <!-- нижняя труба -->
+    <path d="M350,278 L452,248"/>          <!-- верхняя труба -->
+    <path d="M452,248 L472,286"/>          <!-- рулевой стакан -->
+    <path d="M472,286 L520,360"/>          <!-- вилка -->
+  </g>
+
+  <!-- руль -->
+  <path d="M452,248 C462,228 478,224 498,234"
+        fill="none" stroke="#2f3640" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- седло -->
+  <ellipse cx="348" cy="274" rx="32" ry="10" fill="#2f3640"/>
+
+  <!-- ================= ШАТУНЫ И ПЕДАЛИ ================= -->
+  <g class="crank">
+    <line x1="350" y1="355" x2="388" y2="355" stroke="#2f3640" stroke-width="9" stroke-linecap="round"/>
+    <line x1="350" y1="355" x2="312" y2="355" stroke="#2f3640" stroke-width="9" stroke-linecap="round"/>
+    <circle cx="388" cy="355" r="9" fill="#5c6b7a" stroke="#2f3640" stroke-width="3"/>
+    <circle cx="312" cy="355" r="9" fill="#5c6b7a" stroke="#2f3640" stroke-width="3"/>
+    <circle cx="350" cy="355" r="6" fill="#2f3640"/>
+  </g>
+
+  <!-- ================= БЛИЖНЯЯ НОГА ================= -->
+  <line class="thigh" x1="0" y1="0" x2="70" y2="0"
+        stroke="#ffb703" stroke-width="17" stroke-linecap="round"/>
+  <line class="shin"  x1="0" y1="0" x2="70" y2="0"
+        stroke="#ffb703" stroke-width="14" stroke-linecap="round"/>
+
+  <!-- ================= ПЕЛИКАН ================= -->
+  <!-- тело -->
+  <ellipse cx="345" cy="215" rx="68" ry="56"
+           fill="#fffdf0" stroke="#e8dba6" stroke-width="3"/>
+
+  <!-- шея -->
+  <path d="M372,184 C392,140 408,124 430,119"
+        fill="none" stroke="#fffdf0" stroke-width="46" stroke-linecap="round"/>
+
+  <!-- голова -->
+  <circle cx="440" cy="118" r="33" fill="#fffdf0"/>
+
+  <!-- хохолок -->
+  <path d="M416,92 C407,72 412,58 428,54 C421,70 424,82 434,92 Z"
+        fill="#fffdf0"/>
+
+  <!-- верхняя половина клюва -->
+  <path d="M462,96 Q530,98 588,114 Q530,122 462,122 Z"
+        fill="#f4a261" stroke="#dd8a3c" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- большой зоб -->
+  <path d="M462,122 Q530,122 588,114
+           C582,176 548,220 506,214
+           C470,208 454,164 462,122 Z"
+        fill="#ffd166" stroke="#e8a33d" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- блик на зобе -->
+  <path d="M486,140 C492,166 500,188 516,200"
+        fill="none" stroke="#fff0c2" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
+
+  <!-- глаз -->
+  <circle cx="450" cy="104" r="7" fill="#2f3640"/>
+  <circle cx="452.5" cy="101.5" r="2.4" fill="#ffffff"/>
+
+  <!-- крыло, держащее руль -->
+  <path d="M358,178 C420,168 466,196 496,234
+           C472,252 424,250 396,236
+           C368,222 348,200 358,178 Z"
+        fill="#f7ecae" stroke="#e8dba6" stroke-width="3" stroke-linejoin="round"/>
+
+</svg>
+
+</body>
+</html>

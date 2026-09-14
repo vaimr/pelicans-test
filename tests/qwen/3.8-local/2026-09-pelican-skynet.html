@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ПОСЛЕДНИЙ ПЕЛИКАН — Пустошь Скайнет</title>
+<style>
+  :root{
+    --t-crank: 1.15s;   /* педальный цикл = кривошип */
+    --t-wheel: .62s;    /* вращение колёс */
+    --display: Impact, Haettenschweiler, "Franklin Gothic Bold", "Arial Black", sans-serif;
+    --mono: "Cascadia Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:#140e14;overflow:hidden}
+  .stage{position:fixed;inset:0}
+  .stage svg{width:100%;height:100%;display:block}
+
+  /* ============ SVG-анимации ============ */
+  @keyframes spinK   { to{ transform: rotate(360deg);  } }
+  @keyframes spinRK  { to{ transform: rotate(-360deg); } }
+  @keyframes scrollK { to{ transform: translateX(-1200px); } }
+  @keyframes flyK    { to{ transform: translateX(1660px); } }
+
+  /* ноги: ключи стоят на углах кривошипа 0/90/180/270 => linear совпадает с колесом */
+  @keyframes thighK{
+    0%  { transform: rotate(15.6deg);  }
+    25% { transform: rotate(47.8deg);  }
+    50% { transform: rotate(52.1deg);  }
+    75% { transform: rotate(-24.3deg); }
+    100%{ transform: rotate(15.6deg);  }
+  }
+  @keyframes shinK{
+    0%  { transform: rotate(99.5deg);  }
+    25% { transform: rotate(75.5deg);  }
+    50% { transform: rotate(109.3deg); }
+    75% { transform: rotate(148.2deg); }
+    100%{ transform: rotate(99.5deg);  }
+  }
+  .wheel,.crankSpin,.pedal,.thigh,.shin{transform-box:fill-box;transform-origin:center}
+  .wheel    { animation: spinK var(--t-wheel) linear infinite; will-change: transform; }
+  .crankSpin{ animation: spinK var(--t-crank) linear infinite; }
+  .pedal    { animation: spinRK var(--t-crank) linear infinite; }
+  .thigh    { animation: thighK var(--t-crank) linear infinite; }
+  .shin     { animation: shinK  var(--t-crank) linear infinite; }
+  .far      { animation-delay: calc(var(--t-crank) / -2); }
+
+  /* риг: покачивание корпуса от шага */
+  @keyframes bobK   { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-4px);} }
+  @keyframes shadK  { 0%,100%{ transform: scale(1,1);} 50%{ transform: scale(.94,.85);} }
+  .rigBob  { animation: bobK calc(var(--t-crank)/2) ease-in-out infinite; }
+  .shadowP { transform-box:fill-box;transform-origin:center; animation: shadK calc(var(--t-crank)/2) ease-in-out infinite; }
+
+  /* живость пеликана */
+  @keyframes bodyK  { 0%,100%{ transform: rotate(-1.3deg);} 50%{ transform: rotate(1.3deg);} }
+  @keyframes headK  { 0%,100%{ transform: rotate(1.6deg);}  50%{ transform: rotate(-1.6deg);} }
+  @keyframes pouchK { 0%,100%{ transform: rotate(2.2deg);}  50%{ transform: rotate(-2.2deg);} }
+  @keyframes tailK  { 0%,100%{ transform: rotate(3deg);}    50%{ transform: rotate(-3.5deg);} }
+  @keyframes pennK  { 0%,100%{ transform: skewY(4deg) scaleX(1);} 50%{ transform: skewY(-5deg) scaleX(.9);} }
+  @keyframes eyeK   { 0%,100%{ opacity:.9;} 50%{ opacity:.45;} }
+  @keyframes flickK { 0%,100%{ opacity:.32;} 50%{ opacity:.18;} }
+  .bodyLean { transform-box:fill-box; transform-origin:57% 100%; animation: bodyK var(--t-crank) ease-in-out infinite; }
+  .headBob  { transform-box:fill-box; transform-origin:14% 37%;  animation: headK var(--t-crank) ease-in-out infinite; }
+  .pouchSway{ transform-box:fill-box; transform-origin:11% 7%;   animation: pouchK var(--t-crank) ease-in-out infinite; }
+  .tailFlap { transform-box:fill-box; transform-origin:100% 50%; animation: tailK calc(var(--t-crank)/2) ease-in-out infinite; }
+  .pennant  { transform-box:fill-box; transform-origin:100% 50%; animation: pennK calc(var(--t-crank)/2) ease-in-out infinite; }
+  .eyePulse { animation: eyeK var(--t-crank) ease-in-out infinite; }
+  .cone     { animation: flickK 3.1s steps(2) infinite; }
+
+  /* парallax-слои (один keyframe, разные скорости) */
+  .scrollCity { animation: scrollK 55s  linear infinite; will-change: transform; }
+  .scrollCloud{ animation: scrollK 95s  linear infinite; }
+  .scrollMid  { animation: scrollK 18s  linear infinite; will-change: transform; }
+  .scrollRoad { animation: scrollK 2.1s linear infinite; will-change: transform; }
+  .scrollFg   { animation: scrollK 1.35s linear infinite; will-change: transform; }
+
+  /* Скайнет: дроны, луч, сигналы */
+  @keyframes hkBobK { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-9px);} }
+  @keyframes hkEyeK { 0%,78%{opacity:1} 84%,92%{opacity:.15} 100%{opacity:1} }
+  @keyframes blinkK { 0%,54%{opacity:1} 55%,100%{opacity:.12} }
+  @keyframes coreK  { 0%,100%{opacity:.95} 9%{opacity:.3} 14%{opacity:.85} 42%{opacity:.5} 48%{opacity:1} 70%{opacity:.65} }
+  @keyframes winK   { 0%,100%{opacity:.85} 50%{opacity:.2} }
+  @keyframes beamK  { to{ transform: rotate(360deg);} }
+  .flyA { animation: flyK 15s linear infinite; animation-delay:-4s; }
+  .flyB { animation: flyK 24s linear infinite; animation-delay:-13s; }
+  .flyC { animation: flyK 45s linear infinite; animation-delay:-20s; }
+  .hkBob{ animation: hkBobK 3.2s ease-in-out infinite; }
+  .hkEye{ animation: hkEyeK 3s steps(1) infinite; }
+  .blink{ animation: blinkK 1.6s steps(1) infinite; }
+  .blink.d2{ animation-delay:.7s; }
+  .coreF{ animation: coreK 1.7s linear infinite; }
+  .winA { animation: winK 2.3s ease-in-out infinite; }
+  .winB { animation: winK 2.3s ease-in-out infinite; animation-delay:1.1s; }
+  .led  { animation: blinkK 1s steps(1) infinite; }
+  .led.d2{ animation-delay:.5s; }
+  .beamSpin{ transform-box:fill-box; transform-origin:center; animation: beamK 14s linear infinite; }
+
+  /* огонь, дым, солнце, молния */
+  @keyframes fireAK { from{ transform: scale(1,1) rotate(0deg);} to{ transform: scale(1.18,1.4) rotate(3deg);} }
+  @keyframes fireBK { from{ transform: scale(1.1,1.25);} to{ transform: scale(.9,.9);} }
+  @keyframes smokeK { 0%{ opacity:0; transform: translate(0,0) scale(.6);} 20%{ opacity:.5;} 100%{ opacity:0; transform: translate(-38px,-120px) scale(1.9);} }
+  @keyframes sunK   { 0%,100%{ opacity:.5; transform: scale(1);} 50%{ opacity:.8; transform: scale(1.06);} }
+  @keyframes stormK { 0%,86%{opacity:0} 87%{opacity:1} 88.5%{opacity:0} 90%{opacity:.7} 92%,100%{opacity:0} }
+  .fireA { transform-box:fill-box; transform-origin:50% 100%; animation: fireAK .5s  ease-in-out infinite alternate; }
+  .fireB { transform-box:fill-box; transform-origin:50% 100%; animation: fireBK .38s ease-in-out infinite alternate; }
+  .smoke { transform-box:fill-box; transform-origin:center; animation: smokeK 3.6s linear infinite; }
+  .smoke.s2{ animation-delay:-1.2s; } .smoke.s3{ animation-delay:-2.4s; }
+  .smoke.m4{ animation-duration:4.4s; } .smoke.m5{ animation-duration:4.4s; animation-delay:-1.5s; }
+  .smoke.m6{ animation-duration:4.4s; animation-delay:-3s; }
+  .sunPulse{ transform-box:fill-box; transform-origin:center; animation: sunK 7s ease-in-out infinite; }
+  .storm  { animation: stormK 9s linear infinite; }
+
+  /* пепел и угли: паттерн 675x675, сдвиг (-675,+675) => бесшовная петля */
+  @keyframes ashK { to{ transform: translate(-675px, 675px);} }
+  .ashA{ animation: ashK 8s linear infinite; }
+  .ashB{ animation: ashK 5s linear infinite; }
+
+  /* пыль из-под колёс */
+  @keyframes dustK { 0%{ opacity:0; transform: translate(0,0) scale(.4);} 25%{ opacity:.45;} 100%{ opacity:0; transform: translate(-46px,-6px) scale(1.8);} }
+  .dust { transform-box:fill-box; transform-origin:center; animation: dustK var(--t-wheel) linear infinite; }
+  .dust.d2{ animation-delay: calc(var(--t-wheel)/-2); }
+
+  /* ============ HTML-оверлеи ============ */
+  @keyframes grainK { 0%{transform:translate(0,0)} 33%{transform:translate(-24px,18px)} 66%{transform:translate(20px,-14px)} 100%{transform:translate(0,0)} }
+  @keyframes tickK  { to{ transform: translateX(-50%);} }
+  @keyframes liveK  { 0%,60%{opacity:1} 61%,100%{opacity:.25} }
+  .grain{
+    position:absolute; inset:-20%; pointer-events:none; z-index:6; opacity:.08; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='0.55'/></svg>");
+    animation: grainK .9s steps(3) infinite;
+  }
+  .scanlines{
+    position:absolute; inset:0; pointer-events:none; z-index:6; opacity:.3; mix-blend-mode:multiply;
+    background:repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0 1px, transparent 1px 3px);
+  }
+  .vignette{
+    position:absolute; inset:0; pointer-events:none; z-index:4;
+    background:
+      radial-gradient(130% 105% at 50% 40%, transparent 52%, rgba(8,4,3,.62) 100%),
+      linear-gradient(180deg, rgba(10,6,5,.5), transparent 16%),
+      linear-gradient(0deg, rgba(8,4,3,.55), transparent 12%);
+  }
+  .hud{ position:absolute; top:clamp(16px,3.4vh,34px); left:clamp(16px,3vw,40px); pointer-events:none; z-index:5; }
+  .kicker{
+    font:600 11px/1 var(--mono); letter-spacing:.42em; color:#ff9a66; text-transform:uppercase;
+    display:flex; gap:10px; align-items:center;
+  }
+  .kicker::before{ content:""; width:26px; height:3px; background:#ff3b2f; box-shadow:0 0 8px #ff3b2f; }
+  h1{
+    font-family:var(--display); font-size:clamp(40px,6.5vw,82px); line-height:.95; letter-spacing:.02em;
+    color:#f2e6c0; text-transform:uppercase; margin:.18em 0 .14em; transform:skewX(-3deg);
+    text-shadow:0 0 22px rgba(255,90,50,.25), 3px 3px 0 #6d2015, 7px 7px 24px rgba(0,0,0,.7);
+  }
+  h1 .accent{ color:#ff5a3c; text-shadow:0 0 18px rgba(255,59,47,.8), 3px 3px 0 #401008; }
+  .sub{ font:500 11.5px/1.8 var(--mono); letter-spacing:.18em; color:#c9b393; text-transform:uppercase; max-width:52ch; }
+  .sub b{ color:#ff6a4d; font-weight:700; }
+  .feed{
+    position:absolute; top:clamp(16px,3.4vh,34px); right:clamp(16px,3vw,40px); z-index:5;
+    font:700 11px var(--mono); letter-spacing:.3em; color:#ffb08c;
+    border:1px solid rgba(255,90,60,.55); padding:8px 12px; display:flex; gap:9px; align-items:center;
+    background:rgba(20,10,8,.35);
+  }
+  .feed .dot{ width:8px; height:8px; border-radius:50%; background:#ff3b2f; box-shadow:0 0 10px #ff3b2f; animation:liveK 1.2s steps(1) infinite; }
+  .spec{
+    position:absolute; right:clamp(16px,3vw,40px); bottom:48px; z-index:5; pointer-events:none;
+    font:500 10px var(--mono); letter-spacing:.28em; color:rgba(201,179,147,.55); text-transform:uppercase;
+  }
+  .ticker{
+    position:absolute; left:0; right:0; bottom:0; height:36px; z-index:5; overflow:hidden;
+    background:rgba(12,8,6,.82); border-top:1px solid rgba(255,110,70,.28);
+    display:flex; align-items:center;
+  }
+  .tickInner{ display:flex; white-space:nowrap; animation:tickK 32s linear infinite; font:600 11px var(--mono); letter-spacing:.3em; color:#d8b48c; }
+  .tickInner span{ padding-right:3em; }
+
+  @media (max-width:640px){ .spec{display:none} .sub{max-width:34ch} }
+  @media (prefers-reduced-motion: reduce){
+    .stage *, .grain, .tickInner, .feed .dot { animation-play-state: paused !important; }
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+<svg viewBox="0 0 1200 675" preserveAspectRatio="xMidYMid slice" role="img"
+     aria-label="Мультяшный пеликан крутит педали велосипеда по дороге в постапокалиптической пустоши Скайнета">
+  <title>Последний пеликан</title>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#140e14"/><stop offset=".45" stop-color="#33191b"/>
+      <stop offset=".75" stop-color="#6e2c1d"/><stop offset="1" stop-color="#a34a28"/>
+    </linearGradient>
+    <radialGradient id="sunGlow"><stop offset="0" stop-color="rgba(255,110,60,.5)"/><stop offset=".6" stop-color="rgba(255,80,40,.18)"/><stop offset="1" stop-color="rgba(255,80,40,0)"/></radialGradient>
+    <radialGradient id="eyeGlow"><stop offset="0" stop-color="#ffd9c9"/><stop offset=".35" stop-color="#ff5a3c"/><stop offset="1" stop-color="rgba(255,59,47,0)"/></radialGradient>
+    <radialGradient id="redGlow"><stop offset="0" stop-color="rgba(255,59,47,.55)"/><stop offset="1" stop-color="rgba(255,59,47,0)"/></radialGradient>
+    <linearGradient id="pouch" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4a94e"/><stop offset="1" stop-color="#d97a22"/></linearGradient>
+    <linearGradient id="cone" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="rgba(255,224,178,.55)"/><stop offset="1" stop-color="rgba(255,224,178,0)"/></linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="rgba(255,90,60,.4)"/><stop offset="1" stop-color="rgba(255,90,60,0)"/></linearGradient>
+    <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(255,120,70,0)"/><stop offset="1" stop-color="rgba(255,120,70,.16)"/></linearGradient>
+
+    <!-- дальний город (тайл 1200) -->
+    <g id="cityTile" fill="#241a17">
+      <path d="M30,380 L30,306 L52,290 L70,306 L70,380 Z"/>
+      <path d="M262,380 L262,238 L282,222 L302,238 L302,380 Z"/>
+      <line x1="282" y1="222" x2="282" y2="192" stroke="#241a17" stroke-width="3"/>
+      <circle cx="282" cy="246" r="3.5" fill="#ff3b2f" class="blink"/>
+      <g transform="translate(282,252)"><g class="beamSpin">
+        <circle r="500" fill="none" opacity="0"/>
+        <path d="M0,0 L470,-58 L470,26 Z" fill="url(#beam)"/>
+      </g></g>
+      <path d="M380,380 L380,332 L404,318 L428,334 L428,380 Z"/>
+      <rect x="392" y="344" width="5" height="7" fill="#ff8a4d" class="winA"/>
+      <rect x="408" y="352" width="5" height="7" fill="#ff8a4d" class="winB"/>
+      <path d="M492,380 L492,346 Q540,314 588,346 L588,380 Z"/>
+      <path d="M640,380 L640,262 L664,246 L694,268 L694,380 Z"/>
+      <path d="M760,380 L760,318 L786,304 L806,320 L806,380 Z"/>
+      <line x1="900" y1="380" x2="900" y2="258" stroke="#241a17" stroke-width="4"/>
+      <line x1="900" y1="262" x2="986" y2="276" stroke="#241a17" stroke-width="4"/>
+      <line x1="972" y1="274" x2="972" y2="312" stroke="#241a17" stroke-width="2"/>
+      <rect x="878" y="262" width="14" height="10"/>
+      <path d="M1040,380 L1040,330 L1064,318 L1092,332 L1092,380 Z"/>
+      <path d="M1130,380 L1130,296 L1152,284 L1174,298 L1174,380 Z"/>
+      <rect x="0" y="352" width="1200" height="28" fill="url(#haze)"/>
+    </g>
+
+    <!-- дымовые облака в небе (тайл) -->
+    <g id="cloudTile" fill="#2a1518" opacity=".85">
+      <ellipse cx="150" cy="120" rx="130" ry="26"/><ellipse cx="420" cy="80" rx="160" ry="30"/>
+      <ellipse cx="760" cy="140" rx="180" ry="34"/><ellipse cx="1020" cy="90" rx="140" ry="26"/>
+    </g>
+
+    <!-- средний план: техника и руины (тайл) -->
+    <g id="midTile">
+      <rect x="86" y="486" width="128" height="30" rx="14" fill="#171110"/>
+      <circle cx="110" cy="504" r="13" fill="#100c0a"/><circle cx="146" cy="504" r="13" fill="#100c0a"/><circle cx="182" cy="504" r="13" fill="#100c0a"/>
+      <rect x="94" y="458" width="112" height="30" rx="6" fill="#1b1411"/>
+      <rect x="124" y="438" width="48" height="24" rx="8" fill="#1b1411"/>
+      <line x1="160" y1="446" x2="224" y2="414" stroke="#1b1411" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="100" cy="464" r="2.5" fill="#ff3b2f" class="blink d2"/>
+      <ellipse class="smoke"    cx="140" cy="436" rx="14" ry="9" fill="#3a2f2a"/>
+      <ellipse class="smoke s2" cx="140" cy="436" rx="14" ry="9" fill="#3a2f2a"/>
+      <ellipse class="smoke s3" cx="140" cy="436" rx="14" ry="9" fill="#3a2f2a"/>
+      <path d="M300,560 L336,512 L372,528 L404,500 L448,560 Z" fill="#140f0c"/>
+      <line x1="470" y1="560" x2="452" y2="512" stroke="#140f0c" stroke-width="5"/>
+      <line x1="470" y1="560" x2="478" y2="504" stroke="#140f0c" stroke-width="5"/>
+      <line x1="470" y1="560" x2="500" y2="518" stroke="#140f0c" stroke-width="5"/>
+      <path d="M560,560 L616,492 L700,514 L736,560 Z" fill="#100c0a"/>
+      <path d="M664,512 L726,452 L748,470 L692,526 Z" fill="#14100c"/>
+      <circle class="coreF" cx="640" cy="534" r="14" fill="url(#redGlow)"/>
+      <circle class="coreF" cx="640" cy="534" r="6" fill="#ff3b2f"/>
+      <ellipse class="smoke"    cx="650" cy="500" rx="12" ry="8" fill="#3a2f2a"/>
+      <ellipse class="smoke s2" cx="650" cy="500" rx="12" ry="8" fill="#3a2f2a"/>
+      <line x1="800" y1="560" x2="796" y2="512" stroke="#14100c" stroke-width="5"/>
+      <line x1="856" y1="560" x2="852" y2="508" stroke="#14100c" stroke-width="5"/>
+      <line x1="912" y1="560" x2="906" y2="514" stroke="#14100c" stroke-width="5"/>
+      <path d="M796,514 Q826,530 852,510 Q882,526 906,516" fill="none" stroke="#14100c" stroke-width="3"/>
+      <path d="M940,540 L948,518 L1006,514 L1022,540 Z" fill="#171110"/>
+      <path d="M958,518 L966,504 L996,502 L1002,516 Z" fill="#171110"/>
+      <circle cx="958" cy="544" r="11" fill="#0f0b09"/><circle cx="1004" cy="544" r="11" fill="#0f0b09"/>
+      <path class="fireA" d="M972,514 C962,502 966,488 974,478 C976,490 986,492 984,502 C992,498 990,510 972,514 Z" fill="#ff6a1f"/>
+      <path class="fireB" d="M972,512 C968,504 972,494 976,488 C978,498 984,502 972,512 Z" fill="#ffc36b"/>
+      <ellipse class="smoke m4" cx="972" cy="486" rx="13" ry="9" fill="#3a2f2a"/>
+      <ellipse class="smoke m5" cx="972" cy="486" rx="13" ry="9" fill="#3a2f2a"/>
+      <ellipse class="smoke m6" cx="972" cy="486" rx="13" ry="9" fill="#3a2f2a"/>
+    </g>
+
+    <!-- дорога (тайл) -->
+    <g id="roadTile">
+      <rect x="0" y="560" width="1200" height="115" fill="#2a2320"/>
+      <rect x="0" y="560" width="1200" height="10" fill="#352b24"/>
+      <rect x="0" y="570" width="1200" height="3" fill="#171310"/>
+      <g fill="#7d6c49" opacity=".75">
+        <rect x="30" y="610" width="80" height="9"/><rect x="230" y="610" width="80" height="9"/>
+        <rect x="430" y="610" width="80" height="9"/><rect x="630" y="610" width="80" height="9"/>
+        <rect x="830" y="610" width="80" height="9"/><rect x="1030" y="610" width="80" height="9"/>
+      </g>
+      <path d="M200,646 L244,656 L268,648 L318,664 M690,636 L730,648 L758,640 M980,660 L1020,650 L1058,662"
+            fill="none" stroke="#15110e" stroke-width="2.5"/>
+      <ellipse cx="480" cy="652" rx="30" ry="7" fill="#1a1512"/>
+      <ellipse cx="860" cy="668" rx="38" ry="8" fill="#1a1512"/>
+      <ellipse cx="150" cy="670" rx="26" ry="6" fill="#1a1512"/>
+      <ellipse cx="600" cy="655" rx="55" ry="9" fill="#211b18" opacity=".8"/>
+    </g>
+
+    <!-- передний план: обломки (тайл) -->
+    <g id="fgTile" fill="#0e0b09">
+      <path d="M40,675 L76,616 L140,602 L204,630 L232,675 Z"/>
+      <line x1="560" y1="675" x2="540" y2="600" stroke="#0e0b09" stroke-width="5"/>
+      <line x1="560" y1="675" x2="575" y2="595" stroke="#0e0b09" stroke-width="5"/>
+      <line x1="560" y1="675" x2="600" y2="610" stroke="#0e0b09" stroke-width="5"/>
+      <line x1="870" y1="675" x2="872" y2="606" stroke="#0e0b09" stroke-width="7"/>
+      <g transform="rotate(-12 880 600)"><rect x="840" y="586" width="80" height="34" fill="#131009"/>
+        <line x1="852" y1="598" x2="908" y2="598" stroke="#2a2119" stroke-width="3"/>
+        <line x1="852" y1="608" x2="896" y2="608" stroke="#2a2119" stroke-width="3"/></g>
+      <path d="M1060,675 L1080,648 L1120,652 L1140,675 Z"/>
+    </g>
+
+    <!-- пепел / угли: базовый набор 675x675 -->
+    <g id="ashSet" fill="#a89a8c" opacity=".55">
+      <circle cx="30" cy="40" r="2.2"/><circle cx="140" cy="300" r="1.6"/><circle cx="240" cy="120" r="2.4"/>
+      <circle cx="330" cy="520" r="1.5"/><circle cx="420" cy="240" r="2"/><circle cx="520" cy="640" r="1.8"/>
+      <circle cx="600" cy="80" r="1.5"/><circle cx="660" cy="420" r="2.2"/><circle cx="760" cy="300" r="1.6"/>
+      <circle cx="850" cy="560" r="2"/><circle cx="940" cy="160" r="1.5"/><circle cx="1050" cy="480" r="2.3"/>
+      <circle cx="1150" cy="60" r="1.7"/><circle cx="1180" cy="360" r="1.5"/>
+    </g>
+    <g id="emberSet">
+      <circle cx="90" cy="200" r="2.6" fill="#ff8a3c"/><circle cx="300" cy="520" r="2.2" fill="#ffb066"/>
+      <circle cx="520" cy="340" r="2.8" fill="#ff8a3c"/><circle cx="620" cy="90" r="2" fill="#ffc36b"/>
+      <circle cx="180" cy="640" r="2.4" fill="#ff9a4a"/><circle cx="430" cy="60" r="2.2" fill="#ffb066"/>
+      <circle cx="60" cy="560" r="2" fill="#ff8a3c"/>
+    </g>
+
+    <!-- охотник-убийца -->
+    <g id="hk">
+      <path d="M0,0 L78,10 L52,24 L14,16 Z" fill="#16110e"/>
+      <path d="M28,10 L52,-14 L64,-8 L44,16 Z" fill="#1a1410"/>
+      <circle class="hkEye" cx="30" cy="15" r="6" fill="url(#redGlow)"/>
+      <circle class="hkEye" cx="30" cy="15" r="2.5" fill="#ff3b2f"/>
+    </g>
+  </defs>
+
+  <!-- ===== НЕБО ===== -->
+  <rect x="0" y="0" width="1200" height="380" fill="url(#sky)"/>
+  <circle class="sunPulse" cx="860" cy="285" r="170" fill="url(#sunGlow)"/>
+  <circle cx="860" cy="285" r="92" fill="#93301b"/>
+  <circle cx="860" cy="285" r="92" fill="none" stroke="#c45530" stroke-width="3" opacity=".5"/>
+  <circle cx="840" cy="260" r="10" fill="#6e2415" opacity=".7"/><circle cx="884" cy="300" r="7" fill="#6e2415" opacity=".7"/><circle cx="832" cy="312" r="5" fill="#6e2415" opacity=".7"/>
+
+  <g class="scrollCloud"><use href="#cloudTile"/><use href="#cloudTile" x="1200"/></g>
+
+  <g class="storm" opacity="0">
+    <rect x="0" y="0" width="1200" height="675" fill="#ffe0c9" opacity=".18"/>
+    <path d="M190,70 L158,150 L192,158 L148,258 L168,252 L204,170 L176,164 Z" fill="#ffe9d6"/>
+  </g>
+
+  <!-- ===== ПУСТОШЬ ===== -->
+  <rect x="0" y="380" width="1200" height="180" fill="#241c18"/>
+  <g class="scrollCity"><use href="#cityTile"/><use href="#cityTile" x="1200"/></g>
+  <g class="scrollMid"><use href="#midTile"/><use href="#midTile" x="1200"/></g>
+
+  <g transform="translate(-260,120)"><g class="flyA"><g class="hkBob"><use href="#hk"/></g></g></g>
+  <g transform="translate(-260,210)"><g class="flyB"><g class="hkBob" style="animation-delay:-1.4s"><g transform="scale(.7)"><use href="#hk"/></g></g></g></g>
+  <g transform="translate(-260,70)"><g class="flyC"><g transform="scale(.45)"><use href="#hk"/></g></g></g>
+
+  <!-- ===== ДОРОГА ===== -->
+  <g class="scrollRoad"><use href="#roadTile"/><use href="#roadTile" x="1200"/></g>
+  <rect x="506" y="560" width="30" height="115" fill="#14100d" opacity=".45"/>
+  <rect x="726" y="560" width="30" height="115" fill="#14100d" opacity=".45"/>
+  <ellipse class="shadowP" cx="632" cy="561" rx="165" ry="11" fill="#000" opacity=".38"/>
+  <circle class="dust"    cx="470" cy="552" r="8" fill="#b7a88f"/>
+  <circle class="dust d2" cx="690" cy="552" r="8" fill="#b7a88f"/>
+
+  <!-- ===== ПЕЛИКАН НА ВЕЛОСИПЕДЕ ===== -->
+  <g class="rigBob">
+    <!-- дальняя лапа -->
+    <g transform="translate(584,430) scale(.97)">
+      <g class="thigh far"><circle r="150" fill="none" opacity="0"/>
+        <line x1="0" y1="0" x2="64" y2="0" stroke="#b35f14" stroke-width="15" stroke-linecap="round"/>
+        <g transform="translate(64,0)"><g class="shin far"><circle r="80" fill="none" opacity="0"/>
+          <line x1="0" y1="0" x2="56" y2="0" stroke="#b35f14" stroke-width="12" stroke-linecap="round"/>
+          <path d="M52,-7 L62,-7 C74,-5 80,2 78,8 L54,8 C49,6 49,-4 52,-7 Z" fill="#b35f14"/>
+        </g></g>
+      </g>
+    </g>
+
+    <!-- дальнее крыло -->
+    <path d="M560,342 C590,334 622,342 646,356 C668,368 686,370 700,368 L702,378 C682,382 656,378 636,370 C612,360 584,354 560,352 Z" fill="#d3bf8d"/>
+
+    <!-- колёса -->
+    <g transform="translate(520,500)"><g class="wheel">
+      <circle r="55" fill="none" stroke="#1d1a17" stroke-width="9"/>
+      <circle r="51" fill="none" stroke="#b08d57" stroke-width="3"/>
+      <g stroke="#cfc3a5" stroke-width="2">
+        <line x1="0" y1="0" x2="50" y2="0"/><line x1="0" y1="0" x2="40.5" y2="29.4"/><line x1="0" y1="0" x2="15.5" y2="47.6"/>
+        <line x1="0" y1="0" x2="-15.5" y2="47.6"/><line x1="0" y1="0" x2="-40.5" y2="29.4"/><line x1="0" y1="0" x2="-50" y2="0"/>
+        <line x1="0" y1="0" x2="-40.5" y2="-29.4"/><line x1="0" y1="0" x2="-15.5" y2="-47.6"/><line x1="0" y1="0" x2="15.5" y2="-47.6"/>
+        <line x1="0" y1="0" x2="40.5" y2="-29.4"/>
+      </g>
+      <circle cx="0" cy="-50" r="2.5" fill="#e8e0cf"/><circle r="5" fill="#4a2412"/>
+    </g></g>
+    <g transform="translate(740,500)"><g class="wheel">
+      <circle r="55" fill="none" stroke="#1d1a17" stroke-width="9"/>
+      <circle r="51" fill="none" stroke="#b08d57" stroke-width="3"/>
+      <g stroke="#cfc3a5" stroke-width="2">
+        <line x1="0" y1="0" x2="50" y2="0"/><line x1="0" y1="0" x2="40.5" y2="29.4"/><line x1="0" y1="0" x2="15.5" y2="47.6"/>
+        <line x1="0" y1="0" x2="-15.5" y2="47.6"/><line x1="0" y1="0" x2="-40.5" y2="29.4"/><line x1="0" y1="0" x2="-50" y2="0"/>
+        <line x1="0" y1="0" x2="-40.5" y2="-29.4"/><line x1="0" y1="0" x2="-15.5" y2="-47.6"/><line x1="0" y1="0" x2="15.5" y2="-47.6"/>
+        <line x1="0" y1="0" x2="40.5" y2="-29.4"/>
+      </g>
+      <circle cx="0" cy="-50" r="2.5" fill="#e8e0cf"/><circle r="5" fill="#4a2412"/>
+    </g></g>
+
+    <!-- рама -->
+    <g stroke="#8a4a26" stroke-width="7" stroke-linecap="round" fill="none">
+      <path d="M598,500 L568,420"/><path d="M574,427 L722,403"/><path d="M598,500 L718,405"/>
+      <path d="M520,500 L574,427"/><path d="M520,500 L598,500"/><path d="M727,401 L740,500"/>
+    </g>
+    <line x1="721" y1="389" x2="729" y2="411" stroke="#6e3a1e" stroke-width="9" stroke-linecap="round"/>
+    <path d="M724,392 C727,381 721,375 709,374 L700,376" fill="none" stroke="#33291f" stroke-width="6" stroke-linecap="round"/>
+    <line x1="568" y1="420" x2="569" y2="411" stroke="#4a2412" stroke-width="5"/>
+    <path d="M545,413 C556,405 585,405 593,413 C581,421 556,421 545,413 Z" fill="#33291f"/>
+    <g stroke="#6e3a1e" stroke-width="5" fill="none" stroke-linecap="round">
+      <path d="M475.5,455.5 A63,63 0 0 1 520,437"/><path d="M695.5,455.5 A63,63 0 0 1 740,437"/>
+      <path d="M566,421 L536,437 L498,437"/><path d="M506,437 L522,498" stroke-width="4"/>
+    </g>
+    <circle cx="494" cy="433" r="3" fill="#ff3b2f" class="blink"/>
+    <line x1="502" y1="437" x2="498" y2="398" stroke="#33291f" stroke-width="3"/>
+    <path class="pennant" d="M498,400 L452,412 L498,422 Z" fill="#c22a1e"/>
+    <circle class="cone" cx="735" cy="393" r="4" fill="#ffd9a0"/>
+    <path class="cone" d="M738,393 L838,371 L838,414 Z" fill="url(#cone)"/>
+    <path d="M598,483 L521,494 M598,517 L521,506" stroke="#241d18" stroke-width="3" fill="none"/>
+    <circle cx="598" cy="500" r="17" fill="none" stroke="#6e3a1e" stroke-width="4" stroke-dasharray="5 3"/>
+
+    <!-- кривошип с педалями -->
+    <g transform="translate(598,500)"><g class="crankSpin">
+      <circle r="38" fill="none" opacity="0"/>
+      <line x1="0" y1="0" x2="26" y2="0" stroke="#3a3630" stroke-width="5" stroke-linecap="round"/>
+      <line x1="0" y1="0" x2="-26" y2="0" stroke="#3a3630" stroke-width="5" stroke-linecap="round"/>
+      <g transform="translate(26,0)"><g class="pedal">
+        <rect x="-9" y="-3.5" width="18" height="7" rx="2" fill="#2e2a26"/><circle r="2.5" fill="#57503f"/>
+      </g></g>
+      <g transform="translate(-26,0)"><g class="pedal">
+        <rect x="-9" y="-3.5" width="18" height="7" rx="2" fill="#2e2a26"/><circle r="2.5" fill="#57503f"/>
+      </g></g>
+    </g></g>
+
+    <!-- корпус пеликана -->
+    <g class="bodyLean">
+      <rect x="512" y="338" width="56" height="62" rx="12" fill="#565b38"/>
+      <rect x="512" y="352" width="56" height="12" fill="#4a4f31"/>
+      <rect x="522" y="368" width="36" height="24" rx="6" fill="#4a4f31"/>
+      <circle cx="520" cy="346" r="3" fill="#ff3b2f" class="led"/>
+      <line x1="564" y1="340" x2="576" y2="304" stroke="#3b352c" stroke-width="2.5"/>
+      <circle cx="576" cy="302" r="3" fill="#ff4433" class="led d2"/>
+      <g class="tailFlap">
+        <path d="M552,392 C522,392 498,400 484,414 L498,420 C516,410 536,404 554,402 Z" fill="#f2e6c0"/>
+        <path d="M552,398 C526,404 506,414 496,428 L510,430 C524,420 540,412 556,408 Z" fill="#e8d8a8"/>
+        <path d="M550,404 C530,412 516,422 508,434 L520,436 C532,426 544,418 556,412 Z" fill="#d9c48f"/>
+      </g>
+      <ellipse cx="604" cy="382" rx="60" ry="46" transform="rotate(-8 604 382)" fill="#f2e6c0"/>
+      <ellipse cx="630" cy="392" rx="34" ry="30" fill="#fbf4de" opacity=".9"/>
+      <path d="M546,340 C576,348 604,352 628,350 L630,364 C604,366 576,362 548,354 Z" fill="#4a4f31"/>
+    </g>
+
+    <!-- голова с клювом и зобом -->
+    <g class="headBob">
+      <path d="M630,352 C638,330 650,316 664,310 L692,330 C678,344 668,360 664,374 C652,372 640,364 630,352 Z" fill="#f2e6c0"/>
+      <circle cx="672" cy="314" r="28" fill="#f2e6c0"/>
+      <ellipse cx="664" cy="326" rx="9" ry="6" fill="#e8b06a" opacity=".5"/>
+      <path d="M646,300 C660,292 686,290 698,296 L696,308 C682,302 662,304 650,312 Z" fill="#3b352c"/>
+      <g class="pouchSway">
+        <path d="M686,318 C722,318 758,326 786,338 C778,372 754,400 722,410 C698,416 682,404 678,384 C674,362 678,336 686,318 Z" fill="url(#pouch)"/>
+        <ellipse cx="712" cy="352" rx="26" ry="14" fill="#f7b96a" opacity=".5" transform="rotate(-14 712 352)"/>
+      </g>
+      <path d="M684,306 C716,298 756,304 792,320 L786,336 C754,324 718,318 686,320 Z" fill="#e8821e"/>
+      <line x1="686" y1="320" x2="786" y2="336" stroke="#b35c0e" stroke-width="2"/>
+      <circle cx="700" cy="310" r="1.5" fill="#b35c0e"/>
+      <circle class="eyePulse" cx="684" cy="308" r="9" fill="url(#eyeGlow)"/>
+      <circle cx="684" cy="308" r="5.5" fill="#2a0f0c"/><circle cx="684" cy="308" r="2.2" fill="#ff6a4d"/>
+    </g>
+
+    <!-- ближнее бедро + голень -->
+    <circle cx="586" cy="432" r="9" fill="#f2e6c0"/>
+    <g transform="translate(586,432)"><g class="thigh"><circle r="150" fill="none" opacity="0"/>
+      <line x1="0" y1="0" x2="64" y2="0" stroke="#e8821e" stroke-width="15" stroke-linecap="round"/>
+      <g transform="translate(64,0)"><g class="shin"><circle r="80" fill="none" opacity="0"/>
+        <line x1="0" y1="0" x2="56" y2="0" stroke="#e8821e" stroke-width="12" stroke-linecap="round"/>
+        <path d="M52,-7 L62,-7 C74,-5 80,2 78,8 L54,8 C49,6 49,-4 52,-7 Z" fill="#e8821e"/>
+        <path d="M66,6 L64,-4 M72,6 L71,-3" stroke="#b35c0e" stroke-width="1.5"/>
+      </g></g>
+    </g></g>
+
+    <!-- ближнее крыло на руле -->
+    <path d="M566,350 C598,342 634,352 658,368 C678,380 694,382 706,380 L708,392 C688,396 664,392 644,384 C618,374 590,368 566,362 Z" fill="#f0e2b4"/>
+    <path d="M700,384 L712,378 M702,388 L714,386 M700,392 L710,394" stroke="#d9c48f" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- ===== ПЕРЕДНИЙ ПЛАН / ПЕПЕЛ ===== -->
+  <g class="scrollFg"><use href="#fgTile"/><use href="#fgTile" x="1200"/></g>
+  <g class="ashA">
+    <use href="#ashSet"/><use href="#ashSet" x="675"/><use href="#ashSet" x="1350"/>
+    <use href="#ashSet" y="-675"/><use href="#ashSet" x="675" y="-675"/><use href="#ashSet" x="1350" y="-675"/>
+  </g>
+  <g class="ashB">
+    <use href="#emberSet"/><use href="#emberSet" x="675"/><use href="#emberSet" x="1350"/>
+    <use href="#emberSet" y="-675"/><use href="#emberSet" x="675" y="-675"/><use href="#emberSet" x="1350" y="-675"/>
+  </g>
+</svg>
+
+<div class="vignette" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="hud">
+  <div class="kicker">Трансляция 07 // Связь потеряна</div>
+  <h1>Последний <span class="accent">пеликан</span></h1>
+  <p class="sub">Сектор 7 · пустошь · 2147 год · патруль Скайнета активен · <b>крути педали или сгинь</b></p>
+</header>
+<div class="feed"><span class="dot"></span>ЭФИР</div>
+<div class="spec">Механика: чистые CSS-keyframes · без JS · без библиотек</div>
+<div class="ticker" aria-hidden="true">
+  <div class="tickInner">
+    <span>⚠ ЛОВЦА СКВЕРНА ИДЁТ С СЕВЕРА — ЭНЕРГИЯ СЕКТОРА 7: 11% — ПОСЛЕДНИЙ КАНАЛ 03:47:12 — В БЕГСТВЕ 41 208 ЧЕЛОВЕК — СОЖГИ ТО, ЧТО НЕ МОГУТ ВЗЯТЬ — НЕ ДОВЕРЯЙ МАШИНАМ С ГЛАЗАМИ —</span>
+    <span>⚠ ЛОВЦА СКВЕРНА ИДЁТ С СЕВЕРА — ЭНЕРГИЯ СЕКТОРА 7: 11% — ПОСЛЕДНИЙ КАНАЛ 03:47:12 — В БЕГСТВЕ 41 208 ЧЕЛОВЕК — СОЖГИ ТО, ЧТО НЕ МОГУТ ВЗЯТЬ — НЕ ДОВЕРЯЙ МАШИНАМ С ГЛАЗАМ —</span>
+  </div>
+</div>
+</div>
+</body>
+</html>

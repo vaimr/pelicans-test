@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пеликан на велосипеде 🚴‍♂️</title>
+    <style>
+        :root {
+            --sky-top: #1a3b6c;
+            --sky-bottom: #87ceeb;
+            --road: #6b7b6f;
+            --road-darker: #5a6a5e;
+            --grass: #4c8c4a;
+            --grass-light: #6daf6a;
+            --cloud: #f8fafc;
+            --cloud-shadow: #e2e8f0;
+            --sun: #ffd54f;
+            --sun-glow: #ffb300;
+            --bike-frame: #e53935;
+            --bike-accent: #ffb74d;
+            --tire: #2d2d2d;
+            --spoke: #cfd8dc;
+            --hub: #bdbdbd;
+            --pedal: #7c4dff;
+            --pelican-body: #fff9e6;
+            --pelican-head: #fff5d7;
+            --pelican-zob: #ffb6c1;
+            --pelican-beak: #ff8a65;
+            --pelican-wing: #90caf9;
+            --pelican-wing-dark: #577590;
+            --pelican-leg: #ffcc80;
+            --pelican-foot: #ef9a9a;
+            --eye: #1e2b3c;
+            --eye-white: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.12);
+            --glow: rgba(255, 255, 200, 0.35);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 40%, #334155 100%);
+            font-family: 'Segoe UI', 'Noto Sans', system-ui, sans-serif;
+            padding: 1rem;
+        }
+
+        .container {
+            background: var(--shadow);
+            border-radius: 2.5rem;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35), 0 0 0 2px rgba(255, 255, 255, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            max-width: 900px;
+            width: 100%;
+            aspect-ratio: 800 / 400;
+        }
+
+        svg {
+            display: block;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+        }
+
+        /* подпись */
+        .caption {
+            margin-top: 0.75rem;
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            letter-spacing: 0.03em;
+            text-align: center;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            justify-content: center;
+        }
+        .caption span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .caption .emoji {
+            font-size: 1.3rem;
+        }
+
+        /* ==================== ANIMATIONS ==================== */
+
+        /* Вращение заднего колеса */
+        @keyframes wheel-rear {
+            from {
+                transform: translate(300px, 220px) rotate(0deg);
+            }
+            to {
+                transform: translate(300px, 220px) rotate(360deg);
+            }
+        }
+
+        /* Вращение переднего колеса */
+        @keyframes wheel-front {
+            from {
+                transform: translate(550px, 220px) rotate(0deg);
+            }
+            to {
+                transform: translate(550px, 220px) rotate(360deg);
+            }
+        }
+
+        /* Вращение группы спиц заднего колеса */
+        @keyframes spokes-rear {
+            from {
+                transform: translate(300px, 220px) rotate(0deg);
+            }
+            to {
+                transform: translate(300px, 220px) rotate(360deg);
+            }
+        }
+
+        /* Вращение группы спиц переднего колеса */
+        @keyframes spokes-front {
+            from {
+                transform: translate(550px, 220px) rotate(0deg);
+            }
+            to {
+                transform: translate(550px, 220px) rotate(360deg);
+            }
+        }
+
+        /* Вращение кривошипа + педалей */
+        @keyframes crank-rotate {
+            from {
+                transform: translate(400px, 250px) rotate(0deg);
+            }
+            to {
+                transform: translate(400px, 250px) rotate(360deg);
+            }
+        }
+
+        /* Вращение самих педалей (дополнительный угол для эффекта) */
+        @keyframes pedal-spin {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Покачивание пеликана (имитация кручения педалей) */
+        @keyframes pelican-bob {
+            0%,
+            100% {
+                transform: translateY(0px) rotate(-0.8deg);
+            }
+            25% {
+                transform: translateY(-5px) rotate(0.4deg);
+            }
+            50% {
+                transform: translateY(2px) rotate(-1.6deg);
+            }
+            75% {
+                transform: translateY(-3px) rotate(0.2deg);
+            }
+        }
+
+        /* Покачивание головы */
+        @keyframes head-bob {
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+            50% {
+                transform: rotate(1.2deg);
+            }
+        }
+
+        /* Движение зоба (развевается) */
+        @keyframes zob-sway {
+            0%,
+            100% {
+                transform: translateX(0px) translateY(0px) rotate(-1deg);
+            }
+            30% {
+                transform: translateX(-5px) translateY(3px) rotate(2deg);
+            }
+            60% {
+                transform: translateX(4px) translateY(-2px) rotate(-2deg);
+            }
+            85% {
+                transform: translateX(-3px) translateY(1px) rotate(1.5deg);
+            }
+        }
+
+        /* Движение крыла (для баланса) */
+        @keyframes wing-flap {
+            0%,
+            100% {
+                transform: rotate(-4deg);
+            }
+            50% {
+                transform: rotate(6deg);
+            }
+        }
+
+        /* Движение дальнего фона (медленный параллакс) */
+        @keyframes bg-far {
+            from {
+                transform: translateX(0px);
+            }
+            to {
+                transform: translateX(-180px);
+            }
+        }
+
+        /* Движение среднего фона */
+        @keyframes bg-mid {
+            from {
+                transform: translateX(0px);
+            }
+            to {
+                transform: translateX(-280px);
+            }
+        }
+
+        /* Движение переднего фона (дорога/трава) */
+        @keyframes bg-front {
+            from {
+                transform: translateX(0px);
+            }
+            to {
+                transform: translateX(-400px);
+            }
+        }
+
+        /* Движение облаков (разные слои) */
+        @keyframes cloud-slow {
+            from {
+                transform: translateX(0px);
+            }
+            to {
+                transform: translateX(-200px);
+            }
+        }
+
+        @keyframes cloud-medium {
+            from {
+                transform: translateX(0px);
+            }
+            to {
+                transform: translateX(-320px);
+            }
+        }
+
+        @keyframes cloud-fast {
+            from {
+                transform: translateX(0px);
+            }
+            to {
+                transform: translateX(-500px);
+            }
+        }
+
+        /* Движение травы на обочине */
+        @keyframes grass-sway {
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+            50% {
+                transform: rotate(-1.4deg);
+            }
+        }
+
+        /* Пульсация солнца */
+        @keyframes sun-pulse {
+            0%,
+            100% {
+                filter: drop-shadow(0 0 6px #ffb300);
+                transform: scale(1);
+            }
+            50% {
+                filter: drop-shadow(0 0 18px #ffb300) drop-shadow(0 0 30px rgba(255, 180, 0, 0.5));
+                transform: scale(1.08);
+            }
+        }
+
+        /* Мерцание бликов на металле */
+        @keyframes shine {
+            0%,
+            100% {
+                opacity: 0.4;
+            }
+            30% {
+                opacity: 0.9;
+            }
+            60% {
+                opacity: 0.3;
+            }
+        }
+
+        /* Анимация пунктирной разметки дороги */
+        @keyframes road-dash {
+            from {
+                stroke-dashoffset: 0;
+            }
+            to {
+                stroke-dashoffset: -40;
+            }
+        }
+
+        /* ==================== BASE STYLES ==================== */
+
+        /* Дорога */
+        .road-bg {
+            fill: var(--road);
+        }
+        .road-stripe {
+            fill: none;
+            stroke: var(--road-darker);
+            stroke-width: 12;
+            stroke-dasharray: 18 14;
+            stroke-linecap: round;
+            animation: road-dash 0.8s linear infinite;
+        }
+        .road-edge {
+            fill: none;
+            stroke: #d1d5db;
+            stroke-width: 4;
+            stroke-dasharray: 6 8;
+        }
+
+        /* Трава */
+        .grass {
+            fill: var(--grass);
+        }
+        .grass-light {
+            fill: var(--grass-light);
+        }
+        .grass-blade {
+            fill: #3a7d34;
+        }
+
+        /* Облака */
+        .cloud {
+            fill: var(--cloud);
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+        .cloud-soft {
+            fill: #f1f5f9;
+        }
+
+        /* Солнце */
+        .sun {
+            fill: var(--sun);
+            filter: drop-shadow(0 0 10px var(--sun-glow));
+            animation: sun-pulse 4s ease-in-out infinite;
+        }
+        .sun-core {
+            fill: #ffeb3b;
+        }
+        .sun-ray {
+            fill: #ffd54f;
+            animation: shine 2.5s ease-in-out infinite;
+        }
+
+        /* Велосипед */
+        .bike-frame {
+            fill: var(--bike-frame);
+            filter: drop-shadow(0 4px 8px rgba(230, 0, 0, 0.3));
+        }
+        .bike-frame-shine {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.25);
+            stroke-width: 2;
+        }
+        .tire {
+            fill: var(--tire);
+        }
+        .tire-tread {
+            fill: #1e2b3c;
+        }
+        .spoke-line {
+            stroke: var(--spoke);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+        }
+        .hub {
+            fill: var(--hub);
+        }
+        .hub-cap {
+            fill: #d1d5db;
+        }
+        .pedal-body {
+            fill: var(--pedal);
+            filter: drop-shadow(0 3px 6px rgba(124, 77, 255, 0.4));
+        }
+        .pedal-reflect {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.35);
+            stroke-width: 2;
+        }
+        .crank-arm {
+            fill: #cfd8dc;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+        }
+        .crank-cap {
+            fill: #bdbdbd;
+        }
+        .chain {
+            fill: #4b5563;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+        .chainring {
+            fill: #e5e7eb;
+            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
+        }
+        .chainring-dots {
+            fill: #9ca3af;
+        }
+
+        /* Пеликан */
+        .pelican-body {
+            fill: var(--pelican-body);
+            filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.15));
+        }
+        .pelican-body-light {
+            fill: #fffaf2;
+        }
+        .pelican-head {
+            fill: var(--pelican-head);
+        }
+        .pelican-head-light {
+            fill: #fff7e6;
+        }
+        .pelican-zob {
+            fill: var(--pelican-zob);
+            filter: drop-shadow(0 4px 10px rgba(255, 100, 150, 0.35));
+        }
+        .pelican-zob-shine {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.3);
+            stroke-width: 1.5;
+        }
+        .pelican-beak {
+            fill: var(--pelican-beak);
+            filter: drop-shadow(0 3px 8px rgba(255, 100, 80, 0.4));
+        }
+        .pelican-beak-tip {
+            fill: #ff6b4a;
+        }
+        .pelican-eye {
+            fill: var(--eye);
+        }
+        .pelican-eye-white {
+            fill: var(--eye-white);
+        }
+        .pelican-eye-glow {
+            fill: #ffecb3;
+        }
+        .pelican-wing {
+            fill: var(--pelican-wing);
+            filter: drop-shadow(0 4px 10px rgba(0, 80, 170, 0.25));
+        }
+        .pelican-wing-dark {
+            fill: var(--pelican-wing-dark);
+        }
+        .pelican-wing-curve {
+            fill: none;
+            stroke: #577590;
+            stroke-width: 3;
+            stroke-linecap: round;
+        }
+        .pelican-leg {
+            fill: var(--pelican-leg);
+            filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.15));
+        }
+        .pelican-leg-dark {
+            fill: #e57373;
+        }
+        .pelican-foot {
+            fill: var(--pelican-foot);
+        }
+        .pelican-foot-line {
+            fill: none;
+            stroke: #b71c1c;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+        }
+        .pelican-tail {
+            fill: #ffcc80;
+        }
+        .pelican-tail-dark {
+            fill: #ef9a9a;
+        }
+
+        /* Тень */
+        .shadow {
+            fill: rgba(0, 0, 0, 0.18);
+            filter: blur(6px);
+            opacity: 0.7;
+        }
+
+        /* Блик */
+        .glow-dot {
+            fill: var(--glow);
+            filter: blur(5px);
+            opacity: 0.5;
+        }
+
+        /* ==================== ANIMATION ASSIGNMENTS ==================== */
+
+        .wheel-rear-group {
+            animation: wheel-rear 1.4s linear infinite;
+            transform-origin: 300px 220px;
+            transform-box: fill-box;
+        }
+        .spokes-rear-group {
+            animation: spokes-rear 1.4s linear infinite;
+            transform-origin: 300px 220px;
+            transform-box: fill-box;
+        }
+        .wheel-front-group {
+            animation: wheel-front 1.4s linear infinite;
+            transform-origin: 550px 220px;
+            transform-box: fill-box;
+        }
+        .spokes-front-group {
+            animation: spokes-front 1.4s linear infinite;
+            transform-origin: 550px 220px;
+            transform-box: fill-box;
+        }
+        .crank-group {
+            animation: crank-rotate 1.4s linear infinite;
+            transform-origin: 400px 250px;
+            transform-box: fill-box;
+        }
+        .pedal-left {
+            animation: pedal-spin 1.4s linear infinite;
+            transform-origin: 370px 250px;
+            transform-box: fill-box;
+        }
+        .pedal-right {
+            animation: pedal-spin 1.4s linear infinite;
+            transform-origin: 430px 250px;
+            transform-box: fill-box;
+        }
+        .pelican-group {
+            animation: pelican-bob 1.4s ease-in-out infinite;
+            transform-origin: 400px 230px;
+            transform-box: fill-box;
+        }
+        .pelican-head-group {
+            animation: head-bob 1.4s ease-in-out infinite;
+            transform-origin: 440px 165px;
+            transform-box: fill-box;
+        }
+        .pelican-zob-group {
+            animation: zob-sway 1.4s ease-in-out infinite;
+            transform-origin: 455px 185px;
+            transform-box: fill-box;
+        }
+        .pelican-wing-left {
+            animation: wing-flap 1.4s ease-in-out infinite;
+            transform-origin: 380px 190px;
+            transform-box: fill-box;
+        }
+        .pelican-wing-right {
+            animation: wing-flap 1.4s ease-in-out infinite;
+            transform-origin: 460px 190px;
+            transform-box: fill-box;
+        }
+        .bg-far-layer {
+            animation: bg-far 20s linear infinite;
+            transform-origin: 400px 200px;
+            transform-box: fill-box;
+        }
+        .bg-mid-layer {
+            animation: bg-mid 16s linear infinite;
+            transform-origin: 400px 200px;
+            transform-box: fill-box;
+        }
+        .bg-front-layer {
+            animation: bg-front 12s linear infinite;
+            transform-origin: 400px 200px;
+            transform-box: fill-box;
+        }
+        .cloud-slow-1 {
+            animation: cloud-slow 30s linear infinite;
+            transform-origin: 400px 100px;
+            transform-box: fill-box;
+        }
+        .cloud-slow-2 {
+            animation: cloud-slow 35s linear infinite;
+            transform-origin: 400px 100px;
+            transform-box: fill-box;
+        }
+        .cloud-medium-1 {
+            animation: cloud-medium 22s linear infinite;
+            transform-origin: 400px 140px;
+            transform-box: fill-box;
+        }
+        .cloud-medium-2 {
+            animation: cloud-medium 26s linear infinite;
+            transform-origin: 400px 140px;
+            transform-box: fill-box;
+        }
+        .cloud-fast-1 {
+            animation: cloud-fast 14s linear infinite;
+            transform-origin: 400px 80px;
+            transform-box: fill-box;
+        }
+        .cloud-fast-2 {
+            animation: cloud-fast 18s linear infinite;
+            transform-origin: 400px 80px;
+            transform-box: fill-box;
+        }
+        .grass-blade-group {
+            animation: grass-sway 2s ease-in-out infinite;
+            transform-origin: 400px 310px;
+            transform-box: fill-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" aria-label="Мультяшный пеликан едет на велосипеде">
+
+            <!-- ==================== DEFS ==================== -->
+            <defs>
+                <!-- Градиент неба -->
+                <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="var(--sky-top)" />
+                    <stop offset="55%" stop-color="#3a6ea5" />
+                    <stop offset="100%" stop-color="var(--sky-bottom)" />
+                </linearGradient>
+
+                <!-- Градиент солнца -->
+                <radialGradient id="sunGrad" cx="30%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#ffeb3b" />
+                    <stop offset="40%" stop-color="#ffd54f" />
+                    <stop offset="70%" stop-color="#ffb300" />
+                    <stop offset="100%" stop-color="#ff8f00" />
+                </radialGradient>
+
+                <!-- Градиент зоба -->
+                <linearGradient id="zobGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#ff9eaa" />
+                    <stop offset="50%" stop-color="#ff80ab" />
+                    <stop offset="100%" stop-color="#d81b60" />
+                </linearGradient>
+
+                <!-- Градиент клюва -->
+                <linearGradient id="beakGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#ffb74d" />
+                    <stop offset="60%" stop-color="#ff8a65" />
+                    <stop offset="100%" stop-color="#d32f2f" />
+                </linearGradient>
+
+                <!-- Градиент колеса -->
+                <linearGradient id="tireGrad" x1="0" y1="-0.5" x2="0" y2="0.5">
+                    <stop offset="0%" stop-color="#1e2b3c" />
+                    <stop offset="60%" stop-color="#2d3849" />
+                    <stop offset="100%" stop-color="#0f1a26" />
+                </linearGradient>
+
+                <!-- Градиент рамы -->
+                <linearGradient id="frameGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#e53935" />
+                    <stop offset="50%" stop-color="#c62828" />
+                    <stop offset="100%" stop="#b71c1c" />
+                </linearGradient>
+
+                <!-- Градиент педали -->
+                <linearGradient id="pedalGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#9c27b0" />
+                    <stop offset="50%" stop-color="#7c4dff" />
+                    <stop offset="100%" stop-color="#536dfe" />
+                </linearGradient>
+
+                <!-- Градиент пеликана -->
+                <linearGradient id="pelicanBodyGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#fff9e6" />
+                    <stop offset="60%" stop-color="#ffe0b2" />
+                    <stop offset="100%" stop-color="#ffcc80" />
+                </linearGradient>
+
+                <!-- Фильтр тени -->
+                <filter id="blurShadow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="rgba(0,0,0,0.25)" flood-opacity="0.5" />
+                </filter>
+
+                <!-- Фильтр свечения -->
+                <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="6" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+
+                <!-- Фильтр для облаков -->
+                <filter id="cloudFilter" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+            </defs>
+
+            <!-- ==================== BACKGROUND (FAR) ==================== -->
+            <!-- Небо -->
+            <rect x="0" y="0" width="800" height="300" fill="url(#skyGrad)" />
+
+            <!-- Далёкие облака (медленные) -->
+            <!-- Слой 1 (самый дальний) -->
+            <g class="cloud-slow-1" opacity="0.7">
+                <circle cx="120" cy="75" r="45" fill="#f1f5f9" class="cloud-soft" />
+                <circle cx="170" cy="65" r="38" fill="#e2e8f0" class="cloud-soft" />
+                <circle cx="145" cy="88" r="32" fill="#cbd5e1" class="cloud-soft" />
+            </g>
+            <g class="cloud-slow-2" opacity="0.65">
+                <circle cx="620" cy="95" r="50" fill="#f1f5f9" class="cloud-soft" />
+                <circle cx="675" cy="85" r="40" fill="#e2e8f0" class="cloud-soft" />
+                <circle cx="645" cy="105" r="30" fill="#cbd5e1" class="cloud-soft" />
+            </g>
+
+            <!-- Средние облака -->
+            <g class="cloud-medium-1" opacity="0.85">
+                <circle cx="250" cy="130" r="55" fill="#f8fafc" class="cloud" />
+                <circle cx="300" cy="120" r="45" fill="#f1f5f9" class="cloud" />
+                <circle cx="275" cy="145" r="38" fill="#e2e8f0" class="cloud" />
+                <circle cx="230" cy="125" r="28" fill="#cbd5e1" class="cloud" />
+            </g>
+            <g class="cloud-medium-2" opacity="0.8">
+                <circle cx="520" cy="155" r="60" fill="#f8fafc" class="cloud" />
+                <circle cx="575" cy="145" r="48" fill="#f1f5f9" class="cloud" />
+                <circle cx="545" cy="165" r="40" fill="#e2e8f0" class="cloud" />
+                <circle cx="500" cy="150" r="30" fill="#cbd5e1" class="cloud" />
+            </g>
+
+            <!-- Быстрые облака (передний план неба) -->
+            <g class="cloud-fast-1" opacity="0.95">
+                <circle cx="180" cy="195" r="40" fill="#f8fafc" class="cloud" />
+                <circle cx="220" cy="188" r="32" fill="#f1f5f9" class="cloud" />
+                <circle cx="195" cy="205" r="25" fill="#e2e8f0" class="cloud" />
+            </g>
+            <g class="cloud-fast-2" opacity="0.9">
+                <circle cx="650" cy="210" r="45" fill="#f8fafc" class="cloud" />
+                <circle cx="695" cy="202" r="35" fill="#f1f5f9" class="cloud" />
+                <circle cx="670" cy="220" r="28" fill="#e2e8f0" class="cloud" />
+            </g>
+
+            <!-- Солнце -->
+            <g class="sun" filter="url(#glow)">
+                <circle cx="680" cy="100" r="50" fill="url(#sunGrad)" class="sun-core" />
+                <!-- Лучи -->
+                <g class="sun-ray" opacity="0.8">
+                    <rect x="655" y="88" width="50" height="6" rx="3" transform="rotate(45 680 100)" />
+                    <rect x="655" y="106" width="50" height="6" rx="3" transform="rotate(-45 680 100)" />
+                    <rect x="630" y="95" width="40" height="5" rx="2.5" transform="rotate(105 680 100)" />
+                    <rect x="710" y="95" width="40" height="5" rx="2.5" transform="rotate(-15 680 100)" />
+                    <rect x="640" y="78" width="35" height="4" rx="2" transform="rotate(75 680 100)" />
+                    <rect x="700" y="78" width="35" height="4" rx="2" transform="rotate(-75 680 100)" />
+                </g>
+            </g>
+
+            <!-- ==================== MIDDLE GROUND (HILLS) ==================== -->
+            <!-- Далёкие холмы -->
+            <g class="bg-far-layer" opacity="0.55">
+                <path d="M 0 240 Q 120 210 200 230 T 400 210 T 600 225 T 800 205 L 800 300 L 0 300 Z"
+                    fill="#3a7d5a" opacity="0.6" />
+                <path d="M 0 255 Q 150 225 240 240 T 400 220 T 620 235 T 800 215 L 800 300 L 0 300 Z"
+                    fill="#4c8c5a" opacity="0.5" />
+            </g>
+
+            <!-- Средние холмы -->
+            <g class="bg-mid-layer" opacity="0.65">
+                <path d="M 0 270 Q 100 240 180 255 T 400 235 T 620 250 T 800 230 L 800 300 L 0 300 Z"
+                    fill="#5daf5a" opacity="0.55" />
+                <path d="M -50 285 Q 180 250 280 265 T 400 248 T 550 260 T 850 240 L 850 300 L -50 300 Z"
+                    fill="#4c8c4a" opacity="0.45" />
+            </g>
+
+            <!-- Передние холмы / обочина -->
+            <g class="bg-front-layer" opacity="0.75">
+                <path d="M 0 295 Q 80 275 160 285 T 400 270 T 640 280 T 800 265 L 800 300 L 0 300 Z"
+                    fill="#6daf6a" opacity="0.6" />
+                <path d="M -100 305 Q 120 280 220 292 T 400 278 T 580 288 T 900 270 L 900 300 L -100 300 Z"
+                    fill="#5a9f5a" opacity="0.5" />
+            </g>
+
+            <!-- ==================== ROAD ==================== -->
+            <!-- Дорожное полотно -->
+            <rect x="0" y="298" width="800" height="102" fill="var(--road)" class="road-bg" />
+            <!-- Обочина -->
+            <rect x="0" y="298" width="800" height="8" fill="#7f8c8d" opacity="0.5" />
+            <rect x="0" y="306" width="800" height="4" fill="#95a5a6" opacity="0.3" />
+
+            <!-- Разметка (движущаяся) -->
+            <line x1="0" y1="310" x2="800" y2="310" class="road-stroke" stroke="#ffffff" stroke-width="6"
+                stroke-dasharray="24 18" stroke-linecap="round" opacity="0.7" />
+            <!-- Двойная сплошная -->
+            <line x1="0" y1="322" x2="800" y2="322" class="road-stroke" stroke="#ffffff" stroke-width="3"
+                stroke-dasharray="12 10" stroke-linecap="round" opacity="0.5" />
+
+            <!-- ==================== GRASS / VERGE ==================== -->
+            <!-- Трава на обочине (группа для анимации) -->
+            <g class="grass-blade-group" transform-origin="400 310">
+                <rect x="0" y="302" width="800" height="6" fill="var(--grass)" class="grass" />
+                <!-- Светлые пятна -->
+                <rect x="120" y="304" width="40" height="2" fill="var(--grass-light)" rx="2" />
+                <rect x="380" y="304" width="50" height="2" fill="var(--grass-light)" rx="2" />
+                <rect x="620" y="304" width="35" height="2" fill="var(--grass-light)" rx="2" />
+                <!-- Травинки -->
+                <path d="M 50 302 L 52 298 L 54 302 Z" fill="#3a7d34" class="grass-blade" opacity="0.7" />
+                <path d="M 210 302 L 212 297 L 214 302 Z" fill="#4c8c4a" class="grass-blade" opacity="0.6" />
+                <path d="M 450 302 L 452 297 L 454 302 Z" fill="#3a7d34" class="grass-blade" opacity="0.7" />
+                <path d="M 680 302 L 682 298 L 684 302 Z" fill="#4c8c4a" class="grass-blade" opacity="0.6" />
+                <path d="M 750 302 L 752 297 L 754 302 Z" fill="#3a7d34" class="grass-blade" opacity="0.7" />
+            </g>
+
+            <!-- ==================== BICYCLE ==================== -->
+
+            <!-- Тень под велосипедом -->
+            <ellipse cx="400" cy="325" rx="110" ry="12" fill="var(--shadow)" class="shadow" opacity="0.6" />
+
+            <!-- ЗАДНЕЕ КОЛЕСО -->
+            <g class="wheel-rear-group">
+                <!-- Обод -->
+                <circle cx="300" cy="220" r="56" fill="none" stroke="#3a424d" stroke-width="8" class="tire" />
+                <!-- Покрышка -->
+                <circle cx="300" cy="220" r="60" fill="none" stroke="#1e2b3c" stroke-width="10" class="tire-tread" />
+                <!-- Спицы (радиальные, 8 штук) -->
+                <g class="spokes-rear-group">
+                    <!-- Спица 1 (0°) -->
+                    <line x1="300" y1="220" x2="300" y2="164" class="spoke-line" />
+                    <!-- Спица 2 (45°) -->
+                    <line x1="300" y1="220" x2="341" y2="183" class="spoke-line" />
+                    <!-- Спица 3 (90°) -->
+                    <line x1="300" y1="220" x2="356" y2="220" class="spoke-line" />
+                    <!-- Спица 4 (135°) -->
+                    <line x1="300" y1="220" x2="341" y2="257" class="spoke-line" />
+                    <!-- Спица 5 (180°) -->
+                    <line x1="300" y1="220" x2="300" y2="276" class="spoke-line" />
+                    <!-- Спица 6 (225°) -->
+                    <line x1="300" y1="220" x2="259" y2="257" class="spoke-line" />
+                    <!-- Спица 7 (270°) -->
+                    <line x1="300" y1="220" x2="244" y2="220" class="spoke-line" />
+                    <!-- Спица 8 (315°) -->
+                    <line x1="300" y1="220" x2="259" y2="183" class="spoke-line" />
+                </g>
+                <!-- Втулка -->
+                <circle cx="300" cy="220" r="10" fill="var(--hub)" class="hub" />
+                <circle cx="300" cy="220" r="5" fill="var(--hub-cap)" class="hub-cap" />
+            </g>
+
+            <!-- ПЕРЕДНЕЕ КОЛЕСО -->
+            <g class="wheel-front-group">
+                <!-- Обод -->
+                <circle cx="550" cy="220" r="56" fill="none" stroke="#3a424d" stroke-width="8" class="tire" />
+                <!-- Покрышка -->
+                <circle cx="550" cy="220" r="60" fill="none" stroke="#1e2b3c" stroke-width="10" class="tire-tread" />
+                <!-- Спицы (радиальные, 8 штук) -->
+                <g class="spokes-front-group">
+                    <line x1="550" y1="220" x2="550" y2="164" class="spoke-line" />
+                    <line x1="550" y1="220" x2="591" y2="183" class="spoke-line" />
+                    <line x1="550" y1="220" x2="606" y2="220" class="spoke-line" />
+                    <line x1="550" y1="220" x2="591" y2="257" class="spoke-line" />
+                    <line x1="550" y1="220" x2="550" y2="276" class="spoke-line" />
+                    <line x1="550" y1="220" x2="509" y2="257" class="spoke-line" />
+                    <line x1="550" y1="220" x2="494" y2="220" class="spoke-line" />
+                    <line x1="550" y1="220" x2="509" y2="183" class="spoke-line" />
+                </g>
+                <circle cx="550" cy="220" r="10" fill="var(--hub)" class="hub" />
+                <circle cx="550" cy="220" r="5" fill="var(--hub-cap)" class="hub-cap" />
+            </g>
+
+            <!-- РАМА ВЕЛОСИПЕДА -->
+            <g class="bike-frame">
+                <!-- Верхняя труба (заднее колесо → руль) -->
+                <path d="M 315 218 Q 380 170 430 160 Q 480 150 530 160" fill="none" stroke="var(--bike-frame)"
+                    stroke-width="12" stroke-linecap="round" />
+                <!-- Нижняя труба (заднее колесо → педали) -->
+                <path d="M 315 222 Q 370 250 400 255 Q 430 260 450 258" fill="none" stroke="var(--bike-frame)"
+                    stroke-width="12" stroke-linecap="round" />
+                <!-- Подседельная труба -->
+                <path d="M 305 220 Q 320 260 330 285" fill="none" stroke="var(--bike-frame)" stroke-width="10"
+                    stroke-linecap="round" />
+                <!-- Рулевая труба (переднее колесо → руль) -->
+                <path d="M 545 218 Q 520 170 490 155" fill="none" stroke="var(--bike-frame)" stroke-width="10"
+                    stroke-linecap="round" />
+                <!-- Нижняя часть рамы (педали → заднее колесо) -->
+                <path d="M 400 258 Q 390 280 375 300 T 320 310" fill="none" stroke="var(--bike-frame)" stroke-width="10"
+                    stroke-linecap="round" />
+                <!-- Верхняя часть (руль → седло) -->
+                <path d="M 490 150 Q 460 120 440 100 Q 420 80 400 75" fill="none" stroke="var(--bike-frame)"
+                    stroke-width="8" stroke-linecap="round" />
+                <!-- Седло -->
+                <path d="M 390 70 Q 400 65 410 70 L 405 80 Q 395 80 385 70 Z" fill="var(--bike-accent)"
+                    filter="url(#blurShadow)" />
+                <!-- Седло (верх) -->
+                <rect x="382" y="65" width="22" height="8" rx="3" fill="var(--bike-accent)" />
+
+                <!-- Руль -->
+                <path d="M 490 148 Q 500 130 510 135 Q 520 140 515 155" fill="none" stroke="var(--bike-frame)"
+                    stroke-width="8" stroke-linecap="round" />
+                <!-- Ручки руля -->
+                <rect x="510" y="150" width="25" height="8" rx="3" fill="var(--bike-accent)" />
+                <rect x="480" y="150" width="25" height="8" rx="3" fill="var(--bike-accent)" />
+                <!-- Грипсы -->
+                <rect x="512" y="152" width="18" height="4" rx="2" fill="#ffb74d" />
+                <rect x="482" y="152" width="18" height="4" rx="2" fill="#ffb74d" />
+
+                <!-- Вынос руля -->
+                <rect x="478" y="138" width="8" height="18" rx="2" fill="#cfd8dc" />
+
+                <!-- Блеск на раме -->
+                <path d="M 320 210 Q 360 180 400 175" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2"
+                    stroke-linecap="round" class="bike-frame-shine" />
+                <path d="M 450 250 Q 470 235 490 155" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"
+                    stroke-linecap="round" class="bike-frame-shine" />
+            </g>
+
+            <!-- ЦЕПЬ И ЗВЕЗДОЧКА -->
+            <!-- Задняя звездочка -->
+            <g class="chainring" transform="translate(300, 220)">
+                <circle cx="0" cy="0" r="14" fill="#e5e7eb" />
+                <circle cx="0" cy="0" r="10" fill="#f1f3f4" />
+                <!-- Зубья -->
+                <path d="M -8 -5 L 0 -12 L 8 -5 Z" fill="#9ca3af" />
+                <path d="M 5 -8 L 12 0 L 5 8 Z" fill="#9ca3af" />
+                <path d="M -5 8 L 0 12 L -8 5 Z" fill="#9ca3af" />
+                <circle cx="0" cy="0" r="3" fill="#bdbdbd" class="chainring-dots" />
+            </g>
+            <!-- Передняя звезда -->
+            <g class="chainring" transform="translate(400, 258)">
+                <circle cx="0" cy="0" r="20" fill="#e5e7eb" />
+                <circle cx="0" cy="0" r="14" fill="#f1f3f4" />
+                <!-- Зубья -->
+                <path d="M -12 -6 L 0 -18 L 12 -6 Z" fill="#9ca3af" />
+                <path d="M 8 -12 L 18 0 L 8 12 Z" fill="#9ca3af" />
+                <path d="M -8 12 L 0 18 L -12 6 Z" fill="#9ca3af" />
+                <path d="M -6 -8 L 0 -14 L 6 -8 Z" fill="#9ca3af" />
+                <path d="M -12 0 L -6 -6 L 0 0 Z" fill="#9ca3af" />
+                <circle cx="0" cy="0" r="4" fill="#bdbdbd" class="chainring-dots" />
+            </g>
+            <!-- Цепь -->
+            <path class="chain"
+                d="M 390 258 Q 370 250 355 245 Q 340 240 330 240 Q 315 240 305 245 Q 295 250 290 258 Q 288 265 290 272 Q 295 280 305 285 Q 320 290 335 292 Q 350 294 365 294 Q 380 294 392 288"
+                fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+
+            <!-- ПЕДАЛИ -->
+            <!-- Левая педаль -->
+            <g class="pedal-left" transform="translate(370, 250)">
+                <rect x="-12" y="-6" width="24" height="12" rx="4" fill="var(--pedal)" class="pedal-body" />
+                <rect x="-8" y="-3" width="16" height="6" rx="2" fill="#f3e5f5" class="pedal-reflect" />
+                <!-- Ось -->
+                <circle cx="0" cy="0" r="4" fill="var(--hub-cap)" class="crank-cap" />
+                <circle cx="0" cy="0" r="2" fill="#bdbdbd" />
+            </g>
+
+            <!-- Правая педаль -->
+            <g class="pedal-right" transform="translate(430, 250)">
+                <rect x="-12" y="-6" width="24" height="12" rx="4" fill="var(--pedal)" class="pedal-body" />
+                <rect x="-8" y="-3" width="16" height="6" rx="2" fill="#f3e5f5" class="pedal-reflect" />
+                <!-- Ось -->
+                <circle cx="0" cy="0" r="4" fill="var(--hub-cap)" class="crank-cap" />
+                <circle cx="0" cy="0" r="2" fill="#bdbdbd" />
+            </g>
+
+            <!-- Кривошипы -->
+            <g class="crank-group">
+                <!-- Левый кривошип -->
+                <line x1="400" y1="250" x2="370" y2="250" stroke="#cfd8dc" stroke-width="7" stroke-linecap="round"
+                    class="crank-arm" />
+                <!-- Правый кривошип -->
+                <line x1="400" y1="250" x2="430" y2="250" stroke="#cfd8dc" stroke-width="7" stroke-linecap="round"
+                    class="crank-arm" />
+                <!-- Ось -->
+                <circle cx="400" cy="250" r="8" fill="var(--hub)" class="hub" />
+                <circle cx="400" cy="250" r="4" fill="var(--hub-cap)" class="crank-cap" />
+            </g>
+
+            <!-- ==================== PELICAN ==================== -->
+
+            <!-- Тень пеликана -->
+            <ellipse cx="400" cy="315" rx="75" ry="10" fill="var(--shadow)" class="shadow" opacity="0.55" />
+
+            <!-- Группа пеликана (для покачивания) -->
+            <g class="pelican-group" transform="translate(400, 230)">
+
+                <!-- Хвост -->
+                <g class="pelican-tail">
+                    <path d="M -55 -15 Q -70 -25 -78 -10 Q -70 5 -55 0 Z" fill="#ffb378" />
+                    <path d="M -60 -10 Q -78 -22 -78 -5 Q -70 8 -58 5 Z" fill="#e57373" class="pelican-tail-dark" />
+                </g>
+
+                <!-- Туловище (основное) -->
+                <g class="pelican-body">
+                    <!-- Нижняя часть (живот) -->
+                    <ellipse cx="-10" cy="5" rx="55" ry="35" fill="var(--pelican-body)" />
+                    <!-- Верхняя часть (спина) -->
+                    <ellipse cx="5" cy="-10" rx="50" ry="30" fill="var(--pelican-body-light)" />
+                    <!-- Грудка -->
+                    <ellipse cx="-25" cy="10" rx="35" ry="20" fill="#fff3e0" />
+                    <!-- Бок -->
+                    <ellipse cx="20" cy="15" rx="25" ry="18" fill="#ffe0b2" />
+                </g>
+
+                <!-- Крыло левое -->
+                <g class="pelican-wing-left">
+                    <path d="M -45 -5 Q -65 -20 -75 -5 Q -65 10 -50 5 Z" fill="var(--pelican-wing)" />
+                    <path d="M -50 -2 Q -72 -12 -78 2 Q -62 18 -48 8 Z" fill="var(--pelican-wing-dark)" opacity="0.6" />
+                    <!-- Перья -->
+                    <path d="M -68 -8 L -78 -12 L -72 -4 Z" fill="#577590" opacity="0.5" />
+                    <path d="M -60 2 L -72 0 L -68 8 Z" fill="#577590" opacity="0.4" />
+                </g>
+
+                <!-- Крыло правое -->
+                <g class="pelican-wing-right">
+                    <path d="M 45 -5 Q 65 -20 75 -5 Q 65 10 50 5 Z" fill="var(--pelican-wing)" />
+                    <path d="M 50 -2 Q 72 -12 78 2 Q 62 18 48 8 Z" fill="var(--pelican-wing-dark)" opacity="0.6" />
+                    <!-- Перья -->
+                    <path d="M 68 -8 L 78 -12 L 72 -4 Z" fill="#577590" opacity="0.5" />
+                    <path d="M 60 2 L 72 0 L 68 8 Z" fill="#577590" opacity="0.4" />
+                </g>
+
+                <!-- Шея -->
+                <path d="M 20 -30 Q 15 -50 10 -65 Q 5 -80 -5 -85 Q -15 -90 -30 -85 Q -40 -80 -45 -70"
+                    fill="var(--pelican-head)" stroke="#ffcc80" stroke-width="3" stroke-linecap="round" />
+
+                <!-- Голова -->
+                <g class="pelican-head-group">
+                    <ellipse cx="-45" cy="-75" rx="22" ry="20" fill="var(--pelican-head)" class="pelican-head" />
+                    <ellipse cx="-43" cy="-78" rx="18" ry="16" fill="var(--pelican-head-light)" />
+                    <!-- Затылок -->
+                    <path d="M -67 -78 Q -75 -85 -78 -70 Q -72 -60 -60 -65 Z" fill="#ffe0b2" />
+                </g>
+
+                <!-- Глаза -->
+                <g class="pelican-eye">
+                    <!-- Левый глаз -->
+                    <circle cx="-60" cy="-80" r="7" fill="var(--eye-white)" class="pelican-eye-white" />
+                    <circle cx="-60" cy="-80" r="4.5" fill="var(--eye)" class="pelican-eye" />
+                    <circle cx="-60.5" cy="-81" r="1.2" fill="var(--eye-white)" class="pelican-eye-glow" />
+                    <!-- Бровь (левая) -->
+                    <path d="M -67 -88 Q -58 -93 -52 -86" fill="none" stroke="#e57373" stroke-width="2.5"
+                        stroke-linecap="round" opacity="0.6" />
+
+                    <!-- Правый глаз -->
+                    <circle cx="-32" cy="-78" r="7" fill="var(--eye-white)" class="pelican-eye-white" />
+                    <circle cx="-32" cy="-78" r="4.5" fill="var(--eye)" class="pelican-eye" />
+                    <circle cx="-31.5" cy="-79" r="1.2" fill="var(--eye-white)" class="pelican-eye-glow" />
+                    <!-- Бровь (правая) -->
+                    <path d="M -39 -88 Q -30 -93 -24 -86" fill="none" stroke="#e57373" stroke-width="2.5"
+                        stroke-linecap="round" opacity="0.6" />
+                </g>
+
+                <!-- Зоб (большой мешок под клювом) -->
+                <g class="pelican-zob-group">
+                    <path d="M -45 -55 Q -30 -40 -20 -50 Q -10 -60 -15 -75 Q -20 -85 -35 -85 Q -50 -85 -55 -70 Q -58 -60 -52 -50"
+                        fill="url(#zobGrad)" class="pelican-zob" />
+                    <!-- Блик на зобе -->
+                    <path d="M -40 -62 Q -32 -55 -28 -60 Q -22 -68 -28 -72 Q -32 -76 -40 -74 Q -48 -70 -45 -62"
+                        fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2" class="pelican-zob-shine" />
+                    <!-- Складка на зобе -->
+                    <path d="M -42 -68 Q -35 -62 -30 -68" fill="none" stroke="#d81b60" stroke-width="1.5"
+                        stroke-linecap="round" stroke-dasharray="3 3" opacity="0.5" />
+                </g>
+
+                <!-- Клюв -->
+                <g class="pelican-beak-group">
+                    <!-- Верхняя часть клюва -->
+                    <path d="M -25 -68 Q -10 -75 5 -72 Q 20 -68 25 -60 Q 28 -55 22 -48 Q 16 -40 10 -42"
+                        fill="url(#beakGrad)" class="pelican-beak" />
+                    <!-- Нижняя часть клюва -->
+                    <path d="M -20 -62 Q -5 -68 10 -66 Q 22 -64 28 -58 Q 32 -54 26 -48 Q 20 -42 14 -44"
+                        fill="url(#beakGrad)" class="pelican-beak" opacity="0.8" />
+                    <!-- Кончик клюва -->
+                    <circle cx="30" cy="-52" r="4" fill="#ff6b4a" class="pelican-beak-tip" />
+                    <!-- Ноздря -->
+                    <path d="M 26 -58 Q 22 -56 20 -54" fill="none" stroke="#b71c1c" stroke-width="1.5" />
+                    <!-- Линии на клюве -->
+                    <path d="M -15 -66 Q -10 -64 -5 -65" fill="none" stroke="#ff8a65" stroke-width="1.2"
+                        stroke-linecap="round" opacity="0.5" />
+                    <path d="M -22 -64 Q -18 -62 -14 -64" fill="none" stroke="#ff8a65" stroke-width="1.2"
+                        stroke-linecap="round" opacity="0.4" />
+                </g>
+
+                <!-- ==================== LEGS & FEET (attached to pedals visually) ==================== -->
+                <!-- Левая нога (бедро) -->
+                <g class="pelican-leg">
+                    <path d="M -40 30 Q -45 45 -50 60 Q -52 72 -50 82" fill="var(--pelican-leg)" stroke="#e57373"
+                        stroke-width="3" stroke-linecap="round" />
+                    <ellipse cx="-50" cy="82" rx="10" ry="7" fill="var(--pelican-leg-dark)" />
+                </g>
+
+                <!-- Правая нога (бедро) -->
+                <g class="pelican-leg-dark">
+                    <path d="M 30 30 Q 38 45 42 60 Q 44 72 42 82" fill="#e57373" stroke="#c62828" stroke-width="3"
+                        stroke-linecap="round" />
+                    <ellipse cx="42" cy="82" rx="10" ry="7" fill="#d32f2f" />
+                </g>
+
+                <!-- Левая голень + стопа (визуально к левой педали) -->
+                <g class="pelican-foot">
+                    <path d="M -50 82 Q -55 92 -52 102 Q -48 110 -40 110" fill="var(--pelican-foot)" stroke="#b71c1c"
+                        stroke-width="3" stroke-linecap="round" />
+                    <!-- Стопа (левая) -->
+                    <path d="M -40 110 Q -30 112 -22 110 Q -18 108 -20 104 Q -25 102 -32 102 Z"
+                        fill="var(--pelican-foot)" stroke="#b71c1c" stroke-width="2" stroke-linecap="round" />
+                    <!-- Линия на стопе -->
+                    <path d="M -32 106 Q -26 108 -22 106" fill="none" stroke="#9c27b0" stroke-width="1.5" />
+                </g>
+
+                <!-- Правая голень + стопа (визуально к правой педали) -->
+                <g class="pelican-foot-line">
+                    <path d="M 42 82 Q 48 92 45 102 Q 42 110 34 110" fill="var(--pelican-foot)" stroke="#b71c1c"
+                        stroke-width="3" stroke-linecap="round" />
+                    <!-- Стопа (правая) -->
+                    <path d="M 34 110 Q 44 112 52 110 Q 56 108 54 104 Q 49 102 42 102 Z"
+                        fill="var(--pelican-foot)" stroke="#b71c1c" stroke-width="2" stroke-linecap="round" />
+                    <!-- Линия на стопе -->
+                    <path d="M 42 106 Q 48 108 52 106" fill="none" stroke="#9c27b0" stroke-width="1.5" />
+                </g>
+
+                <!-- Лодыжки (соединение с педалями — визуальные точки) -->
+                <circle cx="-40" cy="110" r="3" fill="#ff8a65" opacity="0.7" />
+                <circle cx="34" cy="110" r="3" fill="#ff8a65" opacity="0.7" />
+
+                <!-- Дополнительные блики на ногах -->
+                <ellipse cx="-45" cy="50" rx="4" ry="2" fill="rgba(255,255,255,0.3)" opacity="0.5" />
+                <ellipse cx="40" cy="50" rx="4" ry="2" fill="rgba(255,255,255,0.3)" opacity="0.5" />
+            </g>
+
+            <!-- ==================== GLOW / SPARKLE ==================== -->
+            <!-- Блик на зобе -->
+            <ellipse cx="455" cy="185" rx="18" ry="6" fill="var(--glow)" class="glow-dot" opacity="0.5"
+                filter="url(#glow)" />
+            <!-- Блик на клюве -->
+            <ellipse cx="530" cy="155" rx="10" ry="3" fill="var(--glow)" class="glow-dot" opacity="0.4" />
+            <!-- Блик на раме -->
+            <ellipse cx="430" cy="170" rx="12" ry="4" fill="var(--glow)" class="glow-dot" opacity="0.35" />
+            <!-- Блик на переднем колесе -->
+            <ellipse cx="580" cy="190" rx="10" ry="3" fill="var(--glow)" class="glow-dot" opacity="0.4" />
+
+            <!-- ==================== WATER / REFLECTION (optional ground effect) ==================== -->
+            <!-- Отражение от дороги (heat haze shimmer) -->
+            <rect x="0" y="300" width="800" height="80" fill="none" stroke="rgba(255,255,200,0.12)"
+                stroke-width="2" stroke-dasharray="8 12" opacity="0.3" />
+
+            <!-- ==================== FOREGROUND ELEMENTS ==================== -->
+            <!-- Травинки переднего плана -->
+            <g transform="translate(400, 310)">
+                <path d="M -380 0 L -378 -18 L -382 2 Z" fill="#3a7d34" class="grass-blade" opacity="0.8" />
+                <path d="M -220 0 L -218 -22 L -222 4 Z" fill="#4c8c4a" class="grass-blade" opacity="0.7" />
+                <path d="M -80 0 L -78 -16 L -82 3 Z" fill="#3a7d34" class="grass-blade" opacity="0.85" />
+                <path d="M 80 0 L 78 -14 L 82 2 Z" fill="#4c8c4a" class="grass-blade" opacity="0.75" />
+                <path d="M 200 0 L 198 -20 L 202 3 Z" fill="#3a7d34" class="grass-blade" opacity="0.8" />
+                <path d="M 340 0 L 338 -18 L 342 2 Z" fill="#4c8c4a" class="grass-blade" opacity="0.7" />
+            </g>
+
+            <!-- Цветы на обочине -->
+            <g transform="translate(400, 310)">
+                <!-- Цветок 1 -->
+                <g transform="translate(-320, 8)">
+                    <circle cx="0" cy="0" r="7" fill="#ff8a8a" />
+                    <circle cx="0" cy="0" r="4" fill="#ff6e6e" />
+                    <circle cx="-5" cy="-5" r="2" fill="#ffffff" opacity="0.5" />
+                    <circle cx="5" cy="-4" r="2" fill="#ffffff" opacity="0.4" />
+                    <path d="M 0 10 Q 8 18 16 10 Q 12 4 0 -2 Z" fill="#ffcc80" opacity="0.6" />
+                    <rect x="-2" y="12" width="4" height="18" rx="1" fill="#87ceeb" />
+                </g>
+                <!-- Цветок 2 -->
+                <g transform="translate(150, 12)">
+                    <circle cx="0" cy="0" r="6" fill="#ffb74d" />
+                    <circle cx="0" cy="0" r="3.5" fill="#ff8f00" />
+                    <circle cx="-4" cy="-4" r="1.5" fill="#ffffff" opacity="0.5" />
+                    <circle cx="4" cy="-3" r="1.5" fill="#ffffff" opacity="0.4" />
+                    <path d="M 0 10 Q 6 16 12 10 Q 9 4 0 -2 Z" fill="#ffcc80" opacity="0.5" />
+                </g>
+                <!-- Цветок 3 -->
+                <g transform="translate(380, 6)">
+                    <circle cx="0" cy="0" r="8" fill="#81c784" />
+                    <circle cx="0" cy="0" r="4" fill="#43a047" />
+                    <circle cx="-5" cy="-5" r="2" fill="#ffffff" opacity="0.5" />
+                    <circle cx="4" cy="-6" r="2" fill="#ffffff" opacity="0.4" />
+                    <path d="M 0 12 Q 7 20 14 12 Q 10 4 0 -2 Z" fill="#ffcc80" opacity="0.6" />
+                </g>
+            </g>
+
+            <!-- ==================== WIND LINES (motion effect) ==================== -->
+            <!-- Линии ветра (быстрые, зацикленные через паттерн) -->
+            <g opacity="0.35">
+                <line x1="50" y1="180" x2="100" y2="160" stroke="#ffffff" stroke-width="1.5"
+                    stroke-dasharray="6 10" class="road-stroke" />
+                <line x1="200" y1="200" x2="260" y2="175" stroke="#ffffff" stroke-width="1.2"
+                    stroke-dasharray="5 9" class="road-stroke" />
+                <line x1="500" y1="170" x2="560" y2="150" stroke="#ffffff" stroke-width="1.5"
+                    stroke-dasharray="6 10" class="road-stroke" />
+                <line x1="680" y1="190" x2="740" y2="165" stroke="#ffffff" stroke-width="1.2"
+                    stroke-dasharray="5 9" class="road-stroke" />
+            </g>
+
+            <!-- ==================== WATERMARK / SIGNATURE ==================== -->
+            <!-- Маленькая подпись -->
+            <text x="400" y="390" text-anchor="middle" fill="#94a3b8" font-size="9" font-family="Segoe UI, sans-serif"
+                letter-spacing="0.04em" opacity="0.7">
+                ✦ пеликан на велопрогулке ✦
+            </text>
+
+        </svg>
+        <div class="caption">
+            <span class="emoji">🚴‍♂️</span>
+            <span>Чистый CSS Keyframes · SVG · без JS</span>
+            <span class="emoji">🐧</span>
+        </div>
+    </div>
+</body>
+</html>

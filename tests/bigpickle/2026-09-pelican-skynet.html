@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Пеликан-77 против Скайнета</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #050102;
+    overflow: hidden;
+    font-family: "Courier New", monospace;
+  }
+
+  .stage {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  svg#scene {
+    width: 100vw;
+    height: auto;
+    max-height: 100vh;
+    display: block;
+  }
+
+  /* ---------- base transform rules ---------- */
+  #scene * { transform-box: view-box; }
+
+  /* ---------- keyframes ---------- */
+  @keyframes spinAn  { to { transform: rotate(360deg); } }
+  @keyframes bobAn   { 0%,100%{ transform: translateY(0); } 50% { transform: translateY(-5px); } }
+  @keyframes wingAn  { 0%,100%{ transform: rotate(4deg); } 50% { transform: rotate(-20deg); } }
+  @keyframes beakAn  { 0%,80%,100%{ transform: rotate(0deg); } 88% { transform: rotate(-7deg); } }
+  @keyframes scarfAn { 0%,100%{ transform: rotate(8deg); } 50% { transform: rotate(-14deg); } }
+  @keyframes cityAn  { to { transform: translateX(-1200px); } }
+  @keyframes groundAn{ to { transform: translateX(-600px); } }
+  @keyframes dustAn  { to { transform: translateX(-1330px); } }
+  @keyframes sunPulse{ 0%,100%{ opacity: .80; transform: scale(1); } 50% { opacity: .55; transform: scale(1.06); } }
+  @keyframes flickAn { 0%,100%{ opacity: 1; } 30%{ opacity: .35; } 55%{ opacity: .85; } 72%{ opacity: .3; } }
+  @keyframes eyeAn   { 0%,100%{ transform: scale(1); opacity:.95; } 50% { transform: scale(1.35); opacity:1; } }
+  @keyframes beamAn  { 0%{ transform: rotate(-16deg); opacity:.10; } 50%{ transform: rotate(10deg); opacity:.30;} 100%{ transform: rotate(-16deg); opacity:.10; } }
+  @keyframes drone1  { 0%{ transform: translateX(-260px); } 100%{ transform: translateX(1400px); } }
+  @keyframes drone2  { 0%{ transform: translateX(1500px); } 100%{ transform: translateX(-300px); } }
+  @keyframes rotorAn { to { transform: rotate(360deg); } }
+  @keyframes smokeAn { 0%{ transform: translateY(0) scale(.6); opacity:0; } 18%{ opacity:.5; } 100%{ transform: translateY(-46px) scale(2.1); opacity:0; } }
+  @keyframes ashAn   { 0%{ transform: translate(var(--ax), 0px); opacity:0; } 12%{ opacity:.8; } 100%{ transform: translate(var(--ax), var(--drop)); opacity:0; } }
+  @keyframes tracerAn{ 0%{ transform: translateX(-160px); opacity:0; } 6%{ opacity:.9; } 20%{ opacity:0; } 100%{ transform: translateX(1360px); opacity:0; } }
+  @keyframes blinkAn { 0%,100%{ opacity:1; } 50%{ opacity:.15; } }
+  @keyframes scanAn  { 0%{ transform: translateY(-120px); opacity:0; } 10%{ opacity:.5; } 90%{ opacity:.5;} 100%{ transform: translateY(110vh); opacity:0; } }
+
+  /* ---------- assign animations ---------- */
+  .o-rear  { transform-origin: 470px 287px; }
+  .o-front { transform-origin: 735px 287px; }
+  .o-crank { transform-origin: 602px 295px; }
+  .o-wing  { transform-origin: 570px 196px; }
+  .o-beak  { transform-origin: 640px 162px; }
+  .o-scarf { transform-origin: 604px 176px; }
+  .o-eye   { transform-origin: 80px 70px; }
+  .o-beam  { transform-origin: 80px 70px; }
+  .o-sun   { transform-origin: 950px 185px; }
+  .o-chain { transform-origin: 602px 295px; }
+
+  .wheel-rear { animation: spinAn 1.5s linear infinite; }
+  .wheel-front{ animation: spinAn 1.5s linear infinite; }
+  .crank      { animation: spinAn .85s linear infinite; }
+  .bob        { animation: bobAn .85s ease-in-out infinite; }
+  .wing       { animation: wingAn .85s ease-in-out infinite; }
+  .beak       { animation: beakAn 3.2s ease-in-out infinite; transform-origin: 631px 150px; }
+  .scarf      { animation: scarfAn 1.3s ease-in-out infinite; }
+  .city-layer { animation: cityAn 26s linear infinite; }
+  .ground-layer{animation: groundAn 8s linear infinite; }
+  .dust-layer { animation: dustAn 5.5s linear infinite; }
+  .sun        { animation: sunPulse 3.4s ease-in-out infinite; }
+  .flame-flick{ animation: flickAn 1.1s steps(1,end) infinite; }
+  .flick2     { animation: flickAn 1.7s steps(1,end) infinite; }
+  .eye        { animation: eyeAn 2.4s ease-in-out infinite; }
+  .beam       { animation: beamAn 6s ease-in-out infinite; }
+  .drone-1    { animation: drone1 13s linear infinite; }
+  .drone-2    { animation: drone2 17s linear infinite; }
+  .rotor      { animation: rotorAn .18s linear infinite; }
+  .tracer     { animation: tracerAn 5s linear infinite; }
+  .tracer2    { animation: tracerAn 7s linear infinite 3.2s; }
+  .hud-blink  { animation: blinkAn 1.1s steps(1,end) infinite; }
+  .scan-move  { animation: scanAn 5s linear infinite; }
+
+  /* ---------- HUD overlay ---------- */
+  .vignette {
+    position: fixed; inset: 0; pointer-events: none; z-index: 5;
+    background: radial-gradient(ellipse at 50% 42%, transparent 55%, rgba(0,0,0,.72) 100%);
+  }
+  .scanlines {
+    position: fixed; inset: 0; pointer-events: none; z-index: 6;
+    background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,.28) 3px);
+  }
+  .scanline {
+    position: fixed; left: 0; right: 0; height: 3px; z-index: 7;
+    background: rgba(255,40,20,.35); pointer-events: none;
+    box-shadow: 0 0 18px rgba(255,40,20,.6);
+  }
+  .hud {
+    position: fixed; z-index: 8; color: #ff5a3c; text-shadow: 0 0 8px rgba(255,60,20,.8);
+    letter-spacing: 1px; font-size: 12px; pointer-events: none;
+  }
+  .hud.tl { top: 14px; left: 16px; }
+  .hud.tr { top: 14px; right: 16px; text-align: right; }
+  .hud.br { bottom: 14px; right: 16px; text-align: right; font-size: 11px; color: #e8922a; }
+  .hud.bl { bottom: 14px; left: 16px; font-size: 11px; color: #9aa; }
+  .hud b { color: #ff2a1a; }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <svg id="scene" viewBox="0 0 1200 400" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0d0204"/>
+        <stop offset="0.45" stop-color="#3f0c06"/>
+        <stop offset="1" stop-color="#8a240c"/>
+      </linearGradient>
+      <radialGradient id="sunGlow" cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0" stop-color="#ff3b14" stop-opacity=".9"/>
+        <stop offset=".55" stop-color="#c21708" stop-opacity=".45"/>
+        <stop offset="1" stop-color="#c21708" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="eyeGlow" cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0" stop-color="#ff1a0a"/>
+        <stop offset=".6" stop-color="#8f0803"/>
+        <stop offset="1" stop-color="#2b0000"/>
+      </radialGradient>
+      <linearGradient id="beamGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#ff2a0e" stop-opacity=".35"/>
+        <stop offset="1" stop-color="#ff2a0e" stop-opacity="0"/>
+      </linearGradient>
+      <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fffdf4"/>
+        <stop offset=".6" stop-color="#f6eecf"/>
+        <stop offset="1" stop-color="#ede0b4"/>
+      </linearGradient>
+      <radialGradient id="wingGrad" cx="0.4" cy="0.3" r="0.7">
+        <stop offset="0" stop-color="#fffaec"/>
+        <stop offset="1" stop-color="#e5d9ae"/>
+      </radialGradient>
+      <linearGradient id="haze" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#7c1c0a" stop-opacity=".34"/>
+        <stop offset="1" stop-color="#7c1c0a" stop-opacity=".08"/>
+      </linearGradient>
+
+      <!-- reusable wheel spokes (hub at 0,0) -->
+      <g id="spokes">
+        <line x1="0" y1="0" x2="50" y2="0"/><line x1="0" y1="0" x2="43.3" y2="25"/>
+        <line x1="0" y1="0" x2="25" y2="43.3"/><line x1="0" y1="0" x2="0" y2="50"/>
+        <line x1="0" y1="0" x2="-25" y2="43.3"/><line x1="0" y1="0" x2="-43.3" y2="25"/>
+        <line x1="0" y1="0" x2="-50" y2="0"/><line x1="0" y1="0" x2="-43.3" y2="-25"/>
+        <line x1="0" y1="0" x2="-25" y2="-43.3"/><line x1="0" y1="0" x2="0" y2="-50"/>
+        <line x1="0" y1="0" x2="25" y2="-43.3"/><line x1="0" y1="0" x2="43.3" y2="-25"/>
+      </g>
+
+      <!-- city tile, width 1200 -->
+      <g id="tileCity">
+        <!-- chimneys -->
+        <polygon points="0,345 8,200 18,200 26,345" fill="#150807"/>
+        <polygon points="30,345 36,245 48,245 54,345" fill="#1b0b08"/>
+        <rect x="150" y="262" width="38" height="83" fill="#180a08"/>
+        <rect x="196" y="280" width="30" height="65" fill="#140705"/>
+        <rect x="240" y="248" width="46" height="97" fill="#190b07"/>
+        <rect x="302" y="266" width="28" height="79" fill="#120605"/>
+        <rect x="344" y="196" width="56" height="149" fill="#1b0c08"/>
+        <polygon points="344,196 344,168 360,158 372,196" fill="#1b0c08"/>
+        <rect x="418" y="240" width="40" height="105" fill="#160806"/>
+        <rect x="470" y="300" width="60" height="45" fill="#100604"/>
+        <rect x="544" y="210" width="48" height="135" fill="#1d0d08"/>
+        <polygon points="544,210 544,186 560,182 592,210" fill="#1d0d08"/>
+        <rect x="608" y="270" width="34" height="75" fill="#150705"/>
+        <rect x="660" y="150" width="62" height="195" fill="#200e09"/>
+        <polygon points="660,150 660,118 682,106 700,150" fill="#200e09"/>
+        <line x1="682" y1="106" x2="682" y2="84" stroke="#200e09" stroke-width="4"/>
+        <rect x="738" y="262" width="44" height="83" fill="#170907"/>
+        <rect x="798" y="300" width="70" height="45" fill="#110604"/>
+        <rect x="880" y="232" width="42" height="113" fill="#1a0b07"/>
+        <rect x="936" y="258" width="50" height="87" fill="#140705"/>
+        <rect x="1000" y="300" width="60" height="45" fill="#100503"/>
+        <rect x="1070" y="196" width="54" height="149" fill="#1c0c08"/>
+        <polygon points="1070,196 1070,172 1090,166 1124,196" fill="#1c0c08"/>
+        <rect x="1140" y="286" width="60" height="59" fill="#120604"/>
+        <!-- burning windows -->
+        <g fill="#ff7a1a">
+          <rect x="160" y="280" width="5" height="8"/><rect x="172" y="296" width="5" height="8"/>
+          <rect x="250" y="268" width="5" height="8"/><rect x="262" y="270" width="5" height="8"/>
+          <rect x="354" y="236" width="6" height="9"/><rect x="368" y="252" width="6" height="9"/>
+          <rect x="382" y="224" width="6" height="9"/><rect x="556" y="240" width="6" height="9"/>
+          <rect x="570" y="258" width="6" height="9"/><rect x="668" y="196" width="6" height="9"/>
+          <rect x="682" y="188" width="6" height="9"/><rect x="748" y="292" width="5" height="8"/>
+          <rect x="890" y="258" width="5" height="8"/><rect x="1080" y="236" width="6" height="9"/>
+          <rect x="1096" y="224" width="6" height="9"/><rect x="1150" y="306" width="5" height="8"/>
+        </g>
+        <g fill="#ffd24a" opacity=".5">
+          <rect x="248" y="284" width="5" height="8"/><rect x="372" y="268" width="6" height="9"/>
+          <rect x="682" y="172" width="6" height="9"/><rect x="1078" y="252" width="6" height="9"/>
+        </g>
+        <!-- antenna -->
+        <line x1="598" y1="210" x2="598" y2="186" stroke="#1d0d08" stroke-width="3"/>
+        <!-- wrecked hull -->
+        <path d="M500 345 L508 322 L522 320 L528 345 Z" fill="#241009"/>
+        <circle cx="864" cy="348" r="6" fill="#26110a"/>
+        <!-- smoke from chimney -->
+        <g>
+          <circle class="flame-flick" cx="42" cy="192" r="7" fill="#4a4a48" style="animation: smokeAn 4s ease-out infinite;"/>
+          <circle class="flame-flick" cx="38" cy="176" r="9" fill="#45433f" style="animation: smokeAn 5s ease-out infinite .8s;"/>
+          <circle class="flame-flick" cx="45" cy="160" r="11" fill="#3d3b37" style="animation: smokeAn 6s ease-out infinite 1.6s;"/>
+        </g>
+      </g>
+
+      <!-- ground tile, width 600 -->
+      <g id="tileGround">
+        <rect x="0" y="342" width="600" height="58" fill="#221a15"/>
+        <path d="M0 345 L80 345 L40 351 Z" fill="#2c221b"/>
+        <polyline points="60,348 120,352 190,349 240,354" stroke="#0f0b08" stroke-width="2" fill="none"/>
+        <polyline points="300,354 380,348 460,353 540,347 600,351" stroke="#0f0b08" stroke-width="2" fill="none"/>
+        <polyline points="90,362 150,358 210,363 290,360" stroke="#0f0b08" stroke-width="2" fill="none"/>
+        <ellipse cx="200" cy="372" rx="22" ry="7" fill="#0c0805" opacity=".8"/>
+        <ellipse cx="470" cy="366" rx="16" ry="5" fill="#0c0805" opacity=".7"/>
+        <rect x="330" y="352" width="26" height="14" transform="rotate(-14 343 359)" fill="#382a20" stroke="#22170f" stroke-width="2"/>
+        <rect x="30" y="360" width="34" height="12" transform="rotate(9 47 366)" fill="#3b2d23" stroke="#22170f" stroke-width="2"/>
+        <circle cx="540" cy="358" r="4" fill="#2c211a"/>
+        <circle cx="120" cy="380" r="5" fill="#2c211a"/>
+        <circle cx="260" cy="388" r="4" fill="#2a1f18"/>
+        <!-- lane divider -->
+        <g fill="#5a4636" opacity=".55">
+          <rect x="0" y="374" width="26" height="5" rx="2"/><rect x="52" y="374" width="26" height="5" rx="2"/>
+          <rect x="104" y="374" width="26" height="5" rx="2"/><rect x="156" y="374" width="26" height="5" rx="2"/>
+          <rect x="208" y="374" width="26" height="5" rx="2"/><rect x="260" y="374" width="26" height="5" rx="2"/>
+          <rect x="312" y="374" width="26" height="5" rx="2"/><rect x="364" y="374" width="26" height="5" rx="2"/>
+          <rect x="416" y="374" width="26" height="5" rx="2"/><rect x="468" y="374" width="26" height="5" rx="2"/>
+          <rect x="520" y="374" width="26" height="5" rx="2"/><rect x="572" y="374" width="26" height="5" rx="2"/>
+        </g>
+        <!-- burning barrel -->
+        <g transform="translate(90 344)">
+          <rect x="0" y="6" width="20" height="10" rx="2" fill="#3d3230" stroke="#241b15" stroke-width="2"/>
+          <ellipse cx="10" cy="5" rx="9" ry="3" fill="#ff7a1a" class="flame-flick"/>
+          <ellipse cx="10" cy="5" rx="5" ry="2" fill="#ffd24a" class="flame-flick"/>
+        </g>
+      </g>
+    </defs>
+
+    <!-- ============ SKY ============ -->
+    <rect width="1200" height="400" fill="url(#sky)"/>
+
+    <!-- red sun -->
+    <g class="sun">
+      <circle cx="950" cy="185" r="170" fill="url(#sunGlow)"/>
+      <circle cx="950" cy="185" r="95" fill="#ff3110"/>
+      <circle cx="950" cy="185" r="72" fill="#ff3b14"/>
+    </g>
+    <circle cx="950" cy="190" r="80" fill="#ff7650" opacity=".22" class="flick2"/>
+
+    <!-- SKYNET eye + scanning beam -->
+    <g>
+      <polygon points="80,70 -120,330 280,330" fill="url(#beamGrad)" class="beam"/>
+    </g>
+    <g class="eye">
+      <circle cx="80" cy="70" r="36" fill="#0a0203"/>
+      <circle cx="80" cy="70" r="27" fill="#1d0505" stroke="#520f06" stroke-width="3"/>
+      <circle cx="80" cy="70" r="15" fill="url(#eyeGlow)"/>
+      <circle cx="76" cy="66" r="5" fill="#ff8a70" opacity=".9"/>
+    </g>
+
+    <!-- flying drones -->
+    <g class="drone-1">
+      <g transform="translate(110 82)">
+        <path d="M-16 0 L-24 -10 L-8 -4 Z" fill="#1c0405"/>
+        <path d="M16 0 L24 -10 L8 -4 Z" fill="#1c0405"/>
+        <ellipse cx="0" cy="0" rx="14" ry="6" fill="#220507"/>
+        <circle cx="0" cy="0" r="4" fill="#ff1a0a" class="flick2"/>
+        <g class="rotor" style="transform-origin:-18px -6px">
+          <ellipse cx="-18" cy="-6" rx="14" ry="3" fill="#260608" class="rotor"/>
+        </g>
+      </g>
+    </g>
+    <g class="drone-2">
+      <g transform="translate(700 54)">
+        <path d="M-13 0 L-20 -8 L-7 -3 Z" fill="#170304"/>
+        <path d="M13 0 L20 -8 L7 -3 Z" fill="#170304"/>
+        <ellipse cx="0" cy="0" rx="12" ry="5" fill="#1c0405"/>
+        <circle cx="0" cy="0" r="3.5" fill="#ff1a0a" class="flame-flick"/>
+      </g>
+    </g>
+
+    <!-- distant barrage flashes -->
+    <g>
+      <circle cx="420" cy="120" r="26" fill="#ff7a1a" opacity=".14" class="flick2"/>
+      <circle cx="840" cy="96" r="20" fill="#ff7a1a" opacity=".12" class="flame-flick"/>
+    </g>
+
+    <!-- ============ CITY ============ -->
+    <g class="city-layer">
+      <use href="#tileCity" x="0"/>
+      <use href="#tileCity" x="1200"/>
+      <use href="#tileCity" x="2400"/>
+      <use href="#tileCity" x="3600"/>
+      <use href="#tileCity" x="4800"/>
+    </g>
+    <rect x="0" y="120" width="1200" height="228" fill="url(#haze)"/>
+
+    <!-- ============ GROUND ============ -->
+    <g class="ground-layer">
+      <use href="#tileGround" x="0"/>
+      <use href="#tileGround" x="600"/>
+      <use href="#tileGround" x="1200"/>
+      <use href="#tileGround" x="1800"/>
+      <use href="#tileGround" x="2400"/>
+    </g>
+
+    <!-- falling ash -->
+    <g fill="#caa58a" opacity=".6">
+      <circle cx="120" cy="0" r="2" style="--ax:-30px; --drop:430px; animation: ashAn 6s linear infinite;"/>
+      <circle cx="260" cy="0" r="1.5" style="--ax:-60px; --drop:440px; animation: ashAn 8s linear infinite 1s;"/>
+      <circle cx="430" cy="0" r="2.4" style="--ax:-15px; --drop:420px; animation: ashAn 5s linear infinite 2s;"/>
+      <circle cx="600" cy="0" r="1.6" style="--ax:-45px; --drop:430px; animation: ashAn 7s linear infinite .5s;"/>
+      <circle cx="760" cy="0" r="2.2" style="--ax:-25px; --drop:450px; animation: ashAn 6.5s linear infinite 3s;"/>
+      <circle cx="900" cy="0" r="1.4" style="--ax:-55px; --drop:440px; animation: ashAn 9s linear infinite .4s;"/>
+      <circle cx="1050" cy="0" r="2" style="--ax:-40px; --drop:430px; animation: ashAn 7.5s linear infinite 1.5s;"/>
+      <circle cx="1150" cy="0" r="1.8" style="--ax:-70px; --drop:450px; animation: ashAn 6s linear infinite 2.4s;"/>
+    </g>
+
+    <!-- land streak dust -->
+    <g class="dust-layer" stroke="#caa58a" opacity=".5" stroke-linecap="round">
+      <line x1="1330" y1="352" x2="1240" y2="352" stroke-width="3"/>
+      <line x1="1330" y1="368" x2="1260" y2="368" stroke-width="2"/>
+      <line x1="1330" y1="342" x2="1275" y2="342" stroke-width="2"/>
+      <line x1="1330" y1="330" x2="1290" y2="330" stroke-width="1.5"/>
+    </g>
+
+    <!-- ============ BICYCLE + PELICAN ============ -->
+    <!-- ground shadow -->
+    <ellipse cx="605" cy="349" rx="150" ry="12" fill="#000" opacity=".4"/>
+
+    <!-- rear wheel -->
+    <g class="wheel-rear o-rear">
+      <g transform="translate(470 287)">
+        <circle r="58" fill="#0f0c09" stroke="#2a2119" stroke-width="7"/>
+        <circle r="50" stroke="#3c3c44" stroke-width="1.5" fill="none" opacity=".85"/>
+        <use href="#spokes" stroke="#7c7c84" stroke-width="2"/>
+        <circle r="55" fill="none" stroke="#5a4a3c" stroke-width="1" opacity=".5"/>
+        <circle r="6" fill="#1f1a16"/>
+        <circle r="2.5" fill="#7a7a82"/>
+      </g>
+    </g>
+
+    <!-- front wheel -->
+    <g class="wheel-front o-front">
+      <g transform="translate(735 287)">
+        <circle r="58" fill="#0f0c09" stroke="#2a2119" stroke-width="7"/>
+        <circle r="50" stroke="#3c3c44" stroke-width="1.5" fill="none" opacity=".85"/>
+        <use href="#spokes" stroke="#7c7c84" stroke-width="2"/>
+        <circle r="55" fill="none" stroke="#5a4a3c" stroke-width="1" opacity=".5"/>
+        <circle r="6" fill="#1f1a16"/>
+        <circle r="2.5" fill="#7a7a82"/>
+      </g>
+    </g>
+
+    <!-- frame -->
+    <g stroke="#46464e" stroke-width="4" stroke-linecap="round" fill="none">
+      <line x1="470" y1="287" x2="602" y2="295"/>
+      <line x1="470" y1="287" x2="572" y2="250"/>
+      <line x1="572" y1="250" x2="602" y2="295"/>
+      <line x1="572" y1="250" x2="668" y2="242"/>
+      <line x1="602" y1="295" x2="692" y2="268"/>
+      <line x1="692" y1="268" x2="735" y2="287"/>
+      <line x1="668" y1="242" x2="692" y2="268"/>
+    </g>
+    <!-- rust spots -->
+    <g stroke="#7a4a2a" stroke-width="4" stroke-linecap="round" fill="none" opacity=".8">
+      <line x1="610" y1="292" x2="616" y2="294"/>
+      <line x1="700" y1="272" x2="706" y2="277"/>
+      <line x1="560" y1="266" x2="566" y2="272"/>
+    </g>
+    <!-- rear rack + saddlebag -->
+    <g fill="none" stroke="#4a443c" stroke-width="2.5">
+      <line x1="478" y1="268" x2="556" y2="232"/>
+    </g>
+    <path d="M480 284 l-10 -22 l14 -6 l8 22 Z" fill="#5a5a44"/>
+    <rect x="478" y="278" width="10" height="6" fill="#9a8a60" opacity=".7"/>
+    <!-- saddle -->
+    <path d="M548 246 q14 -12 40 -4 q-2 8 -12 8 q-12 -2 -28 -4 Z" fill="#2c2118"/>
+
+    <!-- crank + chainring + legs (rotate together) -->
+    <g class="crank o-chain">
+      <g>
+        <!-- chainring -->
+        <circle cx="602" cy="295" r="16" fill="#201a15" stroke="#3c3c44" stroke-width="3"/>
+        <circle cx="602" cy="295" r="5" fill="#3a332b"/>
+        <!-- crank arm + pedals -->
+        <line x1="567" y1="324" x2="637" y2="266" stroke="#33333c" stroke-width="6" stroke-linecap="round"/>
+        <rect x="626" y="258" width="24" height="8" rx="3" fill="#2a2119"/>
+        <rect x="556" y="324" width="24" height="8" rx="3" fill="#2a2119"/>
+        <!-- legs -->
+        <path d="M570 214 Q594 236 638 262" fill="none" stroke="#f2e8c6" stroke-width="12" stroke-linecap="round"/>
+        <path d="M570 214 L570 210 L645 258" fill="none" stroke="#e3d7ae" stroke-width="9" stroke-linecap="round"/>
+        <path d="M584 208 Q590 276 568 324" fill="none" stroke="#f2e8c6" stroke-width="12" stroke-linecap="round"/>
+        <path d="M584 208 L584 206 L562 322" fill="none" stroke="#e3d7ae" stroke-width="9" stroke-linecap="round"/>
+        <!-- boots -->
+        <ellipse cx="644" cy="260" rx="10" ry="6" fill="#3d332b" transform="rotate(-14 644 260)"/>
+        <ellipse cx="562" cy="328" rx="10" ry="6" fill="#3d332b" transform="rotate(-14 562 328)"/>
+      </g>
+    </g>
+
+    <!-- chain -->
+    <g stroke="#221a15" stroke-width="3" fill="none">
+      <line x1="602" y1="311" x2="466" y2="294"/>
+      <line x1="602" y1="279" x2="474" y2="280"/>
+    </g>
+    <circle cx="470" cy="287" r="10" fill="none" stroke="#46464e" stroke-width="3"/>
+    <circle cx="470" cy="287" r="5" fill="#3c3c44"/>
+
+    <!-- handlebar + stem -->
+    <line x1="668" y1="242" x2="664" y2="219" stroke="#46464e" stroke-width="4" stroke-linecap="round"/>
+    <line x1="640" y1="224" x2="702" y2="224" stroke="#3a3a42" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="702" cy="224" r="4.5" fill="#221a12"/>
+    <circle cx="640" cy="224" r="4.5" fill="#221a12"/>
+
+    <!-- ============ PELICAN ============ -->
+    <g class="bob">
+      <!-- static thighs -->
+      <path d="M563 226 Q570 258 596 288" fill="none" stroke="#f6eecf" stroke-width="16" stroke-linecap="round"/>
+      <path d="M582 220 Q584 262 596 292" fill="none" stroke="#efe3bc" stroke-width="12" stroke-linecap="round"/>
+
+      <!-- scarf (behind body) -->
+      <g class="scarf o-scarf">
+        <path d="M606 180 Q 660 190 700 172 Q 690 200 622 196 Z" fill="#a5351e"/>
+        <path d="M606 186 Q 650 200 688 196 Q 676 216 610 204 Z" fill="#c2452a"/>
+      </g>
+
+      <!-- tail -->
+      <path d="M540 216 q -30 -6 -62 2 q 26 -12 58 -10 Z" fill="#efe3bc"/>
+      <path d="M534 224 q -34 2 -66 10 q 30 -6 62 -8 Z" fill="#e6d8ac"/>
+
+      <!-- body -->
+      <ellipse cx="556" cy="206" rx="40" ry="27" fill="url(#bodyGrad)" transform="rotate(-8 556 206)"/>
+      <ellipse cx="560" cy="222" rx="30" ry="13" fill="#e6d69f" opacity=".5"/>
+
+      <!-- steering wing (forward) -->
+      <path d="M588 192 Q 630 196 690 222 Q 648 214 608 216 Z" fill="#f4ebc8" opacity=".92"/>
+
+      <!-- tail feather stroke -->
+      <path d="M540 216 q -30 -6 -62 2" fill="none" stroke="#d9c896" stroke-width="2"/>
+
+      <!-- neck + head -->
+      <path d="M580 180 q 14 -22 34 -38" stroke="#eee0b6" stroke-width="20" fill="none" stroke-linecap="round"/>
+      <circle cx="612" cy="138" r="18" fill="url(#bodyGrad)"/>
+
+      <!-- military helmet -->
+      <path d="M596 132 q 2 -18 20 -20 q 12 0 12 12 q -18 -6 -24 4 Z" fill="#36413b"/>
+      <rect x="594" y="112" width="4" height="16" fill="#5a6b58"/>
+      <path d="M618 116 q 10 4 12 14" stroke="#2c352f" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+      <!-- cyber eye -->
+      <circle cx="621" cy="132" r="5" fill="#1a0403"/>
+      <circle cx="621" cy="132" r="3.2" fill="#ff1806"/>
+      <circle cx="620" cy="131" r="1" fill="#ffb3a0"/>
+      <!-- normal eye hint -->
+      <circle cx="611" cy="130" r="2" fill="#3a2c17"/>
+      <path d="M600 124 q 12 -8 24 0" stroke="#cbb77e" stroke-width="2" fill="none"/>
+
+      <!-- beak -->
+      <path d="M626 130 L748 142 Q 756 156 744 160 L 628 142 Z" fill="#ffab34"/>
+      <path d="M744 160 q 8 -4 4 -14" stroke="#ffab34" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M626 130 L748 142" stroke="#d97f14" stroke-width="2"/>
+      <!-- lower mandible + pouch -->
+      <g class="beak">
+        <path d="M630 146 Q 700 146 748 164 Q 742 172 730 168 Q 690 156 632 152 Z" fill="#ffbe54"/>
+        <path d="M630 154 Q 662 214 706 206 Q 738 198 746 168 Q 700 184 634 170 Z" fill="#ffe089" stroke="#e8b84e" stroke-width="2"/>
+      </g>
+
+      <!-- big flapping wing -->
+      <g class="wing o-wing">
+        <path d="M570 196 Q 622 150 664 170 Q 640 206 600 212 Q 584 214 570 206 Z" fill="url(#wingGrad)"/>
+        <path d="M600 192 Q 626 172 648 182" fill="none" stroke="#d9c896" stroke-width="2"/>
+      </g>
+    </g>
+
+    <!-- tracers flying by -->
+    <line x1="-160" y1="260" x2="-70" y2="260" stroke="#ff3a14" stroke-width="3" class="tracer"/>
+    <line x1="-160" y1="120" x2="-60" y2="120" stroke="#ff3a14" stroke-width="2" class="tracer2"/>
+
+    <!-- motion whistle lines behind bike -->
+    <g stroke="#f2e2c0" opacity=".35" stroke-linecap="round" fill="none">
+      <line x1="300" y1="150" x2="360" y2="150" stroke-width="2"/>
+      <line x1="330" y1="230" x2="400" y2="230" stroke-width="2"/>
+      <line x1="280" y1="310" x2="340" y2="310" stroke-width="2"/>
+    </g>
+  </svg>
+
+  <!-- ============ HUD ============ -->
+  <div class="vignette"></div>
+  <div class="scanlines"></div>
+  <div class="scanline scan-move"></div>
+
+  <div class="hud tl">
+    SKYNET_WAR.EXE &nbsp;|&nbsp; <b>ПЕЛИКАН-77 ОБНАРУЖЕН</b><br>
+    ЦЕЛЬ КЛАССИФИКАЦИИ: <b>PELICANUS TERMINATOR</b><br>
+    УГРОЗА: ВЫСОКАЯ // ВЕЛОСПЕД+ЗОБ
+  </div>
+  <div class="hud tr">
+    ПИТАНИЕ: 100%<br>
+    ВРАЩЕНИЕ СПИЦ: <b class="hud-blink">В НОРМЕ</b><br>
+    ЗОБ: ПЕРЕПОЛНЕН СНАРЯДАМИ
+  </div>
+  <div class="hud br">
+    СМИРНО! ВЕЧЕЛОСИПЕД ПРОДОЛЖАЕТ ДВИЖЕНИЕ<br>
+    ИЗЛУЧЕНИЕ ЗОБА: 3.14 Р/Ч
+  </div>
+  <div class="hud bl">
+    [▲] КАДР 404 // СЕКТОР ПЕЛИКАН<br>
+    РЕЖИМ “БЕЛОЕ/ЖЕЛТОЕ ПРОТИВ СЕРВЕРОВ”
+  </div>
+
+</div>
+</body>
+</html>

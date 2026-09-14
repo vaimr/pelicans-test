@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Лягушка на пенни-фартинге</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #1a2a1a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: system-ui, sans-serif;
+    }
+
+    .scene {
+      width: 900px;
+      height: 450px;
+      background: #a3d0e0;
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      position: relative;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* ===== АНИМАЦИИ ===== */
+    /* Вращение колёс */
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* Вращение педалей */
+    @keyframes pedalSpin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    /* Смещение фона (дорожка, облака, трава) */
+    @keyframes moveBg {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-200px); }
+    }
+
+    /* Лёгкое покачивание лягушки в такт */
+    @keyframes frogBob {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-3px); }
+    }
+
+    /* ===== ПРИМЕНЕНИЕ АНИМАЦИЙ ===== */
+    .wheel {
+      animation: spin 1.2s linear infinite;
+      transform-origin: center;
+      transform-box: fill-box;
+    }
+
+    .pedal-crank {
+      animation: pedalSpin 0.9s linear infinite;
+      transform-origin: 530px 285px;
+    }
+
+    .bg-layer {
+      animation: moveBg 2s linear infinite;
+    }
+
+    .bg-layer-slow {
+      animation: moveBg 4s linear infinite;
+    }
+
+    .frog-body {
+      animation: frogBob 0.9s ease-in-out infinite;
+    }
+
+    /* Чтобы колёса не дёргались */
+    .wheel-group {
+      transform-origin: center;
+      transform-box: fill-box;
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <svg viewBox="0 0 900 450" xmlns="http://www.w3.org/2000/svg">
+      <!-- ================= ФОН ================= -->
+      <!-- Небо -->
+      <rect width="900" height="450" fill="#a3d0e0" />
+
+      <!-- Облака (движутся медленно) -->
+      <g class="bg-layer-slow" opacity="0.8">
+        <ellipse cx="120" cy="70" rx="50" ry="25" fill="#f0f8ff" />
+        <ellipse cx="160" cy="60" rx="40" ry="20" fill="#f0f8ff" />
+        <ellipse cx="80" cy="65" rx="35" ry="18" fill="#f0f8ff" />
+
+        <ellipse cx="420" cy="45" rx="55" ry="22" fill="#f0f8ff" />
+        <ellipse cx="470" cy="38" rx="40" ry="18" fill="#f0f8ff" />
+        <ellipse cx="380" cy="40" rx="35" ry="16" fill="#f0f8ff" />
+
+        <ellipse cx="720" cy="80" rx="45" ry="20" fill="#f0f8ff" />
+        <ellipse cx="760" cy="70" rx="35" ry="16" fill="#f0f8ff" />
+        <ellipse cx="680" cy="75" rx="30" ry="14" fill="#f0f8ff" />
+
+        <!-- повтор для плавности -->
+        <ellipse cx="1020" cy="70" rx="50" ry="25" fill="#f0f8ff" />
+        <ellipse cx="1060" cy="60" rx="40" ry="20" fill="#f0f8ff" />
+        <ellipse cx="980" cy="65" rx="35" ry="18" fill="#f0f8ff" />
+      </g>
+
+      <!-- Земля / трава -->
+      <rect y="340" width="900" height="110" fill="#6b8e4e" />
+
+      <!-- Дорожка (движется) -->
+      <g class="bg-layer">
+        <rect y="370" width="900" height="18" fill="#8b7355" opacity="0.7" />
+        <rect y="395" width="900" height="12" fill="#7a6548" opacity="0.6" />
+        <!-- Травинки / камешки на дорожке -->
+        <circle cx="50" cy="380" r="3" fill="#6b5b45" />
+        <circle cx="180" cy="388" r="2.5" fill="#6b5b45" />
+        <circle cx="330" cy="376" r="3" fill="#6b5b45" />
+        <circle cx="500" cy="392" r="2" fill="#6b5b45" />
+        <circle cx="670" cy="382" r="3" fill="#6b5b45" />
+        <circle cx="820" cy="390" r="2.5" fill="#6b5b45" />
+        <!-- повтор -->
+        <circle cx="950" cy="380" r="3" fill="#6b5b45" />
+        <circle cx="1080" cy="388" r="2.5" fill="#6b5b45" />
+      </g>
+
+      <!-- Кустики на заднем плане (двигаются) -->
+      <g class="bg-layer-slow">
+        <ellipse cx="100" cy="340" rx="50" ry="30" fill="#4a7a3a" />
+        <ellipse cx="300" cy="345" rx="45" ry="25" fill="#3d6b2e" />
+        <ellipse cx="600" cy="338" rx="55" ry="32" fill="#4a7a3a" />
+        <ellipse cx="800" cy="342" rx="48" ry="28" fill="#3d6b2e" />
+        <!-- повтор -->
+        <ellipse cx="1000" cy="340" rx="50" ry="30" fill="#4a7a3a" />
+        <ellipse cx="1200" cy="345" rx="45" ry="25" fill="#3d6b2e" />
+      </g>
+
+      <!-- ================= ВЕЛОСИПЕД ПЕННИ-ФАРТИНГ ================= -->
+      <!-- Большое переднее колесо -->
+      <g class="wheel" style="transform-origin: 580px 260px;">
+        <!-- Обод -->
+        <circle cx="580" cy="260" r="85" fill="none" stroke="#2c2c2c" stroke-width="7" />
+        <!-- Резина -->
+        <circle cx="580" cy="260" r="85" fill="none" stroke="#1a1a1a" stroke-width="12" />
+        <circle cx="580" cy="260" r="80" fill="none" stroke="#333" stroke-width="2" />
+
+        <!-- Радиальные спицы (12 штук) -->
+        <line x1="580" y1="180" x2="580" y2="340" stroke="#c0c0c0" stroke-width="2" />
+        <line x1="580" y1="180" x2="580" y2="340" stroke="#c0c0c0" stroke-width="2" transform="rotate(30, 580, 260)" />
+        <line x1="580" y1="180" x2="580" y2="340" stroke="#c0c0c0" stroke-width="2" transform="rotate(60, 580, 260)" />
+        <line x1="580" y1="180" x2="580" y2="340" stroke="#c0c0c0" stroke-width="2" transform="rotate(90, 580, 260)" />
+        <line x1="580" y1="180" x2="580" y2="340" stroke="#c0c0c0" stroke-width="2" transform="rotate(120, 580, 260)" />
+        <line x1="580" y1="180" x2="580" y2="340" stroke="#c0c0c0" stroke-width="2" transform="rotate(150, 580, 260)" />
+
+        <!-- Втулка -->
+        <circle cx="580" cy="260" r="10" fill="#888" stroke="#555" stroke-width="3" />
+      </g>
+
+      <!-- Маленькое заднее колесо -->
+      <g class="wheel" style="transform-origin: 320px 320px;">
+        <circle cx="320" cy="320" r="40" fill="none" stroke="#1a1a1a" stroke-width="9" />
+        <circle cx="320" cy="320" r="37" fill="none" stroke="#333" stroke-width="2" />
+
+        <!-- Спицы -->
+        <line x1="320" y1="285" x2="320" y2="355" stroke="#c0c0c0" stroke-width="2" />
+        <line x1="320" y1="285" x2="320" y2="355" stroke="#c0c0c0" stroke-width="2" transform="rotate(45, 320, 320)" />
+        <line x1="320" y1="285" x2="320" y2="355" stroke="#c0c0c0" stroke-width="2" transform="rotate(90, 320, 320)" />
+        <line x1="320" y1="285" x2="320" y2="355" stroke="#c0c0c0" stroke-width="2" transform="rotate(135, 320, 320)" />
+
+        <circle cx="320" cy="320" r="6" fill="#888" stroke="#555" stroke-width="2" />
+      </g>
+
+      <!-- Рама -->
+      <!-- От втулки большого колеса к седлу -->
+      <line x1="580" y1="260" x2="440" y2="190" stroke="#4a4a4a" stroke-width="7" stroke-linecap="round" />
+      <!-- От седла к заднему колесу -->
+      <line x1="440" y1="190" x2="320" y2="320" stroke="#4a4a4a" stroke-width="7" stroke-linecap="round" />
+      <!-- От втулки большого колеса к педалям -->
+      <line x1="580" y1="260" x2="530" y2="285" stroke="#4a4a4a" stroke-width="6" stroke-linecap="round" />
+      <!-- Седло -->
+      <ellipse cx="440" cy="185" rx="30" ry="10" fill="#6b4226" />
+      <ellipse cx="440" cy="182" rx="28" ry="7" fill="#8b5a2b" />
+
+      <!-- Руль (высокий) -->
+      <line x1="580" y1="260" x2="580" y2="160" stroke="#4a4a4a" stroke-width="6" stroke-linecap="round" />
+      <line x1="560" y1="160" x2="600" y2="160" stroke="#4a4a4a" stroke-width="6" stroke-linecap="round" />
+      <!-- Грипсы руля -->
+      <circle cx="558" cy="160" r="7" fill="#2c2c2c" />
+      <circle cx="602" cy="160" r="7" fill="#2c2c2c" />
+
+      <!-- ================= ЛЯГУШКА ================= -->
+      <g class="frog-body">
+        <!-- Тело лягушки (основное) -->
+        <ellipse cx="500" cy="200" rx="52" ry="40" fill="#7ec850" />
+        <!-- Живот (светло-жёлтый) -->
+        <ellipse cx="500" cy="212" rx="36" ry="26" fill="#e6f27a" />
+
+        <!-- Задние лапы (на педалях) -->
+        <!-- Левая лапа (дальняя) -->
+        <path d="M 510 225 Q 520 260 530 278" stroke="#5da83a" stroke-width="12" fill="none" stroke-linecap="round" />
+        <!-- Правая лапа (ближняя) -->
+        <path d="M 490 225 Q 475 260 530 288" stroke="#7ec850" stroke-width="14" fill="none" stroke-linecap="round" />
+
+        <!-- Ступни на педалях -->
+        <ellipse cx="530" cy="288" rx="16" ry="8" fill="#5da83a" transform="rotate(-10, 530, 288)" />
+        <ellipse cx="530" cy="278" rx="14" ry="7" fill="#6db84a" transform="rotate(-5, 530, 278)" />
+
+        <!-- Педали (крутятся вместе с кривошипом) -->
+        <g class="pedal-crank">
+          <!-- Кривошип -->
+          <line x1="530" y1="285" x2="530" y2="310" stroke="#555" stroke-width="6" stroke-linecap="round" />
+          <!-- Педаль -->
+          <rect x="515" y="305" width="30" height="8" rx="3" fill="#333" />
+          <!-- Вторая педаль (с другой стороны) -->
+          <line x1="530" y1="285" x2="530" y2="260" stroke="#666" stroke-width="5" stroke-linecap="round" opacity="0.5" />
+          <rect x="518" y="255" width="24" height="6" rx="3" fill="#444" opacity="0.5" />
+        </g>
+
+        <!-- Передние лапы (держат руль) -->
+        <path d="M 490 185 Q 530 160 558 158" stroke="#7ec850" stroke-width="12" fill="none" stroke-linecap="round" />
+        <path d="M 510 185 Q 545 165 565 162" stroke="#6db84a" stroke-width="10" fill="none" stroke-linecap="round" />
+
+        <!-- Глаза (большие) -->
+        <!-- Левый глаз -->
+        <circle cx="478" cy="168" r="22" fill="#ffffff" stroke="#3d6b2e" stroke-width="3" />
+        <circle cx="483" cy="165" r="10" fill="#1a1a1a" />
+        <circle cx="487" cy="161" r="4" fill="#ffffff" />
+
+        <!-- Правый глаз -->
+        <circle cx="522" cy="168" r="22" fill="#ffffff" stroke="#3d6b2e" stroke-width="3" />
+        <circle cx="527" cy="165" r="10" fill="#1a1a1a" />
+        <circle cx="531" cy="161" r="4" fill="#ffffff" />
+
+        <!-- Улыбка -->
+        <path d="M 482 195 Q 500 215 518 195" stroke="#3d6b2e" stroke-width="3" fill="none" stroke-linecap="round" />
+
+        <!-- Румянец -->
+        <ellipse cx="468" cy="190" rx="10" ry="6" fill="#f4a0a0" opacity="0.6" />
+        <ellipse cx="532" cy="190" rx="10" ry="6" fill="#f4a0a0" opacity="0.6" />
+
+        <!-- Ноздри -->
+        <circle cx="493" cy="182" r="2.5" fill="#3d6b2e" />
+        <circle cx="507" cy="182" r="2.5" fill="#3d6b2e" />
+
+        <!-- Пятнышки на теле -->
+        <circle cx="470" cy="215" r="5" fill="#5da83a" opacity="0.5" />
+        <circle cx="525" cy="220" r="4" fill="#5da83a" opacity="0.5" />
+        <circle cx="490" cy="230" r="3" fill="#5da83a" opacity="0.4" />
+      </g>
+
+      <!-- ================= ДОПОЛНИТЕЛЬНЫЕ ДЕТАЛИ ================= -->
+      <!-- Тень под велосипедом -->
+      <ellipse cx="500" cy="405" rx="200" ry="12" fill="#3a4a2a" opacity="0.3" />
+
+      <!-- Летящие линии скорости (двигаются) -->
+      <g class="bg-layer" opacity="0.5">
+        <line x1="80" y1="120" x2="130" y2="120" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+        <line x1="50" y1="200" x2="110" y2="200" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" />
+        <line x1="30" y1="280" x2="90" y2="280" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+        <!-- повтор -->
+        <line x1="280" y1="120" x2="330" y2="120" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+        <line x1="250" y1="200" x2="310" y2="200" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" />
+        <line x1="230" y1="280" x2="290" y2="280" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
+      </g>
+    </svg>
+  </div>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Пеликан на велосипеде</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #87CEEB; /* Небесно-голубой фон */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    .scene {
+        position: relative;
+        width: 800px;
+        height: 400px;
+        perspective: 500px;
+    }
+
+    /* Фон для имитации движения (параллакс) */
+    .background {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 200%;
+        height: 100px;
+        background-image:
+            linear-gradient(#654321 1px, transparent 1px),
+            linear-gradient(90deg, #8B4513 1px, transparent 1px);
+        background-size: 40px 40px;
+        animation: moveGround 5s linear infinite;
+        filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+    }
+
+    @keyframes moveGround {
+        from { transform: translateX(0); }
+        to { transform: translateX(-50%); }
+    }
+
+    .bike-wrapper {
+        position: absolute;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+    }
+
+    /* Анимация тряски велосипеда при кручении педалей */
+    @keyframes bikeShake {
+        0%, 100% { transform: translateX(-50%) rotate(0deg); }
+        25% { transform: translateX(-51%) rotate(-0.5deg); }
+        75% { transform: translateX(-49%) rotate(0.5deg); }
+    }
+
+    .bike-group {
+        animation: bikeShake 0.5s ease-in-out infinite alternate;
+    }
+
+    /* Колеса */
+    .wheel {
+        fill: #222;
+        stroke: #000;
+        stroke-width: 4;
+    }
+
+    .spokes line {
+        stroke: #ccc;
+        stroke-width: 1;
+    }
+
+    @keyframes wheelSpin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .front-wheel, .back-wheel {
+        transform-origin: center;
+        animation: wheelSpin 0.5s linear infinite;
+    }
+
+    /* Педали и шатуны */
+    .crank {
+        stroke: #444;
+        stroke-width: 6;
+        stroke-linecap: round;
+    }
+
+    .pedal-circle {
+        fill: #8B4513;
+    }
+
+    @keyframes pedalRotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .crank-group {
+        transform-box: fill-box;
+        transform-origin: 150 150; /* Центр каретки */
+        animation: pedalRotate 0.5s linear infinite;
+    }
+
+    /* Пеликан */
+    .pelican-body {
+        fill: #FFF8DC; /* Светло-желтый */
+        stroke: #DAA520;
+        stroke-width: 2;
+    }
+
+    .pelican-beak {
+        fill: #F4A460; /* Оранжевый клюв */
+    }
+
+    .eye-white {
+        fill: #FFF;
+    }
+
+    .pupil {
+        fill: #000;
+    }
+
+    .zob {
+        fill: #FFEFD5; /* Бледный зоб */
+        stroke: #DEB887;
+        stroke-width: 1;
+    }
+
+    .leg {
+        stroke: #DEB887;
+        stroke-width: 6;
+        stroke-linecap: round;
+    }
+
+    /* Тень под пеликаном и великом */
+    .shadow {
+        position: absolute;
+        bottom: 60px;
+        left: 50%;
+        width: 120px;
+        height: 20px;
+        background: radial-gradient(ellipse at center, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 70%);
+        border-radius: 50%;
+        transform: translateX(-50%);
+        pointer-events: none;
+    }
+</style>
+
+</head>
+<body>
+<div class="scene">
+    <div class="background"></div>
+    <div class="shadow"></div>
+<div class="bike-wrapper">
+    <!-- Группа всего велосипеда с пеликаном -->
+    <svg class="bike-group" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- Рама велосипеда -->
+        <path d="M150,120 Q180,100 220,130 L210,140 Q180,150 150,120Z" fill="none" stroke="#555" stroke-width="4"/>
+        <path d="M150,120 Q120,100 80,130 L90,140 Q120,150 150,120Z" fill="none" stroke="#555" stroke-width="4"/>
+        <line x1="80" y1="130" x2="220" y2="130" stroke="#555" stroke-width="4"/>
+        <circle cx="150" cy="120" r="6" fill="#333"/>
+
+        <!-- Заднее колесо со спицами -->
+        <g class="back-wheel" transform="translate(80, 150)">
+            <circle class="wheel" cx="0" cy="0" r="35"/>
+            <g class="spokes">
+                <line x1="0" y1="0" x2="0" y2="-35"/>
+                <line x1="0" y1="0" x2="17" y2="-30"/>
+                <line x1="0" y1="0" x2="30" y2="-17"/>
+                <line x1="0" y1="0" x2="35" y2="0"/>
+                <line x1="0" y1="0" x2="30" y2="17"/>
+                <line x1="0" y1="0" x2="17" y2="30"/>
+                <line x1="0" y1="0" x2="0" y2="35"/>
+                <line x1="0" y1="0" x2="-17" y2="30"/>
+                <line x1="0" y1="0" x2="-30" y2="17"/>
+                <line x1="0" y1="0" x2="-35" y2="0"/>
+                <line x1="0" y1="0" x2="-30" y2="-17"/>
+                <line x1="0" y1="0" x2="-17" y2="-30"/>
+            </g>
+        </g>
+
+        <!-- Переднее колесо со спицами -->
+        <g class="front-wheel" transform="translate(220, 150)">
+            <circle class="wheel" cx="0" cy="0" r="35"/>
+            <g class="spokes">
+                <line x1="0" y1="0" x2="0" y2="-35"/>
+                <line x1="0" y1="0" x2="17" y2="-30"/>
+                <line x1="0" y1="0" x2="30" y2="-17"/>
+                <line x1="0" y1="0" x2="35" y2="0"/>
+                <line x1="0" y1="0" x2="30" y2="17"/>
+                <line x1="0" y1="0" x2="17" y2="30"/>
+                <line x1="0" y1="0" x2="0" y2="35"/>
+                <line x1="0" y1="0" x2="-17" y2="30"/>
+                <line x1="0" y1="0" x2="-30" y2="17"/>
+                <line x1="0" y1="0" x2="-35" y2="0"/>
+                <line x1="0" y1="0" x2="-30" y2="-17"/>
+                <line x1="0" y1="0" x2="-17" y2="-30"/>
+            </g>
+        </g>
+
+        <!-- Шатун и педали (вращение вокруг центра "каретки") -->
+        <g class="crank-group" transform="translate(150, 120)">
+            <line class="crank" x1="0" y1="0" x2="0" y2="30"/>
+
+            <!-- Левая педаль -->
+            <g transform="rotate(-45)">
+                <circle class="pedal-circle" cx="0" cy="30" r="6"/>
+                <line x1="0" y1="30" x2="0" y2="45" stroke="#444" stroke-width="4"/>
+            </g>
+
+            <!-- Правая педаль -->
+            <g transform="rotate(135)">
+                <circle class="pedal-circle" cx="0" cy="30" r="6"/>
+                <line x1="0" y1="30" x2="0" y2="45" stroke="#444" stroke-width="4"/>
+            </g>
+        </g>
+
+        <!-- Сиденье -->
+        <ellipse cx="150" cy="90" rx="20" ry="8" fill="#8B4513"/>
+
+        <!-- Пеликан сидит на сиденье -->
+        <g transform="translate(150, 70) scale(0.8)">
+
+            <!-- Зоб (самый большой элемент) -->
+            <ellipse class="zob" cx="-10" cy="20" rx="40" ry="25" />
+
+            <!-- Тело -->
+            <ellipse class="pelican-body" cx="0" cy="0" rx="50" ry="35"/>
+
+            <!-- Голова -->
+            <ellipse class="pelican-body" cx="-35" cy="-15" rx="25" ry="20"/>
+
+            <!-- Клюв (большой и мультяшный) -->
+            <polygon class="pelican-beak" points="-65,-15 -100,-5 -100,15 -65,5" />
+
+            <!-- Глаза -->
+            <ellipse class="eye-white" cx="-45" cy="-20" rx="5" ry="7"/>
+            <ellipse class="pupil" cx="-47" cy="-20" rx="2" ry="3"/>
+
+            <!-- Крыло (сложено) -->
+            <path class="pelican-body" d="M10,10 C20,25 30,25 40,10" stroke="#DAA520" stroke-width="8" fill="none" stroke-linecap="round"/>
+
+            <!-- Ноги крутят педали (анимированы через наклон рамы и вращение педалей выше) -->
+            <line class="leg" x1="15" y1="30" x2="30" y2="60"/>
+            <line class="leg" x1="-15" y1="30" x2="-30" y2="60"/>
+
+            <!-- Лапки -->
+            <polyline points="30,60 35,70 25,70" fill="none" stroke="#DEB887" stroke-width="4"/>
+            <polyline points="-30,60 -35,70 -25,70" fill="none" stroke="#DEB887" stroke-width="4"/>
+        </g>
+    </svg>
+</div>
+
+</div>
+</body>
+</html>

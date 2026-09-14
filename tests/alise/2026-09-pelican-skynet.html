@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Пеликан-Т800 :: SKYNET ZONE 7</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  :root{
+    --rust:#8a5a2b;
+    --rust-d:#5d3a1a;
+    --iron:#3a3530;
+    --sky-top:#1a0a0a;
+    --sky-mid:#3a1212;
+    --sky-bot:#6b2818;
+    --bone:#f5e6c8;
+    --bone-pale:#ede0b0;
+    --pouch:#e8c87a;
+    --term-red:#ff2020;
+    --hud:#ff6a00;
+  }
+
+  html,body{
+    width:100%; height:100%;
+    background:#000;
+    overflow:hidden;
+    font-family:'Courier New',monospace;
+  }
+
+  .scene{
+    position:relative;
+    width:100vw; height:100vh;
+    background:linear-gradient(180deg,var(--sky-top) 0%, var(--sky-mid) 45%, var(--sky-bot) 72%, #2a1a10 78%, #1a1208 100%);
+    overflow:hidden;
+  }
+
+  /* ===== SCANLINES OVERLAY ===== */
+  .scanlines{
+    position:absolute; inset:0;
+    pointer-events:none; z-index:100;
+    background:repeating-linear-gradient(
+      0deg,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,.18) 3px,
+      rgba(0,0,0,0) 4px
+    );
+  }
+
+  /* ===== GLITCH FLASH ===== */
+  .glitch{
+    position:absolute; inset:0;
+    pointer-events:none; z-index:101;
+    background:rgba(255,40,0,.06);
+    animation:glitch 6s infinite;
+  }
+  @keyframes glitch{
+    0%,93%,100%{opacity:0}
+    94%{opacity:1; transform:translateX(-3px)}
+    95%{opacity:.5; transform:translateX(2px)}
+    96%{opacity:.8; transform:translateX(-1px)}
+    97%{opacity:0}
+  }
+
+  /* ===== VIGNETTE ===== */
+  .vignette{
+    position:absolute; inset:0;
+    pointer-events:none; z-index:99;
+    background:radial-gradient(ellipse at center, transparent 35%, rgba(0,0,0,.7) 100%);
+  }
+
+  /* ===== SUN ===== */
+  .sun{
+    position:absolute;
+    top:38%; left:50%;
+    transform:translate(-50%,-50%);
+    width:140px; height:140px;
+    border-radius:50%;
+    background:radial-gradient(circle, #ff6020 0%, #cc3010 50%, #801808 80%, transparent 100%);
+    filter:blur(2px);
+    animation:sunPulse 4s ease-in-out infinite;
+    z-index:1;
+  }
+  @keyframes sunPulse{
+    0%,100%{opacity:.8; transform:translate(-50%,-50%) scale(1)}
+    50%{opacity:1; transform:translate(-50%,-50%) scale(1.06)}
+  }
+  .sun::before{
+    content:''; position:absolute; inset:-20px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,80,20,.2) 0%, transparent 70%);
+  }
+
+  /* ===== FAR RUINS ===== */
+  .layer-far{
+    position:absolute; bottom:22%; left:0;
+    width:200%; height:180px;
+    z-index:2;
+    animation:scrollFar 18s linear infinite;
+  }
+  @keyframes scrollFar{
+    from{transform:translateX(0)}
+    to{transform:translateX(-50%)}
+  }
+
+  /* ===== MID RUINS ===== */
+  .layer-mid{
+    position:absolute; bottom:18%; left:0;
+    width:200%; height:220px;
+    z-index:3;
+    animation:scrollMid 9s linear infinite;
+  }
+  @keyframes scrollMid{
+    from{transform:translateX(0)}
+    to{transform:translateX(-50%)}
+  }
+
+  /* ===== NEAR RUINS ===== */
+  .layer-near{
+    position:absolute; bottom:13%; left:0;
+    width:200%; height:120px;
+    z-index:4;
+    animation:scrollNear 5s linear infinite;
+  }
+  @keyframes scrollNear{
+    from{transform:translateX(0)}
+    to{transform:translateX(-50%)}
+  }
+
+  .ruin-svg{ display:block; width:100%; height:100%; }
+
+  /* ===== GROUND ===== */
+  .ground{
+    position:absolute; bottom:0; left:0;
+    width:100%; height:22%;
+    background:linear-gradient(180deg, #2a1a10 0%, #1a1008 60%, #0a0604 100%);
+    z-index:5;
+  }
+  .ground-lines{
+    position:absolute; bottom:14%; left:0;
+    width:200%; height:6px;
+    z-index:5;
+    animation:scrollGround 1.2s linear infinite;
+  }
+  @keyframes scrollGround{
+    from{transform:translateX(0)}
+    to{transform:translateX(-50%)}
+  }
+
+  /* ===== DUST ===== */
+  .dust{
+    position:absolute; bottom:15%; left:30%;
+    width:100px; height:40px;
+    z-index:6; pointer-events:none;
+  }
+  .dust p{
+    position:absolute; border-radius:50%;
+    background:rgba(200,160,100,.25);
+  }
+  .dust p:nth-child(1){ width:18px;height:18px; left:0; bottom:0; animation:dust 1s ease-out infinite; }
+  .dust p:nth-child(2){ width:12px;height:12px; left:10px; bottom:0; animation:dust 1s ease-out .2s infinite; }
+  .dust p:nth-child(3){ width:8px;height:8px; left:20px; bottom:0; animation:dust 1s ease-out .4s infinite; }
+  .dust p:nth-child(4){ width:14px;height:14px; left:5px; bottom:0; animation:dust 1.2s ease-out .6s infinite; }
+  .dust p:nth-child(5){ width:6px;height:6px; left:25px; bottom:0; animation:dust .8s ease-out .8s infinite; }
+  @keyframes dust{
+    0%{transform:translate(0,0) scale(1); opacity:.7}
+    100%{transform:translate(-60px,-10px) scale(2); opacity:0}
+  }
+
+  /* ===== PELICAN RIDER ===== */
+  .rider{
+    position:absolute;
+    bottom:16%; left:50%;
+    transform:translateX(-50%);
+    width:340px; height:380px;
+    z-index:8;
+    animation:bob .5s ease-in-out infinite;
+  }
+  @keyframes bob{
+    0%,100%{transform:translateX(-50%) translateY(0)}
+    50%{transform:translateX(-50%) translateY(-3px)}
+  }
+
+  .pelican-svg{ width:100%; height:100%; display:block; }
+
+  /* Wheel spin */
+  .wheel-f{ transform-origin:100px 280px; animation:spin .5s linear infinite; }
+  .wheel-r{ transform-origin:240px 280px; animation:spin .5s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  /* Pedal spin */
+  .pedal-group{ transform-origin:170px 280px; animation:spin .5s linear infinite; }
+
+  /* Legs */
+  .leg-front{ transform-origin:170px 260px; animation:legFront .5s linear infinite; }
+  .leg-back{ transform-origin:170px 260px; animation:legBack .5s linear infinite; }
+  @keyframes legFront{
+    0%{transform:rotate(0deg)} 25%{transform:rotate(-35deg)} 50%{transform:rotate(0deg)} 75%{transform:rotate(35deg)} 100%{transform:rotate(0deg)}
+  }
+  @keyframes legBack{
+    0%{transform:rotate(0deg)} 25%{transform:rotate(35deg)} 50%{transform:rotate(0deg)} 75%{transform:rotate(-35deg)} 100%{transform:rotate(0deg)}
+  }
+
+  /* Head bob */
+  .head-group{ transform-origin:200px 160px; animation:headBob 1s ease-in-out infinite; }
+  @keyframes headBob{
+    0%,100%{transform:rotate(-1deg)}
+    50%{transform:rotate(2deg)}
+  }
+
+  /* Pouch wobble */
+  .pouch-group{ transform-origin:170px 200px; animation:pouchWobble 1s ease-in-out infinite; }
+  @keyframes pouchWobble{
+    0%,100%{transform:rotate(0deg) translateY(0)}
+    50%{transform:rotate(1deg) translateY(-2px)}
+  }
+
+  /* Terminator eye */
+  .term-eye{ animation:eyeBlink 2s ease-in-out infinite; }
+  @keyframes eyeBlink{
+    0%,90%,100%{opacity:1}
+    93%{opacity:.2}
+    95%{opacity:1}
+  }
+
+  /* ===== HUD ===== */
+  .hud{
+    position:absolute; top:0; left:0; right:0; bottom:0;
+    z-index:98; pointer-events:none;
+    color:var(--hud);
+    font-size:12px; letter-spacing:1px;
+    text-shadow:0 0 4px rgba(255,106,0,.6);
+  }
+  .hud-tl{ position:absolute; top:14px; left:16px; }
+  .hud-tr{ position:absolute; top:14px; right:16px; text-align:right; }
+  .hud-bl{ position:absolute; bottom:14px; left:16px; }
+  .hud-br{ position:absolute; bottom:14px; right:16px; text-align:right; }
+  .hud h3{ font-size:14px; margin-bottom:4px; letter-spacing:2px; }
+  .hud .label{ opacity:.6; }
+  .hud .blink{ animation:blink 1s steps(2) infinite; }
+  @keyframes blink{ 50%{opacity:.3} }
+  .hud .bar{
+    display:inline-block; width:120px; height:8px;
+    border:1px solid var(--hud);
+    margin-top:4px; position:relative;
+  }
+  .hud .bar::after{
+    content:''; position:absolute; left:0; top:0; bottom:0;
+    width:73%; background:var(--hud);
+  }
+</style>
+</head>
+<body>
+<div class="scene">
+
+  <!-- ===== SUN ===== -->
+  <div class="sun"></div>
+
+  <!-- ===== FAR RUINS ===== -->
+  <div class="layer-far">
+    <svg class="ruin-svg" viewBox="0 0 1200 180" preserveAspectRatio="none">
+      <g fill="#2a1a14" opacity=".7">
+        <!-- far city silhouette set 1 -->
+        <rect x="20" y="60" width="40" height="120"/>
+        <rect x="65" y="80" width="30" height="100"/>
+        <rect x="100" y="40" width="50" height="140"/>
+        <polygon points="150,180 175,100 200,180"/>
+        <rect x="205" y="70" width="35" height="110"/>
+        <rect x="245" y="90" width="25" height="90"/>
+        <rect x="275" y="50" width="45" height="130"/>
+        <rect x="325" y="75" width="30" height="105"/>
+        <rect x="360" y="35" width="55" height="145"/>
+        <polygon points="415,180 440,120 465,180"/>
+        <rect x="470" y="85" width="40" height="95"/>
+        <rect x="515" y="55" width="35" height="125"/>
+        <rect x="555" y="75" width="28" height="105"/>
+        <rect x="588" y="45" width="50" height="135"/>
+        <rect x="643" y="80" width="30" height="100"/>
+        <!-- window glows -->
+        <rect x="110" y="60" width="4" height="4" fill="#ff6020" opacity=".8"/>
+        <rect x="130" y="80" width="4" height="4" fill="#ff6020" opacity=".6"/>
+        <rect x="370" y="60" width="4" height="4" fill="#ff6020" opacity=".7"/>
+        <rect x="390" y="100" width="4" height="4" fill="#ff6020" opacity=".5"/>
+        <rect x="595" y="70" width="4" height="4" fill="#ff6020" opacity=".8"/>
+        <rect x="620" y="90" width="4" height="4" fill="#ff6020" opacity=".6"/>
+      </g>
+      <!-- duplicate for seamless loop -->
+      <g fill="#2a1a14" opacity=".7" transform="translate(600,0)">
+        <rect x="20" y="60" width="40" height="120"/>
+        <rect x="65" y="80" width="30" height="100"/>
+        <rect x="100" y="40" width="50" height="140"/>
+        <polygon points="150,180 175,100 200,180"/>
+        <rect x="205" y="70" width="35" height="110"/>
+        <rect x="245" y="90" width="25" height="90"/>
+        <rect x="275" y="50" width="45" height="130"/>
+        <rect x="325" y="75" width="30" height="105"/>
+        <rect x="360" y="35" width="55" height="145"/>
+        <polygon points="415,180 440,120 465,180"/>
+        <rect x="470" y="85" width="40" height="95"/>
+        <rect x="515" y="55" width="35" height="125"/>
+        <rect x="555" y="75" width="28" height="105"/>
+        <rect x="588" y="45" width="50" height="135"/>
+        <rect x="643" y="80" width="30" height="100"/>
+        <rect x="110" y="60" width="4" height="4" fill="#ff6020" opacity=".8"/>
+        <rect x="130" y="80" width="4" height="4" fill="#ff6020" opacity=".6"/>
+        <rect x="370" y="60" width="4" height="4" fill="#ff6020" opacity=".7"/>
+        <rect x="390" y="100" width="4" height="4" fill="#ff6020" opacity=".5"/>
+        <rect x="595" y="70" width="4" height="4" fill="#ff6020" opacity=".8"/>
+        <rect x="620" y="90" width="4" height="4" fill="#ff6020" opacity=".6"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ===== MID RUINS ===== -->
+  <div class="layer-mid">
+    <svg class="ruin-svg" viewBox="0 0 1200 220" preserveAspectRatio="none">
+      <g fill="#1a0e0a" opacity=".85">
+        <rect x="10" y="100" width="60" height="120"/>
+        <polygon points="10,100 40,60 70,100"/>
+        <rect x="75" y="120" width="40" height="100"/>
+        <rect x="120" y="80" width="70" height="140"/>
+        <polygon points="120,80 155,40 190,80"/>
+        <rect x="195" y="110" width="50" height="110"/>
+        <rect x="250" y="70" width="80" height="150"/>
+        <polygon points="250,70 290,30 330,70"/>
+        <rect x="335" y="95" width="55" height="125"/>
+        <rect x="395" y="120" width="35" height="100"/>
+        <rect x="435" y="85" width="65" height="135"/>
+        <polygon points="435,85 467,50 500,85"/>
+        <rect x="505" y="105" width="45" height="115"/>
+        <rect x="555" y="75" width="75" height="145"/>
+        <!-- broken wall -->
+        <polygon points="555,75 555,220 570,200 570,130 600,140 600,75"/>
+        <!-- window glows -->
+        <rect x="135" y="100" width="6" height="6" fill="#ff5010" opacity=".7"/>
+        <rect x="160" y="120" width="6" height="6" fill="#ff5010" opacity=".5"/>
+        <rect x="270" y="100" width="6" height="6" fill="#ff5010" opacity=".8"/>
+        <rect x="300" y="130" width="6" height="6" fill="#ff5010" opacity=".4"/>
+        <rect x="450" y="110" width="6" height="6" fill="#ff5010" opacity=".6"/>
+        <rect x="480" y="140" width="6" height="6" fill="#ff5010" opacity=".5"/>
+      </g>
+      <g fill="#1a0e0a" opacity=".85" transform="translate(600,0)">
+        <rect x="10" y="100" width="60" height="120"/>
+        <polygon points="10,100 40,60 70,100"/>
+        <rect x="75" y="120" width="40" height="100"/>
+        <rect x="120" y="80" width="70" height="140"/>
+        <polygon points="120,80 155,40 190,80"/>
+        <rect x="195" y="110" width="50" height="110"/>
+        <rect x="250" y="70" width="80" height="150"/>
+        <polygon points="250,70 290,30 330,70"/>
+        <rect x="335" y="95" width="55" height="125"/>
+        <rect x="395" y="120" width="35" height="100"/>
+        <rect x="435" y="85" width="65" height="135"/>
+        <polygon points="435,85 467,50 500,85"/>
+        <rect x="505" y="105" width="45" height="115"/>
+        <rect x="555" y="75" width="75" height="145"/>
+        <polygon points="555,75 555,220 570,200 570,130 600,140 600,75"/>
+        <rect x="135" y="100" width="6" height="6" fill="#ff5010" opacity=".7"/>
+        <rect x="160" y="120" width="6" height="6" fill="#ff5010" opacity=".5"/>
+        <rect x="270" y="100" width="6" height="6" fill="#ff5010" opacity=".8"/>
+        <rect x="300" y="130" width="6" height="6" fill="#ff5010" opacity=".4"/>
+        <rect x="450" y="110" width="6" height="6" fill="#ff5010" opacity=".6"/>
+        <rect x="480" y="140" width="6" height="6" fill="#ff5010" opacity=".5"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ===== NEAR RUINS ===== -->
+  <div class="layer-near">
+    <svg class="ruin-svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <g fill="#0a0604" opacity=".9">
+        <rect x="0" y="40" width="90" height="80"/>
+        <polygon points="0,40 45,10 90,40"/>
+        <rect x="95" y="60" width="60" height="60"/>
+        <rect x="160" y="30" width="100" height="90"/>
+        <polygon points="160,30 210,0 260,30"/>
+        <!-- broken top -->
+        <polygon points="160,30 160,50 180,40 180,30"/>
+        <polygon points="200,30 200,60 220,45 220,30 240,30 240,50 260,30"/>
+        <rect x="265" y="55" width="70" height="65"/>
+        <rect x="340" y="35" width="85" height="85"/>
+        <polygon points="340,35 382,5 425,35"/>
+        <rect x="430" y="50" width="55" height="70"/>
+        <rect x="490" y="25" width="95" height="95"/>
+        <polygon points="490,25 537,0 585,25"/>
+        <!-- debris -->
+        <rect x="0" y="105" width="1200" height="15"/>
+      </g>
+      <g fill="#0a0604" opacity=".9" transform="translate(600,0)">
+        <rect x="0" y="40" width="90" height="80"/>
+        <polygon points="0,40 45,10 90,40"/>
+        <rect x="95" y="60" width="60" height="60"/>
+        <rect x="160" y="30" width="100" height="90"/>
+        <polygon points="160,30 210,0 260,30"/>
+        <polygon points="160,30 160,50 180,40 180,30"/>
+        <polygon points="200,30 200,60 220,45 220,30 240,30 240,50 260,30"/>
+        <rect x="265" y="55" width="70" height="65"/>
+        <rect x="340" y="35" width="85" height="85"/>
+        <polygon points="340,35 382,5 425,35"/>
+        <rect x="430" y="50" width="55" height="70"/>
+        <rect x="490" y="25" width="95" height="95"/>
+        <polygon points="490,25 537,0 585,25"/>
+        <rect x="0" y="105" width="1200" height="15"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ===== GROUND ===== -->
+  <div class="ground"></div>
+  <div class="ground-lines">
+    <svg width="1200" height="6" viewBox="0 0 1200 6" preserveAspectRatio="none">
+      <g fill="#3a2818">
+        <rect x="0" y="0" width="50" height="3"/>
+        <rect x="80" y="0" width="50" height="3"/>
+        <rect x="160" y="0" width="50" height="3"/>
+        <rect x="240" y="0" width="50" height="3"/>
+        <rect x="320" y="0" width="50" height="3"/>
+        <rect x="400" y="0" width="50" height="3"/>
+        <rect x="480" y="0" width="50" height="3"/>
+        <rect x="560" y="0" width="50" height="3"/>
+        <rect x="640" y="0" width="50" height="3"/>
+        <rect x="720" y="0" width="50" height="3"/>
+        <rect x="800" y="0" width="50" height="3"/>
+        <rect x="880" y="0" width="50" height="3"/>
+        <rect x="960" y="0" width="50" height="3"/>
+        <rect x="1040" y="0" width="50" height="3"/>
+        <rect x="1120" y="0" width="50" height="3"/>
+      </g>
+    </svg>
+  </div>
+
+  <!-- ===== DUST ===== -->
+  <div class="dust">
+    <p></p><p></p><p></p><p></p><p></p>
+  </div>
+
+  <!-- ===== PELICAN ON BIKE ===== -->
+  <div class="rider">
+    <svg class="pelican-svg" viewBox="0 0 340 380">
+      <defs>
+        <radialGradient id="pouchGrad" cx="50%" cy="50%">
+          <stop offset="0%" stop-color="#f0d090"/>
+          <stop offset="60%" stop-color="#e0b860"/>
+          <stop offset="100%" stop-color="#c09840"/>
+        </radialGradient>
+        <radialGradient id="bodyGrad" cx="40%" cy="35%">
+          <stop offset="0%" stop-color="#faf0e0"/>
+          <stop offset="70%" stop-color="#f0e0c8"/>
+          <stop offset="100%" stop-color="#d8c8a0"/>
+        </radialGradient>
+        <radialGradient id="wheelGrad" cx="50%" cy="50%">
+          <stop offset="0%" stop-color="#4a4038"/>
+          <stop offset="70%" stop-color="#3a3530"/>
+          <stop offset="100%" stop-color="#2a2520"/>
+        </radialGradient>
+        <linearGradient id="frameGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#8a5a2b"/>
+          <stop offset="50%" stop-color="#6d4520"/>
+          <stop offset="100%" stop-color="#4d3015"/>
+        </linearGradient>
+      </defs>
+
+      <!-- ===== BIKE FRAME ===== -->
+      <g stroke="url(#frameGrad)" stroke-width="5" fill="none" stroke-linecap="round">
+        <!-- down tube -->
+        <line x1="170" y1="200" x2="240" y2="280"/>
+        <!-- seat tube -->
+        <line x1="170" y1="200" x2="170" y2="280"/>
+        <!-- top tube -->
+        <line x1="170" y1="200" x2="250" y2="195"/>
+        <!-- chain stay -->
+        <line x1="170" y1="280" x2="240" y2="280"/>
+        <!-- seat stay -->
+        <line x1="170" y1="200" x2="240" y2="280"/>
+        <!-- fork -->
+        <line x1="250" y1="195" x2="240" y2="280"/>
+        <!-- stem + handlebar -->
+        <line x1="250" y1="195" x2="265" y2="175"/>
+        <line x1="255" y1="175" x2="280" y2="175" stroke-width="4"/>
+        <!-- seat post -->
+        <line x1="170" y1="200" x2="165" y2="185"/>
+      </g>
+
+      <!-- ===== SADDLE ===== -->
+      <ellipse cx="163" cy="183" rx="16" ry="5" fill="#3a2818"/>
+      <ellipse cx="163" cy="182" rx="14" ry="4" fill="#5a3a28"/>
+
+      <!-- ===== REAR WHEEL ===== -->
+      <g class="wheel-r">
+        <circle cx="240" cy="280" r="45" fill="none" stroke="#3a3530" stroke-width="4"/>
+        <circle cx="240" cy="280" r="42" fill="none" stroke="#5a4a3a" stroke-width="2"/>
+        <!-- spokes -->
+        <g stroke="#6a5a48" stroke-width="1.2">
+          <line x1="240" y1="238" x2="240" y2="322"/>
+          <line x1="198" y1="280" x2="282" y2="280"/>
+          <line x1="210" y1="250" x2="270" y2="310"/>
+          <line x1="210" y1="310" x2="270" y2="250"/>
+          <line x1="222" y1="240" x2="258" y2="320"/>
+          <line x1="222" y1="320" x2="258" y2="240"/>
+          <line x1="258" y1="240" x2="222" y2="320"/>
+          <line x1="282" y1="262" x2="198" y2="298"/>
+        </g>
+        <circle cx="240" cy="280" r="5" fill="#5a4a38"/>
+        <circle cx="240" cy="280" r="3" fill="#3a3028"/>
+      </g>
+
+      <!-- ===== FRONT WHEEL ===== -->
+      <g class="wheel-f">
+        <circle cx="100" cy="280" r="45" fill="none" stroke="#3a3530" stroke-width="4"/>
+        <circle cx="100" cy="280" r="42" fill="none" stroke="#5a4a3a" stroke-width="2"/>
+        <g stroke="#6a5a48" stroke-width="1.2">
+          <line x1="100" y1="238" x2="100" y2="322"/>
+          <line x1="58" y1="280" x2="142" y2="280"/>
+          <line x1="70" y1="250" x2="130" y2="310"/>
+          <line x1="70" y1="310" x2="130" y2="250"/>
+          <line x1="82" y1="240" x2="118" y2="320"/>
+          <line x1="82" y1="320" x2="118" y2="240"/>
+          <line x1="118" y1="240" x2="82" y2="320"/>
+          <line x1="142" y1="262" x2="58" y2="298"/>
+        </g>
+        <circle cx="100" cy="280" r="5" fill="#5a4a38"/>
+        <circle cx="100" cy="280" r="3" fill="#3a3028"/>
+      </g>
+
+      <!-- ===== CHAIN (decorative) ===== -->
+      <line x1="170" y1="280" x2="240" y2="280" stroke="#4a4038" stroke-width="1.5" stroke-dasharray="3 2" opacity=".6"/>
+
+      <!-- ===== PEDALS ===== -->
+      <g class="pedal-group">
+        <!-- crank arm front -->
+        <line x1="170" y1="280" x2="170" y2="305" stroke="#5a4a38" stroke-width="3"/>
+        <rect x="162" y="303" width="16" height="5" rx="1" fill="#4a3a28"/>
+        <!-- crank arm back (offset 180°) -->
+        <line x1="170" y1="280" x2="170" y2="255" stroke="#5a4a38" stroke-width="3"/>
+        <rect x="162" y="251" width="16" height="5" rx="1" fill="#4a3a28"/>
+        <!-- chainring -->
+        <circle cx="170" cy="280" r="10" fill="none" stroke="#5a4a38" stroke-width="2"/>
+        <circle cx="170" cy="280" r="3" fill="#3a3028"/>
+      </g>
+
+      <!-- ===== PELICAN BODY ===== -->
+      <!-- Big pouch (zob) -->
+      <g class="pouch-group">
+        <ellipse cx="170" cy="220" rx="55" ry="40" fill="url(#pouchGrad)" stroke="#b89840" stroke-width="1.5"/>
+        <!-- pouch stretch lines -->
+        <path d="M130,220 Q170,240 210,220" stroke="#c8a850" stroke-width="1" fill="none" opacity=".5"/>
+        <path d="M135,210 Q170,225 205,210" stroke="#c8a850" stroke-width="1" fill="none" opacity=".4"/>
+        <!-- pouch strap / metal ring -->
+        <path d="M130,200 Q170,185 210,200" stroke="#8a5a2b" stroke-width="2" fill="none"/>
+      </g>
+
+      <!-- Torso -->
+      <ellipse cx="195" cy="170" rx="32" ry="40" fill="url(#bodyGrad)" stroke="#c8b890" stroke-width="1.5"/>
+
+      <!-- Backpack with red indicator -->
+      <rect x="210" y="155" width="18" height="28" rx="3" fill="#4a3a28" stroke="#3a2818" stroke-width="1"/>
+      <circle cx="219" cy="165" r="3" fill="#ff2020" class="term-eye"/>
+
+      <!-- Wing (arm) reaching to handlebar -->
+      <path d="M215,165 Q235,170 262,175" stroke="#e8d8b0" stroke-width="10" fill="none" stroke-linecap="round"/>
+      <path d="M215,165 Q235,170 262,175" stroke="#d0c098" stroke-width="6" fill="none" stroke-linecap="round" opacity=".5"/>
+
+      <!-- ===== LEGS ===== -->
+      <!-- Back leg -->
+      <g class="leg-back">
+        <path d="M185,200 L185,260 L170,280" stroke="#e8d8b0" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <circle cx="185" cy="200" r="5" fill="#d8c8a0"/>
+        <circle cx="170" cy="280" r="4" fill="#3a3028"/>
+      </g>
+      <!-- Front leg -->
+      <g class="leg-front">
+        <path d="M200,200 L200,260 L170,280" stroke="#f0e0c0" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <circle cx="200" cy="200" r="5" fill="#e0d0a8"/>
+        <circle cx="170" cy="280" r="4" fill="#3a3028"/>
+      </g>
+
+      <!-- ===== NECK + HEAD ===== -->
+      <g class="head-group">
+        <!-- Neck -->
+        <path d="M205,140 Q215,110 225,95" stroke="url(#bodyGrad)" stroke-width="14" fill="none" stroke-linecap="round"/>
+
+        <!-- Head -->
+        <ellipse cx="232" cy="90" rx="20" ry="16" fill="url(#bodyGrad)" stroke="#c8b890" stroke-width="1.5"/>
+
+        <!-- Upper beak -->
+        <path d="M248,85 Q280,80 295,88 Q285,92 248,92 Z" fill="#e8c87a" stroke="#b89840" stroke-width="1.5"/>
+        <!-- Beak tip hook -->
+        <path d="M293,88 Q298,92 292,96" stroke="#b89840" stroke-width="2" fill="none"/>
+
+        <!-- Lower beak (pouch connection) -->
+        <path d="M248,92 Q270,98 288,94" stroke="#c8a850" stroke-width="2" fill="none"/>
+
+        <!-- Terminator eye -->
+        <ellipse cx="238" cy="85" rx="5" ry="3" fill="#1a0a0a"/>
+        <circle cx="239" cy="85" r="2.5" fill="#ff2020" class="term-eye"/>
+        <circle cx="239" cy="85" r="1" fill="#ffaaaa"/>
+
+        <!-- Scar / battle damage on head -->
+        <path d="M225,78 L230,84" stroke="#8a5a2b" stroke-width="1.5" opacity=".7"/>
+        <path d="M228,76 L233,82" stroke="#8a5a2b" stroke-width="1" opacity=".5"/>
+
+        <!-- Tiny antenna on head -->
+        <line x1="232" y1="75" x2="232" y2="62" stroke="#5a4a38" stroke-width="1.5"/>
+        <circle cx="232" cy="60" r="2" fill="#ff2020" class="term-eye"/>
+      </g>
+
+      <!-- Rust patches on frame -->
+      <circle cx="200" cy="210" r="3" fill="#6a4a20" opacity=".6"/>
+      <circle cx="230" cy="250" r="2" fill="#6a4a20" opacity=".5"/>
+      <circle cx="175" cy="240" r="2.5" fill="#6a4a20" opacity=".4"/>
+
+      <!-- Ground shadow -->
+      <ellipse cx="170" cy="335" rx="80" ry="6" fill="#000" opacity=".4"/>
+
+    </svg>
+  </div>
+
+  <!-- ===== HUD ===== -->
+  <div class="hud">
+    <div class="hud-tl">
+      <h3>SKYNET TERMINAL</h3>
+      <div class="label">ZONE 7 :: WASTELAND</div>
+      <div>UNIT: PELICAN-T800</div>
+      <div>STATUS: <span class="blink">ACTIVE PURSUIT</span></div>
+    </div>
+    <div class="hud-tr">
+      <h3>THREAT LEVEL</h3>
+      <div class="label">CURRENT: <span style="color:#ff2020">CRITICAL</span></div>
+      <div>SECTOR: 7-G-04</div>
+      <div>CONTACT: 04:23:17</div>
+    </div>
+    <div class="hud-bl">
+      <div class="label">FUEL</div>
+      <div class="bar"></div>
+      <div class="label" style="margin-top:8px">AMMO</div>
+      <div class="bar" style="width:90px"><span style="position:relative"></span></div>
+    </div>
+    <div class="hud-br">
+      <div class="label">SYS.DATE: 2029.08.29</div>
+      <div class="label">JDAY: +1284</div>
+      <div style="margin-top:6px;opacity:.5">// CONNECTION STABLE</div>
+    </div>
+  </div>
+
+  <!-- ===== VIGNETTE ===== -->
+  <div class="vignette"></div>
+
+  <!-- ===== SCANLINES ===== -->
+  <div class="scanlines"></div>
+
+  <!-- ===== GLITCH ===== -->
+  <div class="glitch"></div>
+
+</div>
+</body>
+</html>

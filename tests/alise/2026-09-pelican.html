@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Пеликан на велосипеде</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #87CEEB;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: sans-serif;
+    overflow: hidden;
+  }
+
+  .scene {
+    position: relative;
+    width: 800px;
+    height: 500px;
+    background: linear-gradient(to bottom, #87CEEB 0%, #B0E0E6 55%, #90C8D0 100%);
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  /* ===== ОБЛАКА ===== */
+  .clouds { position: absolute; top: 0; left: 0; width: 200%; height: 100%; pointer-events: none; }
+  .cloud-group { animation: cloudMove 25s linear infinite; }
+  @keyframes cloudMove { from { transform: translateX(0); } to { transform: translateX(-400px); } }
+
+  /* ===== ДАЛЬНИЕ ХОЛМЫ ===== */
+  .far-hills { position: absolute; bottom: 90px; left: 0; width: 200%; height: 80px; pointer-events: none; }
+  .far-hills-group { animation: farHillsMove 18s linear infinite; }
+  @keyframes farHillsMove { from { transform: translateX(0); } to { transform: translateX(-400px); } }
+
+  /* ===== БЛИЖНИЕ ХОЛМЫ ===== */
+  .near-hills { position: absolute; bottom: 80px; left: 0; width: 200%; height: 70px; pointer-events: none; }
+  .near-hills-group { animation: nearHillsMove 12s linear infinite; }
+  @keyframes nearHillsMove { from { transform: translateX(0); } to { transform: translateX(-400px); } }
+
+  /* ===== ЗЕМЛЯ ===== */
+  .ground { position: absolute; bottom: 0; left: 0; width: 100%; height: 80px; background: #6ab04c; }
+
+  /* ===== ДОРОГА ===== */
+  .road { position: absolute; bottom: 0; left: 0; width: 100%; height: 70px; background: #555; }
+  .road-line { position: absolute; top: 50%; left: 0; width: 200%; height: 4px; background: repeating-linear-gradient(90deg, #fff 0 30px, transparent 30px 60px); transform: translateY(-50%); animation: roadMove 0.8s linear infinite; }
+  @keyframes roadMove { from { transform: translateY(-50%) translateX(0); } to { transform: translateY(-50%) translateX(-60px); } }
+
+  /* ===== ПЕЛИКАН+ВЕЛОСИПЕД ===== */
+  .pelican-bike {
+    position: absolute;
+    left: 50%;
+    bottom: 48px;
+    width: 340px;
+    height: 320px;
+    transform: translateX(-50%);
+  }
+  .pelican-body-bob { animation: bodyBob 0.6s ease-in-out infinite; transform-origin: 170px 220px; }
+  @keyframes bodyBob { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-3px) rotate(0.5deg); } }
+
+  /* колёса */
+  .wheel { transform-box: fill-box; transform-origin: center; }
+  .wheel-spin { animation: spin 0.8s linear infinite; transform-origin: center; transform-box: fill-box; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* педали */
+  .pedal-assembly { animation: spin 0.8s linear infinite; transform-origin: 170px 240px; }
+
+  /* ноги */
+  .leg-left { animation: legLeft 0.8s linear infinite; transform-origin: 155px 200px; transform-box: fill-box; }
+  .leg-right { animation: legRight 0.8s linear infinite; transform-origin: 185px 200px; transform-box: fill-box; }
+  @keyframes legLeft {
+    0%   { transform: rotate(20deg); }
+    25%  { transform: rotate(-10deg); }
+    50%  { transform: rotate(-25deg); }
+    75%  { transform: rotate(5deg); }
+    100% { transform: rotate(20deg); }
+  }
+  @keyframes legRight {
+    0%   { transform: rotate(-25deg); }
+    25%  { transform: rotate(5deg); }
+    50%  { transform: rotate(20deg); }
+    75%  { transform: rotate(-10deg); }
+    100% { transform: rotate(-25deg); }
+  }
+
+  /* зоб */
+  .pouch { animation: pouchBounce 0.6s ease-in-out infinite; transform-origin: 115px 185px; transform-box: fill-box; }
+  @keyframes pouchBounce { 0%,100% { transform: scale(1, 1); } 50% { transform: scale(1.04, 1.06); } }
+
+  /* крылья-руки */
+  .wing-left { animation: wingLeft 0.4s ease-in-out infinite; transform-origin: 140px 165px; transform-box: fill-box; }
+  .wing-right { animation: wingRight 0.6s ease-in-out infinite; transform-origin: 200px 165px; transform-box: fill-box; }
+  @keyframes wingLeft { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-12deg); } }
+  @keyframes wingRight { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(8deg); } }
+
+  /* клюв */
+  .beak-upper { animation: beakOpen 2.5s ease-in-out infinite; transform-origin: 95px 155px; transform-box: fill-box; }
+  @keyframes beakOpen { 0%,70%,100% { transform: rotate(0deg); } 80% { transform: rotate(-8deg); } 90% { transform: rotate(0deg); } }
+
+  /* глаз */
+  .eyelid { animation: blink 3s ease-in-out infinite; transform-origin: 108px 140px; transform-box: fill-box; }
+  @keyframes blink { 0%,45%,55%,100% { transform: scaleY(0); } 50% { transform: scaleY(1); } }
+
+  /* хохолок */
+  .crest { animation: crestFlutter 0.5s ease-in-out infinite; transform-origin: 100px 120px; transform-box: fill-box; }
+  @keyframes crestFlutter { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(5deg); } }
+
+  /* капли пота */
+  .sweat { animation: sweatFly 1s ease-in-out infinite; transform-box: fill-box; }
+  @keyframes sweatFly { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-30px) translateX(10px); opacity: 0; } }
+
+  h1 { text-align: center; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); margin-top: 10px; font-size: 18px; }
+</style>
+</head>
+<body>
+<div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+
+<h1>🚴 Пеликан едет на велосипеде</h1>
+
+<div class="scene">
+
+  <!-- ============ ОБЛАКА ============ -->
+  <svg class="clouds" viewBox="0 0 1600 200" preserveAspectRatio="xMidYMid slice">
+    <g class="cloud-group">
+      <g fill="#fff" opacity="0.85">
+        <ellipse cx="120" cy="70" rx="50" ry="25"/>
+        <ellipse cx="160" cy="60" rx="40" ry="22"/>
+        <ellipse cx="200" cy="70" rx="45" ry="20"/>
+        <ellipse cx="520" cy="100" rx="55" ry="25"/>
+        <ellipse cx="560" cy="90" rx="40" ry="22"/>
+        <ellipse cx="600" cy="100" rx="50" ry="20"/>
+        <ellipse cx="920" cy="55" rx="45" ry="22"/>
+        <ellipse cx="960" cy="45" rx="35" ry="18"/>
+        <ellipse cx="1000" cy="55" rx="40" ry="20"/>
+        <ellipse cx="1320" cy="85" rx="50" ry="25"/>
+        <ellipse cx="1360" cy="75" rx="40" ry="22"/>
+        <ellipse cx="1400" cy="85" rx="45" ry="20"/>
+      </g>
+      <!-- повтор для бесшовности -->
+      <g fill="#fff" opacity="0.85">
+        <ellipse cx="520" cy="70" rx="50" ry="25"/>
+        <ellipse cx="560" cy="60" rx="40" ry="22"/>
+        <ellipse cx="600" cy="70" rx="45" ry="20"/>
+        <ellipse cx="920" cy="100" rx="55" ry="25"/>
+        <ellipse cx="960" cy="90" rx="40" ry="22"/>
+        <ellipse cx="1000" cy="100" rx="50" ry="20"/>
+        <ellipse cx="1320" cy="55" rx="45" ry="22"/>
+        <ellipse cx="1360" cy="45" rx="35" ry="18"/>
+        <ellipse cx="1400" cy="55" rx="40" ry="20"/>
+        <ellipse cx="1520" cy="85" rx="50" ry="25"/>
+        <ellipse cx="1560" cy="75" rx="40" ry="22"/>
+      </g>
+    </g>
+  </svg>
+
+  <!-- ============ ДАЛЬНИЕ ХОЛМЫ ============ -->
+  <svg class="far-hills" viewBox="0 0 1600 80" preserveAspectRatio="xMidYMid slice">
+    <g class="far-hills-group">
+      <path d="M0,80 Q100,20 200,50 Q300,10 400,45 Q500,15 600,40 Q700,5 800,35 Q900,20 1000,45 Q1100,10 1200,40 Q1300,20 1400,50 Q1500,15 1600,45 L1600,80 Z" fill="#8FBC8F"/>
+      <path d="M0,80 Q100,20 200,50 Q300,10 400,45 Q500,15 600,40 Q700,5 800,35 Q900,20 1000,45 Q1100,10 1200,40 Q1300,20 1400,50 Q1500,15 1600,45 L1600,80 Z" fill="#8FBC8F" transform="translate(400,0)"/>
+    </g>
+  </svg>
+
+  <!-- ============ БЛИЖНИЕ ХОЛМЫ ============ -->
+  <svg class="near-hills" viewBox="0 0 1600 70" preserveAspectRatio="xMidYMid slice">
+    <g class="near-hills-group">
+      <path d="M0,70 Q80,25 160,45 Q240,10 320,40 Q400,15 480,35 Q560,5 640,30 Q720,20 800,40 Q880,10 960,35 Q1040,20 1120,40 Q1200,5 1280,30 Q1360,15 1440,40 Q1520,10 1600,35 L1600,70 Z" fill="#7CC46E"/>
+      <path d="M0,70 Q80,25 160,45 Q240,10 320,40 Q400,15 480,35 Q560,5 640,30 Q720,20 800,40 Q880,10 960,35 Q1040,20 1120,40 Q1200,5 1280,30 Q1360,15 1440,40 Q1520,10 1600,35 L1600,70 Z" fill="#7CC46E" transform="translate(400,0)"/>
+      <!-- деревца -->
+      <g fill="#4a8a3a">
+        <circle cx="100" cy="30" r="10"/>
+        <circle cx="280" cy="25" r="8"/>
+        <circle cx="500" cy="28" r="9"/>
+        <circle cx="680" cy="22" r="8"/>
+        <circle cx="900" cy="26" r="10"/>
+        <circle cx="1100" cy="24" r="8"/>
+        <circle cx="1300" cy="27" r="9"/>
+        <circle cx="1500" cy="25" r="8"/>
+      </g>
+    </g>
+  </svg>
+
+  <!-- ============ ДОРОГА ============ -->
+  <div class="ground"></div>
+  <div class="road">
+    <div class="road-line"></div>
+  </div>
+
+  <!-- ============ ПЕЛИКАН + ВЕЛОСИПЕД ============ -->
+  <svg class="pelican-bike" viewBox="0 0 340 320" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- ===== ТЕНЬ ===== -->
+    <ellipse cx="170" cy="295" rx="120" ry="10" fill="rgba(0,0,0,0.25)"/>
+
+    <!-- ===== ВЕЛОСИПЕД ===== -->
+    <!-- рама -->
+    <g fill="none" stroke="#E8552D" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="70" y1="250" x2="170" y2="250"/>
+      <line x1="170" y1="250" x2="200" y2="170"/>
+      <line x1="200" y1="170" x2="70" y2="250"/>
+      <line x1="170" y1="250" x2="170" y2="170"/>
+      <line x1="170" y1="170" x2="200" y2="170"/>
+      <line x1="170" y1="170" x2="160" y2="130"/>
+    </g>
+
+    <!-- седло -->
+    <path d="M150,125 Q170,118 190,128 Q188,135 170,132 Q152,132 150,125Z" fill="#333"/>
+    <!-- фонарик -->
+    <circle cx="225" cy="175" r="6" fill="#FFD700" stroke="#333" stroke-width="1.5"/>
+    <circle cx="223" cy="173" r="2" fill="#fff" opacity="0.6"/>
+
+    <!-- руль -->
+    <g fill="none" stroke="#333" stroke-width="5" stroke-linecap="round">
+      <path d="M155,130 Q130,110 100,105"/>
+      <path d="M155,130 Q175,115 185,110"/>
+    </g>
+    <!-- ручки руля -->
+    <circle cx="98" cy="105" r="5" fill="#222"/>
+    <circle cx="187" cy="110" r="5" fill="#222"/>
+
+    <!-- цепь -->
+    <ellipse cx="120" cy="250" rx="55" ry="6" fill="none" stroke="#666" stroke-width="1.5"/>
+
+    <!-- ===== ЗАДНЕЕ КОЛЕСО ===== -->
+    <g>
+      <circle cx="70" cy="250" r="48" fill="none" stroke="#222" stroke-width="5"/>
+      <g class="wheel-spin" style="transform-origin:70px 250px;">
+        <circle cx="70" cy="250" r="40" fill="none" stroke="#444" stroke-width="1"/>
+        <!-- спицы -->
+        <line x1="70" y1="210" x2="70" y2="290" stroke="#888" stroke-width="1.5"/>
+        <line x1="30" y1="250" x2="110" y2="250" stroke="#888" stroke-width="1.5"/>
+        <line x1="42" y1="222" x2="98" y2="278" stroke="#888" stroke-width="1.5"/>
+        <line x1="98" y1="222" x2="42" y2="278" stroke="#888" stroke-width="1.5"/>
+        <line x1="50" y1="215" x2="90" y2="285" stroke="#888" stroke-width="1.5"/>
+        <line x1="90" y1="215" x2="50" y2="285" stroke="#888" stroke-width="1.5"/>
+        <circle cx="70" cy="250" r="5" fill="#333"/>
+      </g>
+    </g>
+
+    <!-- ===== ПЕРЕДНЕЕ КОЛЕСО ===== -->
+    <g>
+      <circle cx="270" cy="250" r="48" fill="none" stroke="#222" stroke-width="5"/>
+      <g class="wheel-spin" style="transform-origin:270px 250px;">
+        <circle cx="270" cy="250" r="40" fill="none" stroke="#444" stroke-width="1"/>
+        <line x1="270" y1="210" x2="270" y2="290" stroke="#888" stroke-width="1.5"/>
+        <line x1="230" y1="250" x2="310" y2="250" stroke="#888" stroke-width="1.5"/>
+        <line x1="242" y1="222" x2="298" y2="278" stroke="#888" stroke-width="1.5"/>
+        <line x1="298" y1="222" x2="242" y2="278" stroke="#888" stroke-width="1.5"/>
+        <line x1="250" y1="215" x2="290" y2="285" stroke="#888" stroke-width="1.5"/>
+        <line x1="290" y1="215" x2="250" y2="285" stroke="#888" stroke-width="1.5"/>
+        <circle cx="270" cy="250" r="5" fill="#333"/>
+      </g>
+    </g>
+
+    <!-- ===== ПЕДАЛИ ===== -->
+    <g class="pedal-assembly">
+      <line x1="155" y1="240" x2="185" y2="260" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+      <rect x="148" y="256" width="16" height="5" rx="2" fill="#555"/>
+      <rect x="176" y="238" width="16" height="5" rx="2" fill="#555"/>
+    </g>
+
+    <!-- ===== ПЕЛИКАН (на седле) ===== -->
+    <g class="pelican-body-bob">
+
+      <!-- ХВОСТ -->
+      <path d="M230,160 Q260,150 275,155 Q270,165 260,168 Q250,170 230,170Z" fill="#FFF8DC" stroke="#E8D8A0" stroke-width="1"/>
+
+      <!-- ХОХОЛОК -->
+      <g class="crest">
+        <path d="M95,120 Q88,95 92,88 Q95,92 97,100 Q100,85 104,88 Q106,95 103,108 Q108,95 112,98 Q113,105 105,118Z" fill="#FFF8DC" stroke="#E8D8A0" stroke-width="1"/>
+      </g>
+
+      <!-- ТЕЛО -->
+      <ellipse cx="170" cy="170" rx="55" ry="45" fill="#FFFDE7" stroke="#E8D8A0" stroke-width="1.5"/>
+
+      <!-- КРЫЛО (ЗАДНЕЕ - правое) -->
+      <g class="wing-right">
+        <ellipse cx="195" cy="165" rx="20" ry="35" fill="#FFF8DC" stroke="#E8D8A0" stroke-width="1.2" transform="rotate(15,195,165)"/>
+      </g>
+
+      <!-- ШЕЯ -->
+      <path d="M130,145 Q120,110 110,85 Q105,70 100,55 Q98,48 100,42" fill="none" stroke="#E8D8A0" stroke-width="28" stroke-linecap="round"/>
+      <path d="M130,145 Q120,110 110,85 Q105,70 100,55 Q98,48 100,42" fill="none" stroke="#FFFDE7" stroke-width="24" stroke-linecap="round"/>
+
+      <!-- ГОЛОВА -->
+      <ellipse cx="103" cy="48" rx="22" ry="20" fill="#FFFDE7" stroke="#E8D8A0" stroke-width="1.5"/>
+
+      <!-- ГЛАЗ -->
+      <circle cx="112" cy="42" r="7" fill="#fff" stroke="#333" stroke-width="1"/>
+      <circle cx="114" cy="42" r="4" fill="#222"/>
+      <circle cx="115" cy="41" r="1.5" fill="#fff"/>
+      <!-- веко -->
+      <ellipse class="eyelid" cx="112" cy="42" rx="8" ry="7" fill="#FFFDE7"/>
+
+      <!-- КЛЮВ ВЕРХНЯЯ ЧАСТЬ -->
+      <g class="beak-upper">
+        <path d="M85,50 Q60,52 45,48 Q40,50 42,55 Q55,58 82,58Z" fill="#FFA500" stroke="#E88500" stroke-width="1.2"/>
+        <path d="M85,52 Q65,54 50,51" fill="none" stroke="#E88500" stroke-width="0.8"/>
+      </g>
+      <!-- КЛЮВ НИЖНЯЯ ЧАСТЬ + ЗОБ -->
+      <g class="pouch">
+        <!-- зоб-мешок -->
+        <path d="M88,52 Q60,60 50,75 Q55,95 80,100 Q100,105 100,80 Q98,58 88,52Z" fill="#FFE4B5" stroke="#E8A868" stroke-width="1.2" opacity="0.9"/>
+        <!-- нижняя челюсть -->
+        <path d="M85,52 Q70,56 60,58 Q65,60 82,58Z" fill="#FFA500" stroke="#E88500" stroke-width="1"/>
+      </g>
+
+      <!-- КРЫЛО (ПЕРЕДНЕЕ - левое, машет) -->
+      <g class="wing-left">
+        <path d="M135,155 Q120,175 115,200 Q125,195 135,180 Q145,170 150,155Z" fill="#FFF8DC" stroke="#E8D8A0" stroke-width="1.2"/>
+        <path d="M135,160 Q125,175 120,190" fill="none" stroke="#E8D8A0" stroke-width="0.8"/>
+        <path d="M140,158 Q132,170 128,183" fill="none" stroke="#E8D8A0" stroke-width="0.8"/>
+      </g>
+
+      <!-- НОГИ -->
+      <g class="leg-left">
+        <path d="M155,195 Q150,220 158,240" fill="none" stroke="#FFA500" stroke-width="7" stroke-linecap="round"/>
+        <path d="M158,240 L155,256 L162,256Z" fill="#FFA500" stroke="#E88500" stroke-width="0.5"/>
+      </g>
+      <g class="leg-right">
+        <path d="M185,195 Q188,220 182,240" fill="none" stroke="#FFA500" stroke-width="7" stroke-linecap="round"/>
+        <path d="M182,240 L178,238 L185,238Z" fill="#FFA500" stroke="#E88500" stroke-width="0.5"/>
+      </g>
+
+      <!-- КАПЛЯ ПОТА -->
+      <g class="sweat">
+        <ellipse cx="125" cy="115" rx="3" ry="5" fill="#7EC8E3" opacity="0.8"/>
+      </g>
+
+    </g>
+    <!-- /pelican-body-bob -->
+
+  </svg>
+
+</div>
+</div>
+</body>
+</html>
