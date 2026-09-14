@@ -1,0 +1,13 @@
+# Node modules
+node_modules/
+
+# Videos and large media (keep only overview_final)
+screenshots/*.mp4
+screenshots/*.webm
+!screenshots/overview_final.mp4
+!screenshots/overview_final.gif
+!screenshots/overview_grid.png
+
+# Temp files
+/tmp/*
+screenshots/page@*.webm
