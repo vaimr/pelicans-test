@@ -78,7 +78,7 @@
 
 ### 🏆 GPT Astra (2 трлн параметров) — лучший результат
 
-<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/gpt/2026-09-pelican.html" target="_blank">Исходный файл пеликана</a>
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/gpt/2026-09-pelican.html" target="_blank">Пеликан</a>
 
 [![](screenshots/thumbnails/gpt/2026-09-pelican.png)](screenshots/gpt/2026-09-pelican.png)
 
@@ -86,21 +86,21 @@
 
 > Нюансы: ось вращения педалей расположена на уровне ступни, а не педали; сзади велосипеда видна непонятная палочка. Мелочи, легко исправляемые итеративно.
 
-<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/gpt/2026-09-pelican-skynet.html" target="_blank">Исходный файл пеликана-Скайнет</a>
-
-[![](screenshots/thumbnails/gpt/2026-09-pelican-skynet.png)](screenshots/gpt/2026-09-pelican-skynet.png)
-
-Настоящий постапокалипсис: пеликан в каске, дроны с моргающими глазами, рюкзак за спиной, колесо вместо облака. Режимы «крейсерский» и «погоня» (ускорение). Появился нибайр.
-
-> Нюансы: ось педалей всё ещё на уровне ступни; цепь на передней звёздочке навешана некорректно; артефакт в раме. В целом — стильно и качественно.
-
-<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/gpt/2026-09-frog.html" target="_blank">Исходный файл лягушки</a>
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/gpt/2026-09-frog.html" target="_blank">Лягушка</a>
 
 [![](screenshots/thumbnails/gpt/2026-09-frog.png)](screenshots/gpt/2026-09-frog.png)
 
 Лягушка на пенни-фартинге: правильная анимация ног, колесо вращается, фон меняется. Стилистика продолжается — карта, попутный ветер, ночной режим.
 
 > Ось педалей на уровне ступни — та же мелкая неточность. Механика в целом корректна.
+
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/gpt/2026-09-pelican-skynet.html" target="_blank">Пеликан-Скайнет</a>
+
+[![](screenshots/thumbnails/gpt/2026-09-pelican-skynet.png)](screenshots/gpt/2026-09-pelican-skynet.png)
+
+Настоящий постапокалипсис: пеликан в каске, дроны с моргающими глазами, рюкзак за спиной, колесо вместо облака. Режимы «крейсерский» и «погоня» (ускорение). Появился нибайр.
+
+> Нюансы: ось педалей всё ещё на уровне ступни; цепь на передней звёздочке навешана некорректно; артефакт в раме. В целом — стильно и качественно.
 
 ---
 
@@ -114,14 +114,6 @@
 
 > Результат слабый.
 
-<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/deepseek/2026-09-pelican-skynet.html" target="_blank">Пеликан-Скайнет</a>
-
-[![](screenshots/thumbnails/deepseek/2026-09-pelican-skynet.png)](screenshots/deepseek/2026-09-pelican-skynet.png)
-
-Велосипед почти получился, но слишком упрощённый — просто 2 вращающихся колеса и пеликан-терминатор (или цыплёнок-терминатор).
-
-> Результат слабый.
-
 <a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/deepseek/2026-09-frog.html" target="_blank">Лягушка</a>
 
 [![](screenshots/thumbnails/deepseek/2026-09-frog.png)](screenshots/deepseek/2026-09-frog.png)
@@ -129,6 +121,14 @@
 Велосипед не получился, лягушка на лягушку не похожа, рама непропорциональная.
 
 > Результат неудовлетворительный.
+
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/deepseek/2026-09-pelican-skynet.html" target="_blank">Пеликан-Скайнет</a>
+
+[![](screenshots/thumbnails/deepseek/2026-09-pelican-skynet.png)](screenshots/deepseek/2026-09-pelican-skynet.png)
+
+Велосипед почти получился, но слишком упрощённый — просто 2 вращающихся колеса и пеликан-терминатор (или цыплёнок-терминатор).
+
+> Результат слабый.
 
 ---
 
