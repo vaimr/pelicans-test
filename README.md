@@ -72,19 +72,19 @@
 
 ### 🏆 GPT Astra (2 трлн параметров) — лучший результат
 
-[Исходный файл пеликана](tests/gpt/2026-09-pelican.html) | [![](screenshots/thumbnails/gpt/2026-09-pelican.png)](screenshots/gpt/2026-09-pelican.png)
+[Исходный файл пеликана](tests/gpt/2026-09-pelican.html) | [![](screenshots/thumbnails/gpt/2026-09-pelican.png)](screenshots/overview_final.mp4)
 
 Светлая страница в серых тонах, расслабленная стилизация. Пеликан анимирован, колеса крутятся, лапы на педалях. Фон — облака, холмы и цветы. Работает режим паузы. Генерация ~7 минут.
 
 > Нюансы: ось вращения педалей расположена на уровне ступни, а не педали; сзади велосипеда видна непонятная палочка. Мелочи, легко исправляемые итеративно.
 
-[Исходный файл пеликана-Скайнет](tests/gpt/2026-09-pelican-skynet.html) | [![](screenshots/thumbnails/gpt/2026-09-pelican-skynet.png)](screenshots/gpt/2026-09-pelican-skynet.png)
+[Исходный файл пеликана-Скайнет](tests/gpt/2026-09-pelican-skynet.html) | [![](screenshots/thumbnails/gpt/2026-09-pelican-skynet.png)](screenshots/overview_final.mp4)
 
 Настоящий постапокалипсис: пеликан в каске, дроны с моргающими глазами, рюкзак за спиной, колесо вместо облака. Режимы «крейсерский» и «погоня» (ускорение). Появился нибайр.
 
 > Нюансы: ось педалей всё ещё на уровне ступни; цепь на передней звёздочке навешана некорректно; артефакт в раме. В целом — стильно и качественно.
 
-[Исходный файл лягушки](tests/gpt/2026-09-frog.html) | [![](screenshots/thumbnails/gpt/2026-09-frog.png)](screenshots/gpt/2026-09-frog.png)
+[Исходный файл лягушки](tests/gpt/2026-09-frog.html) | [![](screenshots/thumbnails/gpt/2026-09-frog.png)](screenshots/overview_final.mp4)
 
 Лягушка на пенни-фартинге: правильная анимация ног, колесо вращается, фон меняется. Стилистика продолжается — карта, попутный ветер, ночной режим.
 
@@ -94,19 +94,19 @@
 
 ### 🤖 DeepSeek — базовый режим
 
-[Пеликан](tests/deepseek/2026-09-pelican.html) | [![](screenshots/thumbnails/deepseek/2026-09-pelican.png)](screenshots/deepseek/2026-09-pelican.png)
+[Пеликан](tests/deepseek/2026-09-pelican.html) | [![](screenshots/thumbnails/deepseek/2026-09-pelican.png)](screenshots/overview_final.mp4)
 
 Неправильно собранный велосипед, моргающее солнышко, дёргающийся фон. Пеликан больше похож на ламу. Попытка имитировать движение ног и педалей есть, но неудачная.
 
 > Результат слабый.
 
-[Пеликан-Скайнет](tests/deepseek/2026-09-pelican-skynet.html) | [![](screenshots/thumbnails/deepseek/2026-09-pelican-skynet.png)](screenshots/deepseek/2026-09-pelican-skynet.png)
+[Пеликан-Скайнет](tests/deepseek/2026-09-pelican-skynet.html) | [![](screenshots/thumbnails/deepseek/2026-09-pelican-skynet.png)](screenshots/overview_final.mp4)
 
 Велосипед почти получился, но слишком упрощённый — просто 2 вращающихся колеса и пеликан-терминатор (или цыплёнок-терминатор).
 
 > Результат слабый.
 
-[Лягушка](tests/deepseek/2026-09-frog.html) | [![](screenshots/thumbnails/deepseek/2026-09-frog.png)](screenshots/deepseek/2026-09-frog.png)
+[Лягушка](tests/deepseek/2026-09-frog.html) | [![](screenshots/thumbnails/deepseek/2026-09-frog.png)](screenshots/overview_final.mp4)
 
 Велосипед не получился, лягушка на лягушку не похожа, рама непропорциональная.
 
@@ -116,19 +116,19 @@
 
 ### 🤖 DeepSeek — режим рассуждений (reasoning)
 
-[Пеликан reasoning](tests/deepseek/2026-09-reasoning-pelican.html) | [![](screenshots/thumbnails/deepseek/2026-09-reasoning-pelican.png)](screenshots/deepseek/2026-09-reasoning-pelican.png)
+[Пеликан reasoning](tests/deepseek/2026-09-reasoning-pelican.html) | [![](screenshots/thumbnails/deepseek/2026-09-reasoning-pelican.png)](screenshots/overview_final.mp4)
 
 Нормальный пеликан на нормальном велосипеде, крутит педали (упрощённо, лапки примитивные). Солнце и фон движутся нормально. Муртяшная стилизация.
 
 > Результат удовлетворительный.
 
-[Лягушка reasoning](tests/deepseek/2026-09-reasoning-frog.html) | [![](screenshots/thumbnails/deepseek/2026-09-reasoning-frog.png)](screenshots/deepseek/2026-09-reasoning-frog.png)
+[Лягушка reasoning](tests/deepseek/2026-09-reasoning-frog.html) | [![](screenshots/thumbnails/deepseek/2026-09-reasoning-frog.png)](screenshots/overview_final.mp4)
 
 Лягушка на велосипеде — велосипед получился правильно, педали упрощённо, лягушка крутит одной ногой. Мультяшно, упрощённо.
 
 > Результат более-менее удовлетворительный.
 
-[Пеликан-Скайнет reasoning](tests/deepseek/2026-09-reasoning-pelican-skynet.html) | [![](screenshots/thumbnails/deepseek/2026-09-reasoning-pelican-skynet.png)](screenshots/deepseek/2026-09-reasoning-pelican-skynet.png)
+[Пеликан-Скайнет reasoning](tests/deepseek/2026-09-reasoning-pelican-skynet.html) | [![](screenshots/thumbnails/deepseek/2026-09-reasoning-pelican-skynet.png)](screenshots/overview_final.mp4)
 
 Дроны с красными лампочками, рыбкоподобные элементы. Правильная анимация велосипеда, попытка крутить педалями (упрощённо). Пеликан с шарфиком (как у GPT Astra), но без рюкзака. Очень примитивная рисовка, но более-менее правильная.
 
@@ -138,19 +138,19 @@
 
 ### 💻 Qwen 3.6 Local (35B, INT4, Qwen3.6-A3B с MTP)
 
-[Пеликан](tests/qwen/3.6-local/2026-09-pelican.html) | [![](screenshots/thumbnails/qwen/3.6-local/2026-09-pelican.png)](screenshots/qwen/3.6-local/2026-09-pelican.png)
+[Пеликан](tests/qwen/3.6-local/2026-09-pelican.html) | [![](screenshots/thumbnails/qwen/3.6-local/2026-09-pelican.png)](screenshots/overview_final.mp4)
 
 Фон — красивый, с солнышком и птицами. Велосипед пропорциональный. Пеликан в зобе несёт рыбку (интересная идея модели), вода в зобе.
 
 > Результат неудовлетворительный: пеликан не похож на пеликана, цепь не анимирована.
 
-[Лягушка](tests/qwen/3.6-local/2026-09-frog.html) | [![](screenshots/thumbnails/qwen/3.6-local/2026-09-frog.png)](screenshots/qwen/3.6-local/2026-09-frog.png)
+[Лягушка](tests/qwen/3.6-local/2026-09-frog.html) | [![](screenshots/thumbnails/qwen/3.6-local/2026-09-frog.png)](screenshots/overview_final.mp4)
 
 Лягушка не получилась — только колёса, без рамы. Лапки «летают» в воздухе.
 
 > Результат абсолютно неудовлетворительный.
 
-[Пеликан-Скайнет](tests/qwen/3.6-local/2026-09-pelican-skynet.html) | [![](screenshots/thumbnails/qwen/3.6-local/2026-09-pelican-skynet.png)](screenshots/qwen/3.6-local/2026-09-pelican-skynet.png)
+[Пеликан-Скайнет](tests/qwen/3.6-local/2026-09-pelican-skynet.html) | [![](screenshots/thumbnails/qwen/3.6-local/2026-09-pelican-skynet.png)](screenshots/overview_final.mp4)
 
 Терминатор с дыркой в голове, непропорциональный велосипед. Педали крутятся, лапы — не идеально.
 
@@ -160,19 +160,19 @@
 
 ### 💻 Qwen 3.8 Local (35B, INT4, склонная к рассуждениям)
 
-[Пеликан](tests/qwen/3.8-local/2026-09-pelican.html) | [![](screenshots/thumbnails/qwen/3.8-local/2026-09-pelican.png)](screenshots/qwen/3.8-local/2026-09-pelican.png)
+[Пеликан](tests/qwen/3.8-local/2026-09-pelican.html) | [![](screenshots/thumbnails/qwen/3.8-local/2026-09-pelican.png)](screenshots/overview_final.mp4)
 
 Нормальный пеликан на нормальном велосипеде. **Единственная модель, анимировавшая движение цепи вместе с педалями.** Колёса вращаются, пеликан анимирован, лапы на педалях. Режим старт-стоп, ночной режим. Флажок-гонщик. Пыль сзади, полоски стремительности.
 
 > Уровень хороший для локальной модели. Ось педалей — спорная.
 
-[Лягушка](tests/qwen/3.8-local/2026-09-frog.html) | [![](screenshots/thumbnails/qwen/3.8-local/2026-09-frog.png)](screenshots/qwen/3.8-local/2026-09-frog.png)
+[Лягушка](tests/qwen/3.8-local/2026-09-frog.html) | [![](screenshots/thumbnails/qwen/3.8-local/2026-09-frog.png)](screenshots/overview_final.mp4)
 
 Лягушка на пенни-фартинге: педали крутятся, модель выполнила вращение относительно педалей. Фон с деревьями — моргают, появляются внезапно (дорисовка).
 
 > Результат вполне удовлетворительный.
 
-[Пеликан-Скайнет](tests/qwen/3.8-local/2026-09-pelican-skynet.html) | [![](screenshots/thumbnails/qwen/3.8-local/2026-09-pelican-skynet.png)](screenshots/qwen/3.8-local/2026-09-pelican-skynet.png)
+[Пеликан-Скайнет](tests/qwen/3.8-local/2026-09-pelican-skynet.html) | [![](screenshots/thumbnails/qwen/3.8-local/2026-09-pelican-skynet.png)](screenshots/overview_final.mp4)
 
 «Бегущая строка» снизу, дроны, наблюдательная вышка с моргающим лучом. Пеликан-терминатор с нибайром. Ноги/педали анимированы правильно относительно оси педалей.
 
@@ -182,19 +182,19 @@
 
 ### 💻 Qwen 3.8 Flash Local (125B, INT4, экстремально быстрая)
 
-[Пеликан](tests/qwen/3.8-flash-local/2026-09-pelican.html) | [![](screenshots/thumbnails/qwen/3.8-flash-local/2026-09-pelican.png)](screenshots/qwen/3.8-flash-local/2026-09-pelican.png)
+[Пеликан](tests/qwen/3.8-flash-local/2026-09-pelican.html) | [![](screenshots/thumbnails/qwen/3.8-flash-local/2026-09-pelican.png)](screenshots/overview_final.mp4)
 
 Необычный формат: **полноценная прокручиваемая страница с навигацией**, описаниями и сценами. Пеликан крутит педали (чуть медленнее чем едет). Элементы управления — скорость. Рыбка в зобе (артефакт).
 
 > Цепь движется в обратную сторону — ошибка. Страница — интересная идея.
 
-[Лягушка](tests/qwen/3.8-flash-local/2026-09-frog.html) | [![](screenshots/thumbnails/qwen/3.8-flash-local/2026-09-frog.png)](screenshots/qwen/3.8-flash-local/2026-09-frog.png)
+[Лягушка](tests/qwen/3.8-flash-local/2026-09-frog.html) | [![](screenshots/thumbnails/qwen/3.8-flash-local/2026-09-frog.png)](screenshots/overview_final.mp4)
 
 Страница в старорусском стиле: «с твердыми знаками», «подъём в гору». Режимы управления, скорость.
 
 > **Единственная модель, понявшая исторический контекст пенни-фартинга** и оформившая страницу соответствующе. Но педали и ноги лягушки крутятся не в ту сторону.
 
-[Пеликан-Скайнет](tests/qwen/3.8-flash-local/2026-09-pelican-skynet.html) | [![](screenshots/thumbnails/qwen/3.8-flash-local/2026-09-pelican-skynet.png)](screenshots/qwen/3.8-flash-local/2026-09-pelican-skynet.png)
+[Пеликан-Скайнет](tests/qwen/3.8-flash-local/2026-09-pelican-skynet.html) | [![](screenshots/thumbnails/qwen/3.8-flash-local/2026-09-pelican-skynet.png)](screenshots/overview_final.mp4)
 
 Стратегия выживания, «4 часа до заката пепла». Пеликан 0.7. Цепь упрощена. Лапы не по оси педалей.
 
@@ -204,29 +204,29 @@
 
 ### 🐦 Alice (Алиса) — режим рассуждений сильно упрощает
 
-[Пеликан](tests/alise/2026-09-pelican.html) | [![](screenshots/thumbnails/alise/2026-09-pelican.png)](screenshots/alise/2026-09-pelican.png)
+[Пеликан](tests/alise/2026-09-pelican.html) | [![](screenshots/thumbnails/alise/2026-09-pelican.png)](screenshots/overview_final.mp4)
 
 Несобранные колеса, пеликан смотрит в обратную сторону, лишь силуэт узнаваем. Дорога и движение — более-менее.
 
 > Результат не очень.
 
-[Лягушка](tests/alise/2026-09-frog.html) | [![](screenshots/thumbnails/alise/2026-09-frog.png)](screenshots/alise/2026-09-frog.png)
+[Лягушка](tests/alise/2026-09-frog.html) | [![](screenshots/thumbnails/alise/2026-09-frog.png)](screenshots/overview_final.mp4)
 
 Велосипед не получился, лягушка сверху, лапы не работают. Фон стал проще — лягушка едет по грязи.
 
 > Результат неудовлетворительный.
 
-[Пеликан-Скайнет](tests/alise/2026-09-pelican-skynet.html) | [![](screenshots/thumbnails/alise/2026-09-pelican-skynet.png)](screenshots/alise/2026-09-pelican-skynet.png)
+[Пеликан-Скайнет](tests/alise/2026-09-pelican-skynet.html) | [![](screenshots/thumbnails/alise/2026-09-pelican-skynet.png)](screenshots/overview_final.mp4)
 
 Пеликан-терминатор с красными моргающими глазами и антенной. Цепь спереди — пеликан едет задом наперёд. Пыль от заднего колеса по задумке.
 
 > Результат неудовлетворительный.
 
-[Reasoning: пеликан](tests/alise/2026-09-reasoning-pelican.html) | [![](screenshots/thumbnails/alise/2026-09-reasoning-pelican.png)](screenshots/alise/2026-09-reasoning-pelican.png)
+[Reasoning: пеликан](tests/alise/2026-09-reasoning-pelican.html) | [![](screenshots/thumbnails/alise/2026-09-reasoning-pelican.png)](screenshots/overview_final.mp4)
 
-[Reasoning: лягушка](tests/alise/2026-09-reasoning-frog.html) | [![](screenshots/thumbnails/alise/2026-09-reasoning-frog.png)](screenshots/alise/2026-09-reasoning-frog.png)
+[Reasoning: лягушка](tests/alise/2026-09-reasoning-frog.html) | [![](screenshots/thumbnails/alise/2026-09-reasoning-frog.png)](screenshots/overview_final.mp4)
 
-[Reasoning: пеликан-Скайнет](tests/alise/2026-09-reasoning-pelican-skynet.html) | [![](screenshots/thumbnails/alise/2026-09-reasoning-pelican-skynet.png)](screenshots/alise/2026-09-reasoning-pelican-skynet.png)
+[Reasoning: пеликан-Скайнет](tests/alise/2026-09-reasoning-pelican-skynet.html) | [![](screenshots/thumbnails/alise/2026-09-reasoning-pelican-skynet.png)](screenshots/overview_final.mp4)
 
 **Алиса в режиме рассуждений чрезмерно упрощает задачу.** В чате модель пишет: «ноги считать очень сложно, давай пока удовлетворимся просто прямыми» — ноги двигаются вверх-вниз без привязки к педалям. Пеликан-цыплёнок на облачке вместо постапокалипсиса. Фон моргает, серый.
 
@@ -236,19 +236,19 @@
 
 ### 🍆 BigPickle — бесплатно, с лимитом токенов
 
-[Пеликан](tests/bigpickle/2026-09-pelican.html) | [![](screenshots/thumbnails/bigpickle/2026-09-pelican.png)](screenshots/bigpickle/2026-09-pelican.png)
+[Пеликан](tests/bigpickle/2026-09-pelican.html) | [![](screenshots/thumbnails/bigpickle/2026-09-pelican.png)](screenshots/overview_final.mp4)
 
 Похож на пеликана, велосипед тоже. Но анимация педалей не работает. Солнышко с убегающими лучами, облака движутся.
 
 > Слабоват, но лучше Алисы и Гигачата.
 
-[Лягушка](tests/bigpickle/2026-09-frog.html) | [![](screenshots/thumbnails/bigpickle/2026-09-frog.png)](screenshots/bigpickle/2026-09-frog.png)
+[Лягушка](tests/bigpickle/2026-09-frog.html) | [![](screenshots/thumbnails/bigpickle/2026-09-frog.png)](screenshots/overview_final.mp4)
 
 Велосипед едет задом наперёд. Лягушка с непропорциональными лапами, моргает. Колёса имеют спицы, крутятся в упрощённом виде.
 
 > Результат неудовлетворительный.
 
-[Пеликан-Скайнет](tests/bigpickle/2026-09-pelican-skynet.html) | [![](screenshots/thumbnails/bigpickle/2026-09-pelican-skynet.png)](screenshots/bigpickle/2026-09-pelican-skynet.png)
+[Пеликан-Скайнет](tests/bigpickle/2026-09-pelican-skynet.html) | [![](screenshots/thumbnails/bigpickle/2026-09-pelican-skynet.png)](screenshots/overview_final.mp4)
 
 Парапланеры, дроны, глазки-камеры. Кручение педалей не получилось. Пеликан-терминатор в каске, похож на GPT Astra. Дрончики напоминают GPT Astra (возможно, дистилляция).
 
@@ -258,19 +258,19 @@
 
 ### 🤖 GigaChat (Сбербанк) — без рассуждений
 
-[Пеликан](tests/giga/2026-09-pelican.html) | [![](screenshots/thumbnails/giga/2026-09-pelican.png)](screenshots/giga/2026-09-pelican.png)
+[Пеликан](tests/giga/2026-09-pelican.html) | [![](screenshots/thumbnails/giga/2026-09-pelican.png)](screenshots/overview_final.mp4)
 
 Сетка движется, тень. Без рассуждений — не справился.
 
 > Результат неудовлетворительный.
 
-[Лягушка](tests/giga/2026-09-frog.html) | [![](screenshots/thumbnails/giga/2026-09-frog.png)](screenshots/giga/2026-09-frog.png)
+[Лягушка](tests/giga/2026-09-frog.html) | [![](screenshots/thumbnails/giga/2026-09-frog.png)](screenshots/overview_final.mp4)
 
 Лягушка в углу, машет непонятно чем. Велосипед не получился. Колесо крутится.
 
 > Результат неудовлетворительный.
 
-[Пеликан-Скайнет](tests/giga/2026-09-pelican-skynet.html) | [![](screenshots/thumbnails/giga/2026-09-pelican-skynet.png)](screenshots/giga/2026-09-pelican-skynet.png)
+[Пеликан-Скайнет](tests/giga/2026-09-pelican-skynet.html) | [![](screenshots/thumbnails/giga/2026-09-pelican-skynet.png)](screenshots/overview_final.mp4)
 
 Движущийся элемент внизу, пробегает что-то похожее на паука. Вдалеке — отголоски взрыва.
 
@@ -278,17 +278,17 @@
 
 ### GigaChat — с рассуждениями
 
-[Reasoning: пеликан](tests/giga/2026-09-reasoning-pelican.html) | [![](screenshots/thumbnails/giga/2026-09-reasoning-pelican.png)](screenshots/giga/2026-09-reasoning-pelican.png)
+[Reasoning: пеликан](tests/giga/2026-09-reasoning-pelican.html) | [![](screenshots/thumbnails/giga/2026-09-reasoning-pelican.png)](screenshots/overview_final.mp4)
 
-[Reasoning: лягушка](tests/giga/2026-09-reasoning-frog.html) | [![](screenshots/thumbnails/giga/2026-09-reasoning-frog.png)](screenshots/giga/2026-09-reasoning-frog.png)
+[Reasoning: лягушка](tests/giga/2026-09-reasoning-frog.html) | [![](screenshots/thumbnails/giga/2026-09-reasoning-frog.png)](screenshots/overview_final.mp4)
 
-[Reasoning: пеликан-Скайнет](tests/giga/2026-09-reasoning-pelican-skynet.html) | [![](screenshots/thumbnails/giga/2026-09-reasoning-pelican-skynet.png)](screenshots/giga/2026-09-reasoning-pelican-skynet.png)
+[Reasoning: пеликан-Скайнет](tests/giga/2026-09-reasoning-pelican-skynet.html) | [![](screenshots/thumbnails/giga/2026-09-reasoning-pelican-skynet.png)](screenshots/overview_final.mp4)
 
 В режиме рассуждений GigaChat показывает небольшие улучшения. В reasoning-пеликане — уже есть фон и движение, но велосипед не узнаваем. В reasoning-лягушке — «лягушка-гонщик», но велосипед больше похож на каток. В reasoning-Скайнете — колёса, фон с дронами (с красными лампочками).
 
 > Всё равно неудовлетворительно. GigaChat не показывает свои рассуждения.
 
-[Пеликан из SVG](tests/giga/2026-09-pelican.html) — в HTML-файле спрятан SVG с изображением пеликана, но на странице не отображается. [Скриншот](screenshots/thumbnails/giga/2026-09-pelican-pic.png)
+[Пеликан из SVG](tests/giga/2026-09-pelican.html) — в HTML-файле спрятан SVG с изображением пеликана, но на странице не отображается. [Скриншот](screenshots/overview_final.mp4)
 
 ---
 
@@ -317,7 +317,7 @@
 
 [**overview_final.mp4**](screenshots/overview_final.mp4) — 165 MB, 9:34 мин, все 33 сцены в порядке: GPT Astra → DeepSeek → Qwen 3.6 → Qwen 3.8 → Qwen 3.8 Flash → Alise → BigPickle → GigaChat (включая reasoning).
 
-[**overview_final.gif**](screenshots/overview_final.gif) — 174 MB, 854×480, весь обзор 9:34 (5746 кадров, 10 fps).
+[**overview_final.gif**](screenshots/overview_final.gif) — 16 MB, 400×225, весь обзор 9:34 (1149 кадров, 2 fps).
 
 ---
 
