@@ -78,7 +78,7 @@
 
 ### 🏆 GPT Astra (2 трлн параметров) — лучший результат
 
-[Исходный файл пеликана](tests/gpt/2026-09-pelican.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/gpt/2026-09-pelican.html" target="_blank">Исходный файл пеликана</a>
 
 [![](screenshots/thumbnails/gpt/2026-09-pelican.png)](screenshots/gpt/2026-09-pelican.png)
 
@@ -86,7 +86,7 @@
 
 > Нюансы: ось вращения педалей расположена на уровне ступни, а не педали; сзади велосипеда видна непонятная палочка. Мелочи, легко исправляемые итеративно.
 
-[Исходный файл пеликана-Скайнет](tests/gpt/2026-09-pelican-skynet.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/gpt/2026-09-pelican-skynet.html" target="_blank">Исходный файл пеликана-Скайнет</a>
 
 [![](screenshots/thumbnails/gpt/2026-09-pelican-skynet.png)](screenshots/gpt/2026-09-pelican-skynet.png)
 
@@ -94,7 +94,7 @@
 
 > Нюансы: ось педалей всё ещё на уровне ступни; цепь на передней звёздочке навешана некорректно; артефакт в раме. В целом — стильно и качественно.
 
-[Исходный файл лягушки](tests/gpt/2026-09-frog.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/gpt/2026-09-frog.html" target="_blank">Исходный файл лягушки</a>
 
 [![](screenshots/thumbnails/gpt/2026-09-frog.png)](screenshots/gpt/2026-09-frog.png)
 
@@ -106,7 +106,7 @@
 
 ### 🤖 DeepSeek — базовый режим
 
-[Пеликан](tests/deepseek/2026-09-pelican.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/deepseek/2026-09-pelican.html" target="_blank">Пеликан</a>
 
 [![](screenshots/thumbnails/deepseek/2026-09-pelican.png)](screenshots/deepseek/2026-09-pelican.png)
 
@@ -114,7 +114,7 @@
 
 > Результат слабый.
 
-[Пеликан-Скайнет](tests/deepseek/2026-09-pelican-skynet.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/deepseek/2026-09-pelican-skynet.html" target="_blank">Пеликан-Скайнет</a>
 
 [![](screenshots/thumbnails/deepseek/2026-09-pelican-skynet.png)](screenshots/deepseek/2026-09-pelican-skynet.png)
 
@@ -122,7 +122,7 @@
 
 > Результат слабый.
 
-[Лягушка](tests/deepseek/2026-09-frog.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/deepseek/2026-09-frog.html" target="_blank">Лягушка</a>
 
 [![](screenshots/thumbnails/deepseek/2026-09-frog.png)](screenshots/deepseek/2026-09-frog.png)
 
@@ -134,7 +134,7 @@
 
 ### 🤖 DeepSeek — режим рассуждений (reasoning)
 
-[Пеликан reasoning](tests/deepseek/2026-09-reasoning-pelican.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/deepseek/2026-09-reasoning-pelican.html" target="_blank">Пеликан reasoning</a>
 
 [![](screenshots/thumbnails/deepseek/2026-09-reasoning-pelican.png)](screenshots/deepseek/2026-09-reasoning-pelican.png)
 
@@ -142,7 +142,7 @@
 
 > Результат удовлетворительный.
 
-[Лягушка reasoning](tests/deepseek/2026-09-reasoning-frog.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/deepseek/2026-09-reasoning-frog.html" target="_blank">Лягушка reasoning</a>
 
 [![](screenshots/thumbnails/deepseek/2026-09-reasoning-frog.png)](screenshots/deepseek/2026-09-reasoning-frog.png)
 
@@ -150,7 +150,7 @@
 
 > Результат более-менее удовлетворительный.
 
-[Пеликан-Скайнет reasoning](tests/deepseek/2026-09-reasoning-pelican-skynet.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/deepseek/2026-09-reasoning-pelican-skynet.html" target="_blank">Пеликан-Скайнет reasoning</a>
 
 [![](screenshots/thumbnails/deepseek/2026-09-reasoning-pelican-skynet.png)](screenshots/deepseek/2026-09-reasoning-pelican-skynet.png)
 
@@ -162,7 +162,7 @@
 
 ### 💻 Qwen 3.6 Local (35B, INT4, Qwen3.6-A3B с MTP)
 
-[Пеликан](tests/qwen/3.6-local/2026-09-pelican.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/qwen/3.6-local/2026-09-pelican.html" target="_blank">Пеликан</a>
 
 [![](screenshots/thumbnails/qwen/3.6-local/2026-09-pelican.png)](screenshots/qwen/3.6-local/2026-09-pelican.png)
 
@@ -170,7 +170,7 @@
 
 > Результат неудовлетворительный: пеликан не похож на пеликана, цепь не анимирована.
 
-[Лягушка](tests/qwen/3.6-local/2026-09-frog.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/qwen/3.6-local/2026-09-frog.html" target="_blank">Лягушка</a>
 
 [![](screenshots/thumbnails/qwen/3.6-local/2026-09-frog.png)](screenshots/qwen/3.6-local/2026-09-frog.png)
 
@@ -178,7 +178,7 @@
 
 > Результат абсолютно неудовлетворительный.
 
-[Пеликан-Скайнет](tests/qwen/3.6-local/2026-09-pelican-skynet.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/qwen/3.6-local/2026-09-pelican-skynet.html" target="_blank">Пеликан-Скайнет</a>
 
 [![](screenshots/thumbnails/qwen/3.6-local/2026-09-pelican-skynet.png)](screenshots/qwen/3.6-local/2026-09-pelican-skynet.png)
 
@@ -190,7 +190,7 @@
 
 ### 💻 Qwen 3.8 Local (35B, INT4, склонная к рассуждениям)
 
-[Пеликан](tests/qwen/3.8-local/2026-09-pelican.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/qwen/3.8-local/2026-09-pelican.html" target="_blank">Пеликан</a>
 
 [![](screenshots/thumbnails/qwen/3.8-local/2026-09-pelican.png)](screenshots/qwen/3.8-local/2026-09-pelican.png)
 
@@ -198,7 +198,7 @@
 
 > Уровень хороший для локальной модели. Ось педалей — спорная.
 
-[Лягушка](tests/qwen/3.8-local/2026-09-frog.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/qwen/3.8-local/2026-09-frog.html" target="_blank">Лягушка</a>
 
 [![](screenshots/thumbnails/qwen/3.8-local/2026-09-frog.png)](screenshots/qwen/3.8-local/2026-09-frog.png)
 
@@ -206,7 +206,7 @@
 
 > Результат вполне удовлетворительный.
 
-[Пеликан-Скайнет](tests/qwen/3.8-local/2026-09-pelican-skynet.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/qwen/3.8-local/2026-09-pelican-skynet.html" target="_blank">Пеликан-Скайнет</a>
 
 [![](screenshots/thumbnails/qwen/3.8-local/2026-09-pelican-skynet.png)](screenshots/qwen/3.8-local/2026-09-pelican-skynet.png)
 
@@ -218,7 +218,7 @@
 
 ### 💻 Qwen 3.8 Flash Local (125B, INT4, экстремально быстрая)
 
-[Пеликан](tests/qwen/3.8-flash-local/2026-09-pelican.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/qwen/3.8-flash-local/2026-09-pelican.html" target="_blank">Пеликан</a>
 
 [![](screenshots/thumbnails/qwen/3.8-flash-local/2026-09-pelican.png)](screenshots/qwen/3.8-flash-local/2026-09-pelican.png)
 
@@ -226,7 +226,7 @@
 
 > Цепь движется в обратную сторону — ошибка. Страница — интересная идея.
 
-[Лягушка](tests/qwen/3.8-flash-local/2026-09-frog.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/qwen/3.8-flash-local/2026-09-frog.html" target="_blank">Лягушка</a>
 
 [![](screenshots/thumbnails/qwen/3.8-flash-local/2026-09-frog.png)](screenshots/qwen/3.8-flash-local/2026-09-frog.png)
 
@@ -234,7 +234,7 @@
 
 > **Единственная модель, понявшая исторический контекст пенни-фартинга** и оформившая страницу соответствующе. Но педали и ноги лягушки крутятся не в ту сторону.
 
-[Пеликан-Скайнет](tests/qwen/3.8-flash-local/2026-09-pelican-skynet.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/qwen/3.8-flash-local/2026-09-pelican-skynet.html" target="_blank">Пеликан-Скайнет</a>
 
 [![](screenshots/thumbnails/qwen/3.8-flash-local/2026-09-pelican-skynet.png)](screenshots/qwen/3.8-flash-local/2026-09-pelican-skynet.png)
 
@@ -246,7 +246,7 @@
 
 ### 🐦 Alice (Алиса) — режим рассуждений сильно упрощает
 
-[Пеликан](tests/alise/2026-09-pelican.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/alise/2026-09-pelican.html" target="_blank">Пеликан</a>
 
 [![](screenshots/thumbnails/alise/2026-09-pelican.png)](screenshots/alise/2026-09-pelican.png)
 
@@ -254,7 +254,7 @@
 
 > Результат не очень.
 
-[Лягушка](tests/alise/2026-09-frog.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/alise/2026-09-frog.html" target="_blank">Лягушка</a>
 
 [![](screenshots/thumbnails/alise/2026-09-frog.png)](screenshots/alise/2026-09-frog.png)
 
@@ -262,7 +262,7 @@
 
 > Результат неудовлетворительный.
 
-[Пеликан-Скайнет](tests/alise/2026-09-pelican-skynet.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/alise/2026-09-pelican-skynet.html" target="_blank">Пеликан-Скайнет</a>
 
 [![](screenshots/thumbnails/alise/2026-09-pelican-skynet.png)](screenshots/alise/2026-09-pelican-skynet.png)
 
@@ -270,15 +270,15 @@
 
 > Результат неудовлетворительный.
 
-[Reasoning: пеликан](tests/alise/2026-09-reasoning-pelican.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/alise/2026-09-reasoning-pelican.html" target="_blank">Reasoning: пеликан</a>
 
 [![](screenshots/thumbnails/alise/2026-09-reasoning-pelican.png)](screenshots/alise/2026-09-reasoning-pelican.png)
 
-[Reasoning: лягушка](tests/alise/2026-09-reasoning-frog.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/alise/2026-09-reasoning-frog.html" target="_blank">Reasoning: лягушка</a>
 
 [![](screenshots/thumbnails/alise/2026-09-reasoning-frog.png)](screenshots/alise/2026-09-reasoning-frog.png)
 
-[Reasoning: пеликан-Скайнет](tests/alise/2026-09-reasoning-pelican-skynet.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/alise/2026-09-reasoning-pelican-skynet.html" target="_blank">Reasoning: пеликан-Скайнет</a>
 
 [![](screenshots/thumbnails/alise/2026-09-reasoning-pelican-skynet.png)](screenshots/alise/2026-09-reasoning-pelican-skynet.png)
 
@@ -290,7 +290,7 @@
 
 ### 🍆 BigPickle — бесплатно, с лимитом токенов
 
-[Пеликан](tests/bigpickle/2026-09-pelican.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/bigpickle/2026-09-pelican.html" target="_blank">Пеликан</a>
 
 [![](screenshots/thumbnails/bigpickle/2026-09-pelican.png)](screenshots/bigpickle/2026-09-pelican.png)
 
@@ -298,7 +298,7 @@
 
 > Слабоват, но лучше Алисы и Гигачата.
 
-[Лягушка](tests/bigpickle/2026-09-frog.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/bigpickle/2026-09-frog.html" target="_blank">Лягушка</a>
 
 [![](screenshots/thumbnails/bigpickle/2026-09-frog.png)](screenshots/bigpickle/2026-09-frog.png)
 
@@ -306,7 +306,7 @@
 
 > Результат неудовлетворительный.
 
-[Пеликан-Скайнет](tests/bigpickle/2026-09-pelican-skynet.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/bigpickle/2026-09-pelican-skynet.html" target="_blank">Пеликан-Скайнет</a>
 
 [![](screenshots/thumbnails/bigpickle/2026-09-pelican-skynet.png)](screenshots/bigpickle/2026-09-pelican-skynet.png)
 
@@ -318,7 +318,7 @@
 
 ### 🤖 GigaChat (Сбербанк) — без рассуждений
 
-[Пеликан](tests/giga/2026-09-pelican.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/giga/2026-09-pelican.html" target="_blank">Пеликан</a>
 
 [![](screenshots/thumbnails/giga/2026-09-pelican.png)](screenshots/giga/2026-09-pelican.png)
 
@@ -326,7 +326,7 @@
 
 > Результат неудовлетворительный.
 
-[Лягушка](tests/giga/2026-09-frog.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/giga/2026-09-frog.html" target="_blank">Лягушка</a>
 
 [![](screenshots/thumbnails/giga/2026-09-frog.png)](screenshots/giga/2026-09-frog.png)
 
@@ -334,7 +334,7 @@
 
 > Результат неудовлетворительный.
 
-[Пеликан-Скайнет](tests/giga/2026-09-pelican-skynet.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/giga/2026-09-pelican-skynet.html" target="_blank">Пеликан-Скайнет</a>
 
 [![](screenshots/thumbnails/giga/2026-09-pelican-skynet.png)](screenshots/giga/2026-09-pelican-skynet.png)
 
@@ -344,19 +344,19 @@
 
 ### GigaChat — с рассуждениями
 
-[Reasoning: пеликан](tests/giga/2026-09-reasoning-pelican.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/giga/2026-09-reasoning-pelican.html" target="_blank">Reasoning: пеликан</a>
 
 [![](screenshots/thumbnails/giga/2026-09-reasoning-pelican.png)](screenshots/giga/2026-09-reasoning-pelican.png)
 
-[Пеликан из SVG](tests/giga/2026-09-pelican.html) — в HTML-файле спрятан SVG с изображением пеликана, но на странице не отображается. 
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/giga/2026-09-pelican.html" target="_blank">Пеликан из SVG</a> — в HTML-файле спрятан SVG с изображением пеликана, но на странице не отображается. 
 
 [Полноразмерный скриншот](screenshots/giga/2026-09-pelican-pic.png)
 
-[Reasoning: лягушка](tests/giga/2026-09-reasoning-frog.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/giga/2026-09-reasoning-frog.html" target="_blank">Reasoning: лягушка</a>
 
 [![](screenshots/thumbnails/giga/2026-09-reasoning-frog.png)](screenshots/giga/2026-09-reasoning-frog.png)
 
-[Reasoning: пеликан-Скайнет](tests/giga/2026-09-reasoning-pelican-skynet.html)
+<a href="https://htmlpreview.github.io/?https://github.com/vaimr/pelicans-test/blob/dev/tests/giga/2026-09-reasoning-pelican-skynet.html" target="_blank">Reasoning: пеликан-Скайнет</a>
 
 [![](screenshots/thumbnails/giga/2026-09-reasoning-pelican-skynet.png)](screenshots/giga/2026-09-reasoning-pelican-skynet.png)
 
