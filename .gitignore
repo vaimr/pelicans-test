@@ -5,6 +5,7 @@ node_modules/
 screenshots/*.mp4
 screenshots/*.webm
 screenshots/*.gif
+!screenshots/overview_final.gif
 
 # Temp files
 /tmp/*
