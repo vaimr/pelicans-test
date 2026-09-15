@@ -317,7 +317,7 @@
 
 [**overview_final.mp4**](screenshots/overview_final.mp4) — 165 MB, 9:34 мин, все 33 сцены в порядке: GPT Astra → DeepSeek → Qwen 3.6 → Qwen 3.8 → Qwen 3.8 Flash → Alise → BigPickle → GigaChat (включая reasoning).
 
-[**overview_final.gif**](screenshots/overview_final.gif) — 16 MB, 400×225, весь обзор 9:34 (1149 кадров, 2 fps).
+[**overview_final.gif**](screenshots/overview_final.gif) — 15 MB, 320×180, весь обзор 9:34 (1724 кадра, 3 fps).
 
 ---
 
