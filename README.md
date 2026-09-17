@@ -72,6 +72,19 @@
   --metrics --no-perf --reasoning_preserve
 ```
 
+### Qwen 3.8 Flash Next (reasoning)
+```bash
+/opt/llamacpp/rocm/bin/llama-server \
+  --threads 1 --threads-batch 2 --ctx-size 262144 --batch-size 4096 --ubatch-size 1024 \
+  --flash-attn auto --cache-type-k q4_0 --cache-type-v q4_0 --gpu-layers 999 --fit off \
+  --model /opt/llamacpp/models/UD-IQ4_XS/Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00003.gguf \
+  --temp 0.9 --top-p 0.95 --parallel 2 \
+  --host 0.0.0.0 --port 8503 \
+  --spec-type draft-mtp --kv_unified \
+  --model-draft /opt/llamacpp/models/MTP/mtp-Qwen3.8-Flash-Next-Q4_K_M.gguf \
+  --spec_draft_n_max 4 --spec_draft_p_min 0.75 --cont-batching --metrics --no-perf \
+  --reasoning_preserve --jinja
+```
 ---
 
 ## Детальные результаты
